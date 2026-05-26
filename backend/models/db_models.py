@@ -57,11 +57,23 @@ class ChatRole(str, enum.Enum):
 # ---------------------------------------------------------------------------
 class User(Base):
     __tablename__ = "users"
+    __table_args__ = (
+        UniqueConstraint(
+            "auth_provider",
+            "auth_subject",
+            name="uq_users_auth_provider_subject",
+        ),
+    )
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username = Column(String(50), unique=True, nullable=False, index=True)
     grade_level = Column(Integer, nullable=False)
     total_score = Column(Integer, default=0, nullable=False)
+    email = Column(String(320), nullable=True, index=True)
+    display_name = Column(String(120), nullable=True)
+    auth_provider = Column(String(50), nullable=True, index=True)
+    auth_subject = Column(String(255), nullable=True)
+    last_login_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

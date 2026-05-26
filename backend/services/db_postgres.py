@@ -6,6 +6,7 @@ All database queries live here so route handlers stay thin.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Iterable, List, Optional
 from uuid import UUID
 
@@ -25,6 +26,7 @@ from models.db_models import (
     MatchStatus,
     User,
 )
+from services.oauth_service import OAuthProfile
 
 
 # ── Users ─────────────────────────────────────────────────────────────────
@@ -47,6 +49,51 @@ async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User
     return result.scalar_one_or_none()
 
 
+async def get_user_by_oauth_identity(
+    db: AsyncSession, provider: str, subject: str
+) -> Optional[User]:
+    result = await db.execute(
+        select(User).where(
+            User.auth_provider == provider,
+            User.auth_subject == subject,
+        )
+    )
+    return result.scalar_one_or_none()
+
+
+async def upsert_oauth_user(db: AsyncSession, profile: OAuthProfile) -> User:
+    """
+    Create or update a user from a verified OAuth/OIDC provider identity.
+
+    The stable account key is provider + subject. Email is profile data, not
+    the primary identity, because email can change and is not universal.
+    """
+    now = datetime.now(timezone.utc)
+    user = await get_user_by_oauth_identity(db, profile.provider, profile.subject)
+    if user:
+        user.email = profile.email
+        user.display_name = profile.display_name
+        user.last_login_at = now
+        await db.commit()
+        await db.refresh(user)
+        return user
+
+    username = await _unique_username(db, profile.username_seed)
+    user = User(
+        username=username,
+        grade_level=10,
+        email=profile.email,
+        display_name=profile.display_name,
+        auth_provider=profile.provider,
+        auth_subject=profile.subject,
+        last_login_at=now,
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
 async def add_points(db: AsyncSession, user_id: UUID, points: int) -> int:
     """Add *points* to a user's total_score and return the new total."""
     await db.execute(
@@ -57,6 +104,17 @@ async def add_points(db: AsyncSession, user_id: UUID, points: int) -> int:
     await db.commit()
     user = await get_user(db, user_id)
     return user.total_score if user else 0
+
+
+async def _unique_username(db: AsyncSession, seed: str) -> str:
+    base = (seed or "oauth-user")[:50]
+    candidate = base
+    suffix = 2
+    while await get_user_by_username(db, candidate):
+        suffix_text = f"-{suffix}"
+        candidate = f"{base[: 50 - len(suffix_text)]}{suffix_text}"
+        suffix += 1
+    return candidate
 
 
 # ── Characters ────────────────────────────────────────────────────────────

@@ -9,7 +9,7 @@ This document is the contract between the LitMatch frontend and the backend serv
 - **Base URL:** TBD by backend team. The frontend will read it from a `VITE_API_BASE_URL` env var (defaulting to a relative path).
 - **Content type:** `application/json; charset=utf-8` for all request and response bodies, except `POST /chat` which streams (see §4).
 - **Encoding:** All text is UTF-8. Vietnamese diacritics must be preserved exactly.
-- **Auth (MVP):** None. Identity is whatever username the user typed during onboarding. A future iteration will add session auth — this spec does not block it.
+- **Auth:** OAuth/OIDC login is available under `/api/v1/auth/*` and uses a signed, HTTP-only session cookie. Existing MVP endpoints still accept explicit `user_id` values for backward compatibility.
 - **Idempotency:** `POST /match` and `POST /characters/:id/challenge/submit` should be safe to retry. `submit` may either return the previously stored result or accept the latest answers — frontend treats the response as the source of truth.
 - **Time:** All timestamps are ISO 8601 in UTC (`2026-05-08T12:34:56Z`).
 - **IDs:** Character IDs are stable kebab-case strings (e.g. `chi-pheo`, `thuy-kieu`). They match the seed in `src/data/characters.ts`.
@@ -40,6 +40,42 @@ Common codes the frontend handles:
 | 500 | `INTERNAL` | Server error |
 
 ## 3. Endpoints
+
+### 3.0 Auth
+
+#### `GET /auth/login/{provider}`
+
+Starts an OAuth/OIDC Authorization Code login. Supported provider: `google`.
+
+**Query params**
+
+| Name | Type | Notes |
+| --- | --- | --- |
+| `next` | string | Optional post-login target. Relative paths and configured frontend origins are allowed; external origins are ignored. |
+
+**Response**
+
+`302` redirect to the provider authorization endpoint. Returns `503` when OAuth credentials or `SESSION_SECRET_KEY` are not configured.
+
+#### `GET /auth/callback/{provider}`
+
+OAuth/OIDC redirect URI. Exchanges the authorization code, verifies provider state/nonce through Authlib, creates or updates the backend user keyed by `(provider, subject)`, stores `user_id` in the session, and redirects to the safe post-login target.
+
+#### `GET /auth/me`
+
+Returns the current session user.
+
+**401** if the session is missing, invalid, or points at a deleted user.
+
+#### `POST /auth/logout`
+
+Clears the backend session cookie.
+
+**Response 200**
+
+```json
+{ "ok": true }
+```
 
 ### 3.1 `GET /deck`
 
@@ -379,7 +415,7 @@ Full content (bio, quote, personality, conflict, context, sources, voice, 5 chal
 
 ## 7. Open questions
 
-1. **Auth model:** PRD §6.1 says "Store user profile locally" for MVP. When does the backend introduce sessions? Affects `POST /match` and leaderboard merging.
+1. **Auth enforcement:** OAuth sessions exist, but legacy gameplay endpoints still accept explicit `user_id`. A follow-up should decide when `/match`, `/chat`, challenges, and leaderboard merging switch to session-derived identity.
 2. **Chat retention:** does the backend persist chat history server-side, or is it client-only? Currently client-only via `localStorage`.
 3. **Rate limiting on `/chat`:** what's the cap? Frontend doesn't currently throttle.
 4. **`source` events on chat:** are we shipping retrieval-driven citations in MVP, or just streaming text? If just text, the `source` event can be omitted.

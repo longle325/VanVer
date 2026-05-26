@@ -45,6 +45,8 @@ class UserResponse(BaseModel):
     username: str
     grade_level: int
     total_score: int
+    email: Optional[str] = None
+    display_name: Optional[str] = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 
 from core.config import settings
 from core.database import Base, engine, ensure_vector_extension
@@ -19,6 +20,7 @@ from core.database import Base, engine, ensure_vector_extension
 # Route modules
 from api.routes import (
     admin,
+    auth,
     challenges,
     characters,
     chat,
@@ -82,11 +84,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SESSION_SECRET_KEY or "litmatch-dev-session-secret-change-me",
+    session_cookie=settings.SESSION_COOKIE_NAME,
+    max_age=settings.SESSION_MAX_AGE_SECONDS,
+    same_site=settings.SESSION_COOKIE_SAMESITE,
+    https_only=settings.SESSION_COOKIE_SECURE,
+)
+
 # ── Routes ────────────────────────────────────────────────────────────────
 
 API_PREFIX = "/api/v1"
 
 app.include_router(users.router, prefix=API_PREFIX)
+app.include_router(auth.router, prefix=API_PREFIX)
 app.include_router(deck.router, prefix=API_PREFIX)
 app.include_router(interactions.router, prefix=API_PREFIX)
 app.include_router(chat.router, prefix=API_PREFIX)
