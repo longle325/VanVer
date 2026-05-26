@@ -2,6 +2,7 @@ import tempfile
 import unittest
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 from services.knowledge_retriever import KnowledgeRetriever
 
@@ -129,11 +130,15 @@ class KnowledgeRetrieverTests(unittest.TestCase):
         self.assertEqual(result["sources"][0]["source_path"], "Chi_Pheo/analysis.txt")
 
     def test_diagnostics_reports_lexical_fallback_availability(self):
-        class NoDatabaseRetriever(KnowledgeRetriever):
-            async def diagnostics(self):
-                result = await super().diagnostics()
-                result["last_error"] = "database unavailable"
-                return result
+        class FailingSessionFactory:
+            def __call__(self):
+                return self
+
+            async def __aenter__(self):
+                raise RuntimeError("database unavailable")
+
+            async def __aexit__(self, exc_type, exc, traceback):
+                return False
 
         async def run_diagnostics():
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -151,7 +156,11 @@ class KnowledgeRetrieverTests(unittest.TestCase):
                         }
                     ],
                 )
-                return await NoDatabaseRetriever(index_path=index_path).diagnostics()
+                with patch(
+                    "services.knowledge_retriever.async_session_factory",
+                    FailingSessionFactory(),
+                ):
+                    return await KnowledgeRetriever(index_path=index_path).diagnostics()
 
         result = __import__("asyncio").run(run_diagnostics())
 

@@ -52,6 +52,29 @@ class Settings(BaseSettings):
         "https://localhost",  # Android Capacitor
     ]
 
+    # --- Auth / OAuth ---
+    SESSION_SECRET_KEY: str = ""
+    SESSION_COOKIE_NAME: str = "litmatch_session"
+    SESSION_COOKIE_SECURE: bool = False
+    SESSION_COOKIE_SAMESITE: str = "lax"
+    SESSION_MAX_AGE_SECONDS: int = 60 * 60 * 24 * 14
+
+    OAUTH_POST_LOGIN_REDIRECT: str = "http://localhost:5173"
+    OAUTH_ALLOWED_REDIRECT_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "capacitor://localhost",
+        "https://localhost",
+    ]
+    OAUTH_CALLBACK_BASE_URL: str = ""
+
+    OAUTH_GOOGLE_CLIENT_ID: str = ""
+    OAUTH_GOOGLE_CLIENT_SECRET: str = ""
+    OAUTH_GOOGLE_SERVER_METADATA_URL: str = (
+        "https://accounts.google.com/.well-known/openid-configuration"
+    )
+    OAUTH_GOOGLE_SCOPE: str = "openid email profile"
+
     # --- App ---
     APP_TITLE: str = "LitMatch API"
     APP_VERSION: str = "0.1.0"

@@ -424,6 +424,13 @@ KNOWLEDGE_BASE_DIR=./knowledge_base
 RAG_TOP_K=5
 RAG_MIN_SIMILARITY=0.0
 
+# OAuth / backend session
+SESSION_SECRET_KEY=replace-with-a-long-random-secret
+OAUTH_POST_LOGIN_REDIRECT=http://localhost:5173
+OAUTH_CALLBACK_BASE_URL=http://localhost:8081
+OAUTH_GOOGLE_CLIENT_ID=your-google-client-id
+OAUTH_GOOGLE_CLIENT_SECRET=your-google-client-secret
+
 # Frontend (VITE_ prefix required for Vite to expose to client)
 VITE_API_BASE_URL=http://localhost:8081/api/v1
 VITE_REAL_ENDPOINTS=all
@@ -448,6 +455,13 @@ VITE_REAL_ENDPOINTS=all
 | `EMBEDDING_DIMENSIONS` | `3072` | Embedding vector size |
 | `RAG_TOP_K` | `5` | Number of RAG chunks to retrieve |
 | `RAG_MIN_SIMILARITY` | `0.0` | Minimum cosine similarity threshold |
+| `SESSION_SECRET_KEY` | — | Required for OAuth login session signing |
+| `SESSION_COOKIE_SECURE` | `false` | Set `true` behind HTTPS in production |
+| `OAUTH_POST_LOGIN_REDIRECT` | `http://localhost:5173` | Default safe redirect after login |
+| `OAUTH_ALLOWED_REDIRECT_ORIGINS` | local dev origins | Allowed absolute `next` URL origins |
+| `OAUTH_CALLBACK_BASE_URL` | request host | Public backend origin used for OAuth callback URLs |
+| `OAUTH_GOOGLE_CLIENT_ID` | — | Google OAuth client ID |
+| `OAUTH_GOOGLE_CLIENT_SECRET` | — | Google OAuth client secret |
 | `DEBUG` | `false` | Enable debug logging |
 
 ### GitHub Actions variables (repo settings)
