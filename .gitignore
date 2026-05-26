@@ -10,6 +10,7 @@ __pycache__/
 .env.local
 .env.*.local
 .ruff_cache/
+.brv/
 
 # Knowledge-base SQL dumps — ship via team Drive
 backend/data/*.sql.gz

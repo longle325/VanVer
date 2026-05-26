@@ -14,7 +14,7 @@ This document gives you every touchpoint, the exact data shape at each, and the 
 - Branch from `main`. After your work, open a PR titled e.g. `Add character: <Name> (<Work>)`.
 - Don't push to `main` unless the user explicitly says hotfix.
 - Don't add Co-Authored-By trailers.
-- Don't commit anything in `.brv/` or `frontend/tsconfig.app.tsbuildinfo`.
+- Don't commit anything in `.brv/` or generated `*.tsbuildinfo` files.
 
 ### Slug naming — there are TWO forms; you will need both
 
@@ -27,7 +27,7 @@ Conversion is one-way at the API boundary: `frontend/src/api/adapter.ts:normaliz
 
 ### Files / dirs you will touch (complete list — there is no other place)
 
-**Frontend (no `frontend/src/data/seed.ts` — that file is dead code; do not touch it):**
+**Frontend:**
 1. `frontend/src/data/characters.ts` — the live FE seed (`rawCharacters` array)
 2. `frontend/public/characters/<slug>.png` (+ optional `<slug>-2.png`, `<slug>-3.png`)
 
@@ -402,7 +402,7 @@ If any of those four fails, the prompt card or the chunks need more work — don
 
 ## 9. Known traps
 
-- **Two seed files in FE.** `frontend/src/data/seed.ts` exists but **is dead code**. Edit `characters.ts`, never `seed.ts`.
+- **Single live FE seed.** Edit `frontend/src/data/characters.ts`; old prototype seed files have been removed.
 - **Dual challenge sources.** FE `characters.ts:challenge` (5 q's) and BE `seed_database.py:challenge_questions` (5 q's) are independent. They must stay in sync.
 - **Slug case mismatches.** A typo (e.g. backend `xuan_toc_đỏ` vs frontend `xuan-toc-do`) will silently break RAG retrieval (chunks won't match) AND chat-history fetches will 422. Always verify both forms once.
 - **Chunk hash de-dup.** `embed_knowledge_base.py` skips chunks whose `(chunk_id, text_hash)` is already in DB. If you tweak chunk text, the chunk_id stays the same but text_hash changes → it correctly re-embeds. If you renumber chunks, old chunk_ids stay in DB as orphans; either truncate `knowledge_chunks` first or delete the stale rows manually.

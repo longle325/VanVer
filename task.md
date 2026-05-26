@@ -5,7 +5,7 @@ Last updated: 2026-05-08 (backend wire-up Phase 4 — chat SSE flipped, all endp
 ## Completed
 
 - [x] Read `PRD.md`, `Content_reference.csv`, and provided design references.
-- [x] Built initial static prototype (`_legacy/app.js`, `_legacy/styles.css`).
+- [x] Built initial static prototype, later replaced by the React/Vite app.
 - [x] Implemented all 7 screens (onboarding, discovery, collection, chat, challenge, leaderboard, profile) with Vietnamese localization.
 - [x] Seeded the five MVP CSV characters with full content.
 
@@ -21,7 +21,7 @@ Last updated: 2026-05-08 (backend wire-up Phase 4 — chat SSE flipped, all endp
 - [x] Ported seed characters into typed `src/data/characters.ts`.
 - [x] Implemented chunked streaming chat in mock API (replaces single-shot `mockReply`).
 - [x] Preserved legacy CSS as `src/styles/legacy.css` for visual parity during polish.
-- [x] Moved legacy files into `_legacy/` for diff reference.
+- [x] Removed legacy prototype files after the React/Vite app became the source of truth.
 - [x] `npm install`, `tsc -b`, `npm run build`, and `npm run dev` all succeed.
 - [x] Browser-verified each screen on the React build (onboarding, discover, collection, chat, challenge, leaderboard, profile).
 
