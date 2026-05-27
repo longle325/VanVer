@@ -1,4 +1,4 @@
-import type { Character, ChallengeQuestion } from "@/types";
+import type { Character, ChallengeQuestion, CharacterLevel } from "@/types";
 
 // Question id is auto-generated below, so the seed data only supplies
 // the substantive fields. This mirrors the wire shape from
@@ -14,6 +14,340 @@ const q = (
   answer: number,
   explanation: string,
 ): SeedChallengeQuestion => ({ text, options, answer, explanation });
+
+type CharacterLevelPlan = Omit<
+  CharacterLevel,
+  "image" | "images" | "referenceImage" | "referenceImages" | "assetStatus"
+>;
+
+const imagesPerLevel = 3;
+
+const visualUpgradeTreatment: Record<CharacterLevel["level"], string> = {
+  1: "Level 1 depicts the character's first planned story phase with restrained composition and clear canonical setting.",
+  2: "Level 2 depicts the character's second planned story phase with visibly changed context, stronger narrative tension, and phase-specific symbols.",
+  3: "Level 3 depicts the character's third planned story phase with the highest emotional stakes, strongest symbolic props, and a clearly distinct canonical setting.",
+};
+
+function plannedLevelImages(characterId: string, level: 2 | 3): string[] {
+  return Array.from(
+    { length: imagesPerLevel },
+    (_, index) => `/characters/${characterId}-level-${level}-${index + 1}.png`,
+  );
+}
+
+const levelPlans: Record<string, CharacterLevelPlan[]> = {
+  "chi-pheo": [
+    {
+      level: 1,
+      title: "Canh điền lương thiện",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus:
+        "Gợi phần người còn nguyên vẹn trước khi bị nhà tù và cường hào tha hóa.",
+      visualPrompt:
+        "Chí Phèo thời còn là anh canh điền nghèo, mộc mạc giữa làng Vũ Đại, chưa có vết sẹo dữ dằn hay men rượu phủ đời.",
+    },
+    {
+      level: 2,
+      title: "Tha hóa sau nhà tù",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh dáng vẻ dữ dằn, say rượu, bị xã hội biến thành công cụ đe dọa.",
+      visualPrompt:
+        "Chí Phèo trở về làng Vũ Đại sau nhà tù, mặt đầy sẹo, chai rượu trong tay, dáng đi xiêu vẹo và ánh mắt bị ruồng bỏ.",
+    },
+    {
+      level: 3,
+      title: "Câu hỏi quyền làm người",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Đẩy bi kịch bị cự tuyệt quyền làm người lên cao, không tiết lộ tương lai nếu chưa đúng timeline.",
+      visualPrompt:
+        "Chí Phèo sau bát cháo hành, đứng trước ngõ nhà Bá Kiến với ánh mắt đau đớn, tỉnh thức và phẫn uất vì đường về lương thiện bị chặn.",
+    },
+  ],
+  mi: [
+    {
+      level: 1,
+      title: "Tiếng sáo tuổi trẻ",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus:
+        "Giữ sức sống tuổi trẻ, vẻ đẹp Hmong, tài thổi sáo và tình yêu trước khi bị vùi lấp.",
+      visualPrompt:
+        "Mị thời trẻ ở miền núi Tây Bắc, mặc váy áo Hmong, thổi sáo giữa mùa xuân và còn ánh nhìn tự do.",
+    },
+    {
+      level: 2,
+      title: "Con dâu gạt nợ",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Tập trung vào sức sống bị giam hãm nhưng trỗi dậy trong đêm tình mùa xuân.",
+      visualPrompt:
+        "Mị trong nhà thống lí Pá Tra, căn buồng tối và dây trói của A Sử đối lập với tiếng sáo, men rượu và sắc xuân ngoài kia.",
+    },
+    {
+      level: 3,
+      title: "Người tự cởi trói",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Thể hiện lòng thương người chuyển thành hành động phản kháng và tự giải phóng.",
+      visualPrompt:
+        "Mị trong đêm đông, ánh lửa bếp soi giọt nước mắt A Phủ và khoảnh khắc quyết tâm cắt dây trói để chạy theo con đường sống.",
+    },
+  ],
+  "xuan-toc-do": [
+    {
+      level: 1,
+      title: "Thằng nhặt bóng gặp thời",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus: "Giữ giọng láu cá, đường phố, cơ hội và vô học.",
+      visualPrompt:
+        "Xuân Tóc Đỏ lang thang sân quần vợt, tóc đỏ nổi bật và vẻ mặt lém lỉnh.",
+    },
+    {
+      level: 2,
+      title: "Đốc tờ của xã hội Âu hóa",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh xã hội thượng lưu giả trá biến sự ngu dốt thành danh vọng.",
+      visualPrompt:
+        "Xuân mặc đồ tây kệch cỡm giữa salon Âu hóa và những ánh nhìn tán tụng.",
+    },
+    {
+      level: 3,
+      title: "Anh hùng trào phúng",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Đẩy chất đại ngôn, lố bịch và nghịch lý xã hội tôn vinh kẻ vô lại.",
+      visualPrompt:
+        "Xuân diễn thuyết trước đám đông, hào quang giả tạo pha tiếng cười châm biếm.",
+    },
+  ],
+  "luc-van-tien": [
+    {
+      level: 1,
+      title: "Cứu Kiều Nguyệt Nga",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus:
+        "Giữ khí chất trẻ, chính trực, thấy việc nghĩa thì làm; không vẽ mù ở giai đoạn này.",
+      visualPrompt:
+        "Lục Vân Tiên trẻ trên đường đi thi, mắt sáng, đánh cướp Phong Lai cứu Kiều Nguyệt Nga giữa đường rừng và không cầu báo đáp.",
+    },
+    {
+      level: 2,
+      title: "Hoạn nạn mù lòa",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh nghịch cảnh mù lòa, bị phản bội nhưng vẫn giữ đạo nghĩa.",
+      visualPrompt:
+        "Lục Vân Tiên trong chặng hoạn nạn sau khi bị mù, áo nho sinh sờn cũ, tay dò đường nhưng dáng người vẫn ngay thẳng.",
+    },
+    {
+      level: 3,
+      title: "Phẩm hạnh được minh chứng",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Tập trung vào đạo nghĩa được nhận ra sau nhiều thử thách và trật tự công lý được phục hồi.",
+      visualPrompt:
+        "Lục Vân Tiên sau thử thách, phẩm hạnh và lòng trung chính được minh chứng trong không khí trang nghiêm của công lý phục hồi.",
+    },
+  ],
+  "thuy-kieu": [
+    {
+      level: 1,
+      title: "Tài sắc đầu đời",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus: "Giữ vẻ đa cảm, tài hoa và ý thức về chữ tài chữ mệnh.",
+      visualPrompt:
+        "Thúy Kiều bên đàn nguyệt, vẻ đẹp tài sắc trong không gian khuê các.",
+    },
+    {
+      level: 2,
+      title: "Trao duyên đứt ruột",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh giằng xé giữa chữ hiếu và chữ tình, lời nói vừa lý trí vừa tan nát.",
+      visualPrompt:
+        "Kiều trong đêm trao duyên, kỷ vật tình yêu đặt giữa ánh đèn khuya.",
+    },
+    {
+      level: 3,
+      title: "Lầu Ngưng Bích cô đơn",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Tập trung vào tả cảnh ngụ tình, cô đơn, nhớ nhà, nhớ người yêu và dự cảm lưu lạc.",
+      visualPrompt:
+        "Thúy Kiều ở lầu Ngưng Bích, biển trời mênh mông và tâm trạng buồn trông.",
+    },
+  ],
+  "lao-hac": [
+    {
+      level: 1,
+      title: "Ông lão giữ vườn",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus: "Giữ giọng lễ phép, nghèo khổ, cô độc và thương con.",
+      visualPrompt:
+        "Lão Hạc bên mảnh vườn cũ, dáng gầy guộc và ánh mắt đợi con.",
+    },
+    {
+      level: 2,
+      title: "Nỗi đau cậu Vàng",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh mặc cảm lừa cậu Vàng, nỗi đau đạo đức và sự tự trách.",
+      visualPrompt:
+        "Lão Hạc sau khi bán cậu Vàng, ngồi bên ông giáo với khuôn mặt mếu xệch.",
+    },
+    {
+      level: 3,
+      title: "Lòng tự trọng cuối cùng",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Tập trung vào quyết tâm không ăn vào tiền của con và bi kịch nhân phẩm.",
+      visualPrompt:
+        "Lão Hạc trong căn nhà nghèo, tiền ma chay và văn tự mảnh vườn đặt trước mặt.",
+    },
+  ],
+  "chi-dau": [
+    {
+      level: 1,
+      title: "Người đàn bà mùa sưu",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus: "Giữ giọng mộc mạc, tất bật, nhẫn nhục vì chồng con.",
+      visualPrompt:
+        "Chị Dậu trong căn nhà tranh nghèo, nồi cháo nóng và chồng ốm sau lưng.",
+    },
+    {
+      level: 2,
+      title: "Bị dồn đến đường cùng",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh cảnh bán con, bán chó, đói nghèo và tủi nhục đẩy chị vượt quá sức chịu đựng.",
+      visualPrompt:
+        "Chị Dậu trong áp lực sưu thuế, gương mặt kiệt quệ sau cảnh bán con bán chó, căn nhà nghèo nặng bóng cường hào.",
+    },
+    {
+      level: 3,
+      title: "Tức nước vỡ bờ",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Đẩy sức phản kháng dữ dội nhưng vẫn bắt nguồn từ tình thương gia đình.",
+      visualPrompt:
+        "Chị Dậu vùng lên giữa căn nhà tối, bóng cường hào bị đẩy lùi.",
+    },
+  ],
+  "ong-sau": [
+    {
+      level: 1,
+      title: "Người cha trở về",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus: "Giữ giọng Nam Bộ chân chất, nôn nóng được con nhận cha.",
+      visualPrompt:
+        "Ông Sáu về thăm nhà, vết thẹo trên mặt và ánh mắt chờ tiếng gọi ba.",
+    },
+    {
+      level: 2,
+      title: "Tiếng ba muộn màng",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh hạnh phúc vỡ òa trong phút chia tay và nỗi đau chiến tranh.",
+      visualPrompt:
+        "Ông Sáu ôm bé Thu trong khoảnh khắc chia tay, nước mắt và bụi đường.",
+    },
+    {
+      level: 3,
+      title: "Chiếc lược ngà",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Tập trung vào lời hứa, nỗi ân hận và tình cha kết tinh trong kỷ vật.",
+      visualPrompt:
+        "Ông Sáu tỉ mẩn làm chiếc lược ngà trong căn cứ rừng, ánh lửa nhỏ soi tay.",
+    },
+  ],
+  "ong-hai": [
+    {
+      level: 1,
+      title: "Người khoe làng Chợ Dầu",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus: "Giữ giọng nông dân hồ hởi, thích kể và tự hào về làng.",
+      visualPrompt:
+        "Ông Hai ở nơi tản cư, hào hứng kể chuyện làng Chợ Dầu với mọi người.",
+    },
+    {
+      level: 2,
+      title: "Tin làng theo Tây",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh khủng hoảng xấu hổ, tủi nhục và giằng xé giữa yêu làng, yêu nước.",
+      visualPrompt:
+        "Ông Hai chết lặng sau khi nghe tin làng theo Tây, chợ tản cư mờ sau lưng.",
+    },
+    {
+      level: 3,
+      title: "Làng yêu nước",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Tập trung vào niềm vui được minh oan, tình yêu làng hòa vào lòng kháng chiến.",
+      visualPrompt:
+        "Ông Hai vui mừng khoe tin nhà bị đốt mà làng không theo giặc.",
+    },
+  ],
+  "vu-nuong": [
+    {
+      level: 1,
+      title: "Người vợ giữ khuôn phép",
+      unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
+      promptFocus: "Giữ giọng dịu, trang trọng, thủy chung và hiếu nghĩa.",
+      visualPrompt:
+        "Vũ Nương tiễn chồng ra trận, dáng thùy mị trong không gian cổ truyền.",
+    },
+    {
+      level: 2,
+      title: "Oan khuất chiếc bóng",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
+      promptFocus:
+        "Nhấn mạnh sự bất lực trước nghi kỵ nam quyền và lời trẻ thơ thành án oan.",
+      visualPrompt:
+        "Vũ Nương bên vách có chiếc bóng, bé Đản phía trước và nỗi oan phủ xuống.",
+    },
+    {
+      level: 3,
+      title: "Minh oan nơi Hoàng Giang",
+      unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
+      promptFocus:
+        "Tập trung vào phẩm giá, ước mơ công lý và bi kịch không thể trở lại trần thế.",
+      visualPrompt:
+        "Vũ Nương hiện bên sông Hoàng Giang, ánh thủy cung buồn và thanh sạch.",
+    },
+  ],
+};
+
+function buildLevels(character: SeedCharacter): CharacterLevel[] {
+  const levelOneImages = character.images?.length
+    ? character.images
+    : character.image
+      ? [character.image]
+      : [];
+  const referenceImage = levelOneImages[0] ?? character.image ?? "";
+  const plan = levelPlans[character.id];
+  if (!plan) return [];
+
+  return plan.map((levelPlan) => {
+    const images =
+      levelPlan.level === 1
+        ? levelOneImages
+        : plannedLevelImages(character.id, levelPlan.level);
+
+    return {
+      ...levelPlan,
+      image: images[0] ?? referenceImage,
+      images,
+      referenceImage,
+      referenceImages: levelOneImages,
+      assetStatus: levelPlan.level === 1 ? "existing" : "needs_generation",
+      visualPrompt: `${levelPlan.visualPrompt} ${visualUpgradeTreatment[levelPlan.level]}`,
+    };
+  });
+}
 
 const rawCharacters: SeedCharacter[] = [
   {
@@ -1003,6 +1337,7 @@ const rawCharacters: SeedCharacter[] = [
 // any handwritten boilerplate.
 export const characters: Character[] = rawCharacters.map((character) => ({
   ...character,
+  levels: buildLevels(character),
   challenge: character.challenge.map((question, index) => ({
     ...question,
     id: `${character.id}-q${index + 1}`,

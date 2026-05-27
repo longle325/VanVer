@@ -33,6 +33,23 @@ export interface ChallengeQuestion {
   explanation: string;
 }
 
+export interface CharacterLevel {
+  level: 1 | 2 | 3;
+  title: string;
+  /**
+   * Primary image for the level. Use `images` when a view supports the
+   * full three-image character set.
+   */
+  image: string;
+  images: string[];
+  referenceImage: string;
+  referenceImages: string[];
+  assetStatus: "existing" | "needs_generation";
+  unlockRequirement: string;
+  promptFocus: string;
+  visualPrompt: string;
+}
+
 export interface Character {
   id: string;
   name: string;
@@ -59,6 +76,7 @@ export interface Character {
   suggestedQuestions?: string[];
   interpretationThemes?: string[];
   symbols?: string[];
+  levels?: CharacterLevel[];
   challenge: ChallengeQuestion[];
 }
 

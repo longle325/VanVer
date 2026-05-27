@@ -1,18 +1,57 @@
 # LitMatch character image prompts
 
-Prompts for the 5 MVP characters, written for ChatGPT (image gen) or any DALL·E / SDXL-class model. Each prompt is **self-contained** — paste any one of them as-is.
+Prompts and image rules for the LitMatch character cards, written for ChatGPT image generation or any DALL·E / SDXL-class model.
 
 Style direction targets the two reference images in `mock style images/`: aged Vietnamese parchment / Đông Hồ folk woodblock + Hàng Trống classical scroll painting. The cultural guardrails block exists because gpt-image models otherwise default to Chinese tropes for "Asian historical figure" — keep that block in the prompt; it makes a measurable difference.
 
-**Recommended size:** 1024×1536 (portrait). Save outputs to `public/characters/<id>.png`:
+## Level image rule
+
+Each character has three images per level. The current structure is phase-based: Level 1, Level 2, and Level 3 each map to one distinct story phase from `docs/ke-hoach-giai-doan-cap-do-nhan-vat.md`. A fully populated character has nine active images total.
+
+Level 1 files use each character's base naming convention:
+
+```text
+public/characters/<character-id>.png
+public/characters/<character-id>-2.png
+public/characters/<character-id>-3.png
+```
+
+`mi`, `thuy-kieu`, and `xuan-toc-do` use `-1`, `-2`, `-3` for Level 1.
+
+Level 2 and Level 3 files use this convention:
+
+```text
+public/characters/<character-id>-level-2-1.png
+public/characters/<character-id>-level-2-2.png
+public/characters/<character-id>-level-2-3.png
+public/characters/<character-id>-level-3-1.png
+public/characters/<character-id>-level-3-2.png
+public/characters/<character-id>-level-3-3.png
+```
+
+Images must preserve the same physical identity, face shape, age/body continuity where canon allows, clothing lineage, and cultural setting, then evolve the image through the planned phase: scene, emotional state, lighting, symbolic props, costume wear/details, border complexity, and narrative stakes.
+
+The level progression must be visually obvious even without UI labels:
+
+- **Level 1:** first planned story phase, usually the character's early identity or baseline canonical state.
+- **Level 2:** second planned story phase, with a visible change in plot pressure, environment, props, and emotional state.
+- **Level 3:** third planned story phase, with the highest emotional stakes or strongest symbolic/canonical consequence.
+
+For the three images inside a level, keep the same character identity and upgrade tier, but vary the camera and moment: portrait, action/emotion beat, and symbolic environment beat.
+
+Do **not** bake explicit level UI into the artwork: no stars, no badges, no "Level 2" / "Level 3" text, no numeric marks, no progress bars, and no decorative rank icons. If the product needs stars or level labels, add them programmatically in the app UI.
+
+Each image should match the aspect ratio of that character's active set. Use cover-crop normalization rather than padding, so generated images do not show extra side or top gutters.
+
+**Recommended size:** Match the existing Level 1 canvas for that character. The current Level 1 file names are:
 
 | Character | File path |
 | --- | --- |
 | Chí Phèo | `public/characters/chi-pheo.png` |
-| Mị | `public/characters/mi.png` |
-| Xuân Tóc Đỏ | `public/characters/xuan-toc-do.png` |
+| Mị | `public/characters/mi-1.png` |
+| Xuân Tóc Đỏ | `public/characters/xuan-toc-do-1.png` |
 | Lục Vân Tiên | `public/characters/luc-van-tien.png` |
-| Thúy Kiều | `public/characters/thuy-kieu.png` |
+| Thúy Kiều | `public/characters/thuy-kieu-1.png` |
 
 ---
 
@@ -56,7 +95,7 @@ Mood: tragic, raw, the soul of a wronged peasant who once dreamed of being a "l�
 
 ---
 
-## 2. Mị — `mi.png`
+## 2. Mị — `mi-1.png`
 
 ```
 Vietnamese folk illustration in the Đông Hồ woodblock + Hàng Trống classical scroll-painting tradition. Aged parchment paper background with subtle warm sepia and ochre tones, faint paper grain texture, soft hand-painted brush edges. Decorative botanical border ornaments in muted sage green and gold (bamboo leaves, plum blossoms, lotus). Warm natural palette: parchment cream, deep cinnabar red, gold ochre, ink brown, muted jade. Single subject portrait, three-quarter or frontal view, expressive face conveying inner emotion, gentle painterly shading, no harsh photorealism, no anime, no manga, no comic-book gloss. Production-quality book illustration. Strictly Vietnamese cultural setting and clothing — explicitly NOT Chinese, NOT Japanese, NOT Korean.
@@ -81,7 +120,7 @@ Mood: quietly resilient, sorrowful but with a flicker of awakening — she still
 
 ---
 
-## 3. Xuân Tóc Đỏ — `xuan-toc-do.png`
+## 3. Xuân Tóc Đỏ — `xuan-toc-do-1.png`
 
 ```
 Vietnamese folk illustration in the Đông Hồ woodblock + Hàng Trống classical scroll-painting tradition. Aged parchment paper background with subtle warm sepia and ochre tones, faint paper grain texture, soft hand-painted brush edges. Decorative botanical border ornaments in muted sage green and gold (bamboo leaves, plum blossoms, lotus). Warm natural palette: parchment cream, deep cinnabar red, gold ochre, ink brown, muted jade. Single subject portrait, three-quarter or frontal view, expressive face conveying inner emotion, gentle painterly shading, no harsh photorealism, no anime, no manga, no comic-book gloss. Production-quality book illustration. Strictly Vietnamese cultural setting and clothing — explicitly NOT Chinese, NOT Japanese, NOT Korean.
@@ -133,7 +172,7 @@ Mood: heroic, upright, the moral idealism of Nguyễn Đình Chiểu's Nam Bộ 
 
 ---
 
-## 5. Thúy Kiều — `thuy-kieu.png`
+## 5. Thúy Kiều — `thuy-kieu-1.png`
 
 ```
 Vietnamese folk illustration in the Đông Hồ woodblock + Hàng Trống classical scroll-painting tradition. Aged parchment paper background with subtle warm sepia and ochre tones, faint paper grain texture, soft hand-painted brush edges. Decorative botanical border ornaments in muted sage green and gold (bamboo leaves, plum blossoms, lotus). Warm natural palette: parchment cream, deep cinnabar red, gold ochre, ink brown, muted jade. Single subject portrait, three-quarter or frontal view, expressive face conveying inner emotion, gentle painterly shading, no harsh photorealism, no anime, no manga, no comic-book gloss. Production-quality book illustration. Strictly Vietnamese cultural setting and clothing — explicitly NOT Chinese, NOT Japanese, NOT Korean.
@@ -162,5 +201,6 @@ Mood: melancholic, refined, lyric — "tài mệnh tương đố" — the great 
 
 ## After you have the PNGs
 
-1. Drop each file into `public/characters/` with the filename in the table at the top (kebab-case ID + `.png`).
-2. Tell me — I'll update `src/data/characters.ts` to point to `/characters/<id>.png` and verify in Chrome.
+1. Drop active Level 1/2/3 files into `public/characters/` with the filename convention above.
+2. Verify every file has the same dimensions and aspect ratio as that character's active set.
+3. Update `src/data/characters.ts` only if the naming convention changes.
