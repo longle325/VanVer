@@ -210,29 +210,30 @@ const levelPlans: Record<string, CharacterLevelPlan[]> = {
   "chi-dau": [
     {
       level: 1,
-      title: "Người đàn bà mùa sưu",
+      title: "Khổ cực trong mùa sưu",
       unlockRequirement: "Mở khóa khi gặp nhân vật lần đầu.",
-      promptFocus: "Giữ giọng mộc mạc, tất bật, nhẫn nhục vì chồng con.",
+      promptFocus:
+        "Giữ giọng người vợ, người mẹ nông dân nghèo bị sưu thuế dồn ép; nhẫn nhục, chạy vạy, van xin, chịu cảnh bán chó bán con để cứu gia đình.",
       visualPrompt:
-        "Chị Dậu trong căn nhà tranh nghèo, nồi cháo nóng và chồng ốm sau lưng.",
+        "Chị Dậu trong mùa sưu, căn nhà tranh nghèo, chồng ốm, con đói, nồi cháo loãng và áp lực sưu thuế vây quanh.",
     },
     {
       level: 2,
-      title: "Bị dồn đến đường cùng",
+      title: "Tức nước vỡ bờ",
       unlockRequirement: "Mở khóa sau khi vượt qua thử thách cơ bản.",
       promptFocus:
-        "Nhấn mạnh cảnh bán con, bán chó, đói nghèo và tủi nhục đẩy chị vượt quá sức chịu đựng.",
+        "Nhấn mạnh khoảnh khắc chị Dậu từ nhẫn nhục chuyển sang phản kháng trực diện để bảo vệ anh Dậu khi cai lệ và người nhà lý trưởng xông vào hành hạ.",
       visualPrompt:
-        "Chị Dậu trong áp lực sưu thuế, gương mặt kiệt quệ sau cảnh bán con bán chó, căn nhà nghèo nặng bóng cường hào.",
+        "Chị Dậu vùng lên trong căn nhà tối, chặn cai lệ và người nhà lý trưởng khi họ định trói đánh anh Dậu đang ốm.",
     },
     {
       level: 3,
-      title: "Tức nước vỡ bờ",
+      title: "Đêm tối bế tắc",
       unlockRequirement: "Mở khóa sau khi vượt qua thử thách nâng cao.",
       promptFocus:
-        "Đẩy sức phản kháng dữ dội nhưng vẫn bắt nguồn từ tình thương gia đình.",
+        "Không xem phản kháng là chiến thắng; nhấn mạnh bi kịch sau đó, khi chị thoát một bẫy nhưng vẫn bị xã hội tàn nhẫn dồn vào ngõ cụt và phải chạy trong đêm tối.",
       visualPrompt:
-        "Chị Dậu vùng lên giữa căn nhà tối, bóng cường hào bị đẩy lùi.",
+        "Chị Dậu chạy trong đêm tối sau biến cố, ánh làng xa mờ, phía sau là bóng áp bức, phía trước là số phận bấp bênh không có lối ra.",
     },
   ],
   "ong-sau": [
