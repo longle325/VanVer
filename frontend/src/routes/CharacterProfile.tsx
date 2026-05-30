@@ -3,6 +3,7 @@ import { ArrowLeft, MapPin, ChevronDown, MessageSquare, BookOpen } from "lucide-
 import { useCharacter } from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
 import CharacterArt from "@/components/CharacterArt";
+import CharacterVideoPlayer from "@/components/CharacterVideoPlayer";
 import VoicePlayButton from "@/components/VoicePlayButton";
 import type { Character } from "@/types";
 
@@ -254,6 +255,21 @@ export default function CharacterProfile() {
             )}
           </div>
         </details>
+
+        {character.videos?.[0] && (
+          <section className="profile-video-section">
+            <h2>Video hành trình nhân vật</h2>
+            <div className="profile-video-frame">
+              <CharacterVideoPlayer video={character.videos[0]} />
+            </div>
+            <div className="profile-video-copy">
+              <strong>{character.videos[0].title}</strong>
+              {character.videos[0].description && (
+                <p>{character.videos[0].description}</p>
+              )}
+            </div>
+          </section>
+        )}
 
         <div className="actions-row character-profile-actions">
           <Link

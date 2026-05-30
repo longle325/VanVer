@@ -468,6 +468,15 @@ const rawCharacters: SeedCharacter[] = [
       "/characters/mi-2.png",
       "/characters/mi-3.png",
     ],
+    videos: [
+      {
+        id: "three-phase-demo",
+        title: "Hành trình ba giai đoạn của Mị",
+        src: "/character-videos/mi/mi-three-phase-demo.mp4",
+        description:
+          "Ba chặng chuyển biến của Mị: tiếng sáo tuổi trẻ, đời con dâu gạt nợ, và khoảnh khắc cắt dây cứu A Phủ.",
+      },
+    ],
     genre: "Văn học hiện thực",
     imageBrief:
       "Thiếu nữ người Mông ngồi quay sợi bên cửa sổ nhỏ, ánh mắt hướng ra núi rừng Tây Bắc.",
