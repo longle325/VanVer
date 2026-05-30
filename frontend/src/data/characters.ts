@@ -1,4 +1,5 @@
 import type { Character, ChallengeQuestion, CharacterLevel } from "@/types";
+import { buildCharacterVideos } from "./characterVideos";
 
 // Question id is auto-generated below, so the seed data only supplies
 // the substantive fields. This mirrors the wire shape from
@@ -467,15 +468,6 @@ const rawCharacters: SeedCharacter[] = [
       "/characters/mi-1.png",
       "/characters/mi-2.png",
       "/characters/mi-3.png",
-    ],
-    videos: [
-      {
-        id: "three-phase-demo",
-        title: "Hành trình ba giai đoạn của Mị",
-        src: "/character-videos/mi/mi-three-phase-demo.mp4",
-        description:
-          "Ba chặng chuyển biến của Mị: tiếng sáo tuổi trẻ, đời con dâu gạt nợ, và khoảnh khắc cắt dây cứu A Phủ.",
-      },
     ],
     genre: "Văn học hiện thực",
     imageBrief:
@@ -1348,6 +1340,7 @@ const rawCharacters: SeedCharacter[] = [
 export const characters: Character[] = rawCharacters.map((character) => ({
   ...character,
   levels: buildLevels(character),
+  videos: character.videos ?? buildCharacterVideos(character),
   challenge: character.challenge.map((question, index) => ({
     ...question,
     id: `${character.id}-q${index + 1}`,

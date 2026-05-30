@@ -56,6 +56,8 @@ export interface CharacterVideo {
   /** Public path under `frontend/public/character-videos/<slug>/`. */
   src: string;
   poster?: string;
+  /** Optional WebVTT subtitles/captions track next to the MP4. */
+  captions?: string;
   description?: string;
 }
 

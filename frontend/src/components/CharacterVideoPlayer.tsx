@@ -146,6 +146,15 @@ export default function CharacterVideoPlayer({
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
       >
         <source src={video.src} type="video/mp4" />
+        {video.captions && (
+          <track
+            kind="subtitles"
+            src={video.captions}
+            srcLang="vi"
+            label="Tiếng Việt"
+            default
+          />
+        )}
       </video>
 
       <button
