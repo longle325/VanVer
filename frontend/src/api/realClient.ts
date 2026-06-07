@@ -20,6 +20,8 @@ import type {
   ChatMessage,
   ChatSource,
   LeaderboardEntry,
+  OpenEndedGradeRequest,
+  OpenEndedGradeResult,
   UserProfile,
 } from "@/types";
 import {
@@ -84,6 +86,16 @@ interface BackendChallengeResult {
   points_earned: number;
   explanations: string[];
   correct_answers: number[];
+}
+
+interface BackendOpenEndedGradeResult {
+  score: 0 | 1;
+  passed: boolean;
+  feedback: string;
+  matched_criteria: string[];
+  missing_criteria: string[];
+  confidence: number;
+  retrieval_mode: string;
 }
 
 interface BackendSwipeResponse {
@@ -255,6 +267,36 @@ export const realClient: ApiClient = {
       awarded: res.points_earned,
       answers: [...answers],
       correctAnswers: res.correct_answers,
+    };
+  },
+
+  async gradeOpenEndedAnswer(
+    input: OpenEndedGradeRequest,
+  ): Promise<OpenEndedGradeResult> {
+    const res = await apiFetch<BackendOpenEndedGradeResult>(
+      "/challenges/grade-open-ended",
+      {
+        method: "POST",
+        body: {
+          character_slug: input.characterId,
+          character_name: input.characterName,
+          work_title: input.workTitle,
+          phase_title: input.phaseTitle ?? input.question.phaseTitle,
+          question: input.question.text,
+          answer: input.answer,
+          rubric: input.question.rubric ?? "",
+          evidence: input.question.evidence,
+        },
+      },
+    );
+    return {
+      score: res.score,
+      passed: res.passed,
+      feedback: res.feedback,
+      matchedCriteria: res.matched_criteria ?? [],
+      missingCriteria: res.missing_criteria ?? [],
+      confidence: res.confidence,
+      retrievalMode: res.retrieval_mode,
     };
   },
 

@@ -1,5 +1,6 @@
 import type { Character, ChallengeQuestion, CharacterLevel } from "@/types";
 import { buildCharacterVideos } from "./characterVideos";
+import { levelChallengeMap } from "./levelChallenges";
 
 // Question id is auto-generated below, so the seed data only supplies
 // the substantive fields. This mirrors the wire shape from
@@ -345,7 +346,7 @@ function buildLevels(character: SeedCharacter): CharacterLevel[] {
       images,
       referenceImage,
       referenceImages: levelOneImages,
-      assetStatus: levelPlan.level === 1 ? "existing" : "needs_generation",
+      assetStatus: "existing",
       visualPrompt: `${levelPlan.visualPrompt} ${visualUpgradeTreatment[levelPlan.level]}`,
     };
   });
@@ -1340,6 +1341,7 @@ const rawCharacters: SeedCharacter[] = [
 export const characters: Character[] = rawCharacters.map((character) => ({
   ...character,
   levels: buildLevels(character),
+  levelChallenges: levelChallengeMap[character.id],
   videos: character.videos ?? buildCharacterVideos(character),
   challenge: character.challenge.map((question, index) => ({
     ...question,

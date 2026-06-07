@@ -587,12 +587,49 @@ small,
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 3px 8px;
+  font-size: 9.5px;
 }
 
 .collection-status .material-symbols-outlined {
   color: var(--gold);
+}
+
+/* Per-level seal: parchment-gold (1) -> rich gold (2) -> Tết red & gold (3). */
+.collection-status svg {
+  color: var(--gold);
+  width: 12px;
+  height: 12px;
+}
+
+.collection-status.level-1 {
+  background: linear-gradient(180deg, var(--surface-lowest), var(--paper));
+  border-color: var(--wood-light);
+  color: var(--cinnabar);
+}
+
+.collection-status.level-2 {
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  border-color: var(--cinnabar);
+  color: var(--cinnabar-deep);
+}
+
+.collection-status.level-2 svg {
+  color: var(--cinnabar-deep);
+}
+
+.collection-status.level-3 {
+  background: linear-gradient(180deg, var(--cinnabar-bright), var(--cinnabar-deep));
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  font-weight: 700;
+  box-shadow:
+    inset 0 0 0 1px rgba(230, 200, 124, 0.35),
+    0 2px 8px rgba(91, 0, 5, 0.3);
+}
+
+.collection-status.level-3 svg {
+  color: var(--gold-bright);
 }
 
 .collection-progress {
@@ -1008,6 +1045,184 @@ small,
   margin-bottom: clamp(34px, 4vw, 48px);
 }
 
+.challenge-phase-copy {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.challenge-level-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: fit-content;
+  max-width: 100%;
+  margin: -22px auto 28px;
+  padding: 10px 14px 10px 10px;
+  border: 1px solid var(--wood-light);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, var(--surface-lowest), var(--paper));
+  box-shadow: inset 0 0 0 1px var(--gold-soft);
+  color: var(--cinnabar-deep);
+  font-family: "Noto Serif", serif;
+  font-weight: 700;
+}
+
+.challenge-level-preview img {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 auto;
+  border-radius: 6px;
+  object-fit: cover;
+  object-position: top center;
+  border: 1px solid var(--gold-soft);
+}
+
+.question-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto clamp(20px, 2.6vw, 28px);
+}
+
+.question-pips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.question-pip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--wood-light);
+  background: linear-gradient(180deg, var(--surface-lowest), var(--paper));
+  box-shadow: inset 0 0 0 1px var(--gold-soft);
+  color: var(--muted);
+  font-family: "Noto Serif", serif;
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    border-color 120ms ease;
+}
+
+.question-pip:hover {
+  transform: translateY(-1px);
+  border-color: var(--cinnabar-bright);
+}
+
+.question-pip:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.question-pip.answered {
+  border-color: var(--cinnabar);
+  background: linear-gradient(180deg, #f3d777, var(--gold));
+  color: var(--cinnabar-deep);
+}
+
+.question-pip.current {
+  border-color: var(--cinnabar-deep);
+  background: linear-gradient(180deg, var(--cinnabar-bright), var(--cinnabar-deep));
+  color: var(--surface-lowest);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 4px 12px rgba(91, 0, 5, 0.18);
+}
+
+.question-progress-caption {
+  margin: 0;
+  font-family: "Noto Serif", serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.open-answer-block {
+  display: grid;
+  gap: 14px;
+}
+
+.open-answer-block textarea {
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+  border: 1px solid var(--wood-light);
+  border-radius: 8px;
+  background: var(--surface-lowest);
+  color: var(--ink);
+  padding: 18px 20px;
+  font: 500 18px/1.6 "Noto Serif", serif;
+  box-shadow: inset 0 0 0 1px var(--gold-soft);
+}
+
+.open-answer-block textarea:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.open-answer-hint {
+  margin: 0;
+  color: var(--muted);
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.form-error {
+  max-width: 820px;
+  margin: -14px auto 18px;
+  color: var(--cinnabar-deep);
+  font-weight: 700;
+  text-align: center;
+}
+
+.level-up-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px auto;
+  width: fit-content;
+  max-width: 100%;
+  padding: 12px 18px;
+  border: 1px solid var(--cinnabar);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, #fff4cf, var(--gold-soft));
+  color: var(--cinnabar-deep);
+  font-family: "Noto Serif", serif;
+  font-weight: 800;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 8px 24px rgba(91, 0, 5, 0.16);
+  animation: level-up-rise 560ms ease-out both;
+}
+
+@keyframes level-up-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .option {
   background:
     linear-gradient(180deg, var(--surface-lowest), var(--paper));
@@ -1075,6 +1290,186 @@ small,
 
   .challenge-card {
     padding-block: 46px;
+  }
+}
+
+/* ============================================================
+ * Level progress — three-phase journey stepper
+ * ============================================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.level-progress {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 clamp(22px, 3vw, 32px);
+  padding: 0;
+}
+
+.level-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--wood-light);
+  border-radius: 8px;
+  background: linear-gradient(180deg, var(--surface-lowest), var(--paper));
+  box-shadow: inset 0 0 0 1px var(--gold-soft);
+  text-align: left;
+}
+
+.level-step-dot {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--wood-light);
+  background: var(--surface-lowest);
+  color: var(--muted);
+  font-family: "Noto Serif", serif;
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.level-step-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.level-step-kicker {
+  font-family: "Noto Serif", serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.level-step-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.level-step.done {
+  border-color: var(--cinnabar);
+}
+
+.level-step.done .level-step-dot {
+  background: linear-gradient(180deg, #f3d777, var(--gold));
+  border-color: var(--cinnabar);
+  color: var(--cinnabar-deep);
+}
+
+.level-step.done .level-step-title {
+  color: var(--cinnabar-deep);
+}
+
+.level-step.active {
+  border-color: var(--cinnabar-bright);
+  box-shadow:
+    inset 0 0 0 1px var(--cinnabar),
+    0 4px 14px rgba(91, 0, 5, 0.12);
+}
+
+.level-step.active .level-step-dot {
+  background: linear-gradient(180deg, var(--cinnabar-bright), var(--cinnabar-deep));
+  border-color: var(--cinnabar-deep);
+  color: var(--surface-lowest);
+  animation: level-step-pulse 2.4s ease-in-out infinite;
+}
+
+.level-step.locked {
+  opacity: 0.7;
+}
+
+@keyframes level-step-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(91, 0, 5, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(91, 0, 5, 0.14);
+  }
+}
+
+/* Compact variant — dots only, used on Collection cards. */
+.level-progress.compact {
+  display: flex;
+  gap: 8px;
+  margin: 6px 0 8px;
+}
+
+.level-progress.compact .level-step {
+  flex: 0 0 auto;
+  gap: 0;
+  padding: 2px;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+.level-progress.compact .level-step-dot {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+.challenge-level-progress {
+  margin-top: clamp(-8px, 0vw, 0px);
+}
+
+.profile-level-progress {
+  margin: 4px 0 clamp(18px, 2.4vw, 26px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-step.active .level-step-dot {
+    animation: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .level-progress:not(.compact) {
+    gap: 8px;
+  }
+
+  .level-progress:not(.compact) .level-step {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 10px 6px;
+  }
+
+  .level-progress:not(.compact) .level-step-kicker {
+    font-size: 9px;
+  }
+
+  .level-progress:not(.compact) .level-step-title {
+    font-size: 11px;
   }
 }
 

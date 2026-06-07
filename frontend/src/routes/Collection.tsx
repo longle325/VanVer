@@ -4,32 +4,43 @@ import { ShieldCheck, LockOpen, ChevronDown } from "lucide-react";
 import { useAllCharacters } from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
 import CharacterArt from "@/components/CharacterArt";
+import LevelProgress from "@/components/LevelProgress";
+import {
+  getLevelImages,
+  getLevelProgressPercent,
+  getUnlockedCharacterLevel,
+  type LevelResults,
+} from "@/lib/characterLevels";
 import type { Character, ChallengeResult } from "@/types";
 
-type SortKey = "recent" | "progress";
+type SortKey = "level" | "recent" | "progress";
 
 const SORT_LABEL: Record<SortKey, string> = {
+  level: "Cấp độ nhân vật",
   recent: "Mới thêm gần đây",
   progress: "Tiến độ thử thách",
 };
 
-function progressPercent(result: ChallengeResult | undefined): number {
-  if (!result) return 33;
-  return result.passed ? 100 : Math.round((result.score / 5) * 100);
-}
-
 function CollectionCard({
   character,
   result,
+  levelResults,
 }: {
   character: Character;
   result?: ChallengeResult;
+  levelResults: LevelResults;
 }) {
-  const status = result?.passed
+  const currentLevel = getUnlockedCharacterLevel(character, levelResults);
+  const progress = getLevelProgressPercent(character, levelResults, result);
+  const hasLevels = Boolean(character.levelChallenges?.length);
+  const isFullyComplete = character.levelChallenges?.length
+    ? currentLevel === 3 && result?.passed
+    : result?.passed;
+  const status = isFullyComplete
     ? "Đã mở khóa hoàn toàn"
     : "Chưa hoàn thành thử thách";
-  const progress = progressPercent(result);
-  const image = character.portrait || character.images?.[0] || character.image;
+  const image =
+    character.portrait || getLevelImages(character, levelResults)[0] || character.image;
 
   return (
     <article className="card collection-card">
@@ -43,9 +54,9 @@ function CollectionCard({
         ) : (
           <CharacterArt character={character} />
         )}
-        <span className="collection-status">
-          {result?.passed ? <ShieldCheck size={14} /> : <LockOpen size={14} />}
-          {result?.passed ? "Đã mở khóa" : "Chờ thử thách"}
+        <span className={`collection-status level-${currentLevel}`}>
+          {isFullyComplete ? <ShieldCheck size={14} /> : <LockOpen size={14} />}
+          Level {currentLevel}
         </span>
       </Link>
       <div className="collection-body">
@@ -55,11 +66,20 @@ function CollectionCard({
           </Link>
         </h2>
         <p>{character.work}</p>
-        <div className="collection-progress">
-          <span style={{ width: `${progress}%` }} />
-        </div>
+        {hasLevels ? (
+          <LevelProgress
+            character={character}
+            levelResults={levelResults}
+            compact
+            className="collection-level-progress"
+          />
+        ) : (
+          <div className="collection-progress">
+            <span style={{ width: `${progress}%` }} />
+          </div>
+        )}
         <small>{progress}% khám phá</small>
-        <span className={`badge ${result?.passed ? "done" : "pending"}`}>
+        <span className={`badge ${isFullyComplete ? "done" : "pending"}`}>
           {status}
         </span>
         <div className="actions-row">
@@ -95,7 +115,8 @@ export default function Collection() {
   const { data: catalog = [] } = useAllCharacters();
   const matches = useAppStore((s) => s.matches);
   const completed = useAppStore((s) => s.completed);
-  const [sort, setSort] = useState<SortKey>("recent");
+  const levelResults = useAppStore((s) => s.levelResults);
+  const [sort, setSort] = useState<SortKey>("level");
   const [open, setOpen] = useState(false);
 
   const matched = catalog
@@ -103,9 +124,21 @@ export default function Collection() {
     .map((character) => ({
       character,
       matchedAt: matches.indexOf(character.id),
-      progress: progressPercent(completed[character.id]),
+      level: getUnlockedCharacterLevel(character, levelResults),
+      progress: getLevelProgressPercent(
+        character,
+        levelResults,
+        completed[character.id],
+      ),
     }))
     .sort((a, b) => {
+      if (sort === "level") {
+        return (
+          b.level - a.level ||
+          b.progress - a.progress ||
+          b.matchedAt - a.matchedAt
+        );
+      }
       if (sort === "progress") return b.progress - a.progress;
       return b.matchedAt - a.matchedAt;
     });
@@ -162,6 +195,7 @@ export default function Collection() {
               key={character.id}
               character={character}
               result={completed[character.id]}
+              levelResults={levelResults}
             />
           ))}
         </div>
