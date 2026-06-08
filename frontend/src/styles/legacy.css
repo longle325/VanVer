@@ -139,8 +139,27 @@ button {
   gap: 10px;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
 .topbar > div:first-child {
   display: none;
+}
+
+.global-sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 
 .metric {
@@ -159,6 +178,32 @@ button {
 
 .metric .material-symbols-outlined {
   color: var(--cinnabar);
+}
+
+@media (max-width: 520px) {
+  .global-sound-toggle span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .topbar-actions {
+    gap: 8px;
+  }
+
+  .topbar-metrics {
+    gap: 8px;
+  }
+
+  .metric {
+    padding: 10px 12px;
+  }
 }
 
 .page {

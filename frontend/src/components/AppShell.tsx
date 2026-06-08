@@ -1,8 +1,16 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAppStore } from "@/stores/useAppStore";
-import { Compass, BookOpen, Trophy, User, Flame, Medal } from "lucide-react";
+import {
+  Compass,
+  BookOpen,
+  Trophy,
+  User,
+  Flame,
+  Medal,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import BackgroundMusic from "@/components/BackgroundMusic";
 
 interface NavItem {
   key: string;
@@ -22,12 +30,13 @@ export default function AppShell() {
   const profile = useAppStore((s) => s.profile);
   const points = useAppStore((s) => s.points);
   const streak = useAppStore((s) => s.streak);
+  const musicEnabled = useAppStore((s) => s.music.enabled);
+  const setMusicEnabled = useAppStore((s) => s.setMusicEnabled);
   const location = useLocation();
   const isLeaderboard = location.pathname.startsWith("/leaderboard");
 
   return (
     <div className="app-shell">
-      <BackgroundMusic />
       <aside className="side-nav">
         <div className="brand">
           <h1 className="brand-title">LitMatch</h1>
@@ -49,7 +58,7 @@ export default function AppShell() {
         </nav>
       </aside>
       <header className="topbar">
-        <div>
+        <div className="topbar-identity">
           <strong
             style={{
               color: "var(--cinnabar)",
@@ -65,17 +74,35 @@ export default function AppShell() {
             </span>
           )}
         </div>
-        <div className="topbar-metrics">
-          <span className="metric">
-            <Flame size={16} />
-            {isLeaderboard ? "Thành tích: " : ""}
-            {streak} Ngày
-          </span>
-          <span className="metric">
-            <Medal size={16} />
-            {isLeaderboard ? "Điểm: " : ""}
-            {points.toLocaleString("vi-VN")} Điểm
-          </span>
+        <div className="topbar-actions">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={musicEnabled}
+            aria-label={musicEnabled ? "Tắt nhạc nền" : "Bật nhạc nền"}
+            title={musicEnabled ? "Tắt nhạc nền" : "Bật nhạc nền"}
+            className={`global-sound-toggle${musicEnabled ? " is-on" : ""}`}
+            onClick={() => setMusicEnabled(!musicEnabled)}
+          >
+            {musicEnabled ? (
+              <Volume2 size={18} aria-hidden="true" />
+            ) : (
+              <VolumeX size={18} aria-hidden="true" />
+            )}
+            <span>{musicEnabled ? "Nhạc bật" : "Nhạc tắt"}</span>
+          </button>
+          <div className="topbar-metrics">
+            <span className="metric">
+              <Flame size={16} />
+              {isLeaderboard ? "Thành tích: " : ""}
+              {streak} Ngày
+            </span>
+            <span className="metric">
+              <Medal size={16} />
+              {isLeaderboard ? "Điểm: " : ""}
+              {points.toLocaleString("vi-VN")} Điểm
+            </span>
+          </div>
         </div>
       </header>
       <main className="main">
