@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { Check, CheckCircle, BookOpen, Sparkles } from "lucide-react";
+import { Check, CheckCircle, Sparkles } from "lucide-react";
 import { api } from "@/api/client";
 import { useCharacter, useSubmitChallengeMutation } from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
@@ -474,15 +474,6 @@ export default function Challenge() {
       </div>
       {gradeError && <p className="form-error">{gradeError}</p>}
       <div className="challenge-actions">
-        <button
-          className="btn ghost"
-          onClick={() => setActiveQuestion((q) => Math.max(0, q - 1))}
-          disabled={activeQuestion === 0}
-          type="button"
-        >
-          <BookOpen size={16} />
-          Cần gợi ý? Xem lại văn bản
-        </button>
         <button
           className="btn primary"
           type="button"
