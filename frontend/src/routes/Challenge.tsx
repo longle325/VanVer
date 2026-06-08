@@ -114,39 +114,105 @@ function ResultView({
             const isCorrect = isOpen
               ? Boolean(openGrade?.passed)
               : picked === correctIndex;
+            const pickedIndex =
+              typeof picked === "number" ? picked : undefined;
+            const answerText =
+              typeof picked === "string" && picked.trim()
+                ? picked
+                : "Chưa trả lời";
+            const gradeText = openGrade
+              ? openGrade.passed
+                ? "Đạt"
+                : "Chưa đạt"
+              : "Chưa có kết quả chấm";
+            const gradeReason =
+              openGrade?.feedback ||
+              (openGrade
+                ? "Chưa có nhận xét chi tiết."
+                : "Câu này chưa có dữ liệu chấm để hiển thị.");
             return (
               <div key={index} className="info-block">
                 <h3>
                   {isCorrect ? "Đạt" : "Cần xem lại"} - Câu {index + 1}
                 </h3>
-                <p>
-                  <strong>{question.text}</strong>
-                </p>
                 {isOpen ? (
+                  <dl className="open-grade-summary">
+                    <div className="open-grade-row">
+                      <dt>Câu trả lời của bạn</dt>
+                      <dd>{answerText}</dd>
+                    </div>
+                    <div className="open-grade-row">
+                      <dt>Đạt hay chưa đạt</dt>
+                      <dd>{gradeText}</dd>
+                    </div>
+                    <div className="open-grade-row">
+                      <dt>Lý do</dt>
+                      <dd>{gradeReason}</dd>
+                    </div>
+                  </dl>
+                ) : (
                   <>
-                    <p>Câu trả lời của bạn: {String(picked || "Chưa trả lời")}</p>
-                    {question.rubric && <p>Rubric: {question.rubric}</p>}
-                    {openGrade && (
-                      <>
-                        <p>
-                          Kết quả chấm:{" "}
-                          {openGrade.passed ? "Đạt rubric" : "Chưa đạt rubric"}
-                        </p>
-                        <p>Nhận xét: {openGrade.feedback}</p>
-                        {openGrade.missingCriteria.length > 0 && (
-                          <p>
-                            Cần bổ sung:{" "}
-                            {openGrade.missingCriteria.join("; ")}
-                          </p>
-                        )}
-                      </>
+                    <p>
+                      <strong>{question.text}</strong>
+                    </p>
+                    <ul
+                      className="answer-review-options"
+                      aria-label={`Các lựa chọn câu ${index + 1}`}
+                    >
+                      {question.options.map((option, optionIndex) => {
+                        const letter = String.fromCharCode(65 + optionIndex);
+                        const pickedOption = pickedIndex === optionIndex;
+                        const correctOption = correctIndex === optionIndex;
+                        const stateClass = correctOption
+                          ? " correct"
+                          : pickedOption
+                            ? " picked-wrong"
+                            : "";
+                        const optionLabels = [
+                          `Lựa chọn ${letter}: ${option}`,
+                          pickedOption ? "Bạn chọn" : null,
+                          correctOption ? "Đáp án đúng" : null,
+                        ]
+                          .filter(Boolean)
+                          .join(". ");
+
+                        return (
+                          <li
+                            key={optionIndex}
+                            className={`answer-review-option${stateClass}`}
+                            aria-label={optionLabels}
+                          >
+                            <strong>{letter}</strong>
+                            <span className="answer-review-text">{option}</span>
+                            <span className="answer-review-badges">
+                              {pickedOption && (
+                                <span className="answer-review-badge picked">
+                                  Bạn chọn
+                                </span>
+                              )}
+                              {correctOption && (
+                                <span className="answer-review-badge correct">
+                                  <CheckCircle size={14} aria-hidden="true" />
+                                  Đúng
+                                </span>
+                              )}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    {question.explanation && (
+                      <p className="answer-review-note">
+                        {question.explanation}
+                      </p>
+                    )}
+                    {question.evidence && (
+                      <p className="answer-review-evidence">
+                        Dẫn chứng: {question.evidence}
+                      </p>
                     )}
                   </>
-                ) : (
-                  <p>Đáp án đúng: {question.options[correctIndex]}</p>
                 )}
-                <p>{question.explanation}</p>
-                {question.evidence && <p>Dẫn chứng: {question.evidence}</p>}
               </div>
             );
           })}

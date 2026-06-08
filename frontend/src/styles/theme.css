@@ -1275,6 +1275,130 @@ small,
   color: var(--ink-soft);
 }
 
+.answer-review-options {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.answer-review-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(122, 79, 44, 0.28);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 238, 0.92), rgba(244, 224, 173, 0.34));
+  color: var(--ink-soft);
+  font-family: "Noto Serif", serif;
+  line-height: 1.45;
+}
+
+.answer-review-option strong {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--wood-light);
+  border-radius: 50%;
+  background: var(--surface-lowest);
+  color: var(--cinnabar-deep);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.answer-review-option.correct {
+  border-color: var(--cinnabar);
+  background:
+    linear-gradient(180deg, #fff4cf, rgba(230, 185, 77, 0.3));
+  box-shadow: inset 0 0 0 1px rgba(143, 29, 32, 0.18);
+}
+
+.answer-review-option.correct strong {
+  border-color: var(--cinnabar);
+  background:
+    linear-gradient(180deg, var(--cinnabar-bright), var(--cinnabar-deep));
+  color: var(--surface-lowest);
+}
+
+.answer-review-option.picked-wrong {
+  border-color: rgba(143, 29, 32, 0.42);
+  background:
+    linear-gradient(180deg, rgba(255, 244, 229, 0.94), rgba(143, 29, 32, 0.08));
+}
+
+.answer-review-text {
+  min-width: 0;
+}
+
+.answer-review-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.answer-review-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.answer-review-badge.picked {
+  border: 1px solid rgba(122, 79, 44, 0.34);
+  background: rgba(255, 251, 238, 0.82);
+  color: var(--ink-soft);
+}
+
+.answer-review-badge.correct {
+  border: 1px solid var(--cinnabar);
+  background: var(--cinnabar-deep);
+  color: var(--surface-lowest);
+}
+
+.answer-review-note,
+.answer-review-evidence {
+  margin-top: 8px;
+}
+
+.open-grade-summary {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.open-grade-row {
+  display: grid;
+  gap: 3px;
+}
+
+.open-grade-row dt {
+  color: var(--cinnabar);
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.open-grade-row dd {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
 @media (max-width: 720px) {
   .reference-challenge .headline-lg {
     margin-bottom: 24px;
@@ -1282,6 +1406,15 @@ small,
 
   .challenge-card {
     padding-block: 46px;
+  }
+
+  .answer-review-option {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .answer-review-badges {
+    grid-column: 2;
+    justify-content: flex-start;
   }
 }
 
@@ -2027,6 +2160,12 @@ small,
   font-weight: 600;
 }
 
+.profile-analysis-tags {
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px 14px;
+}
+
 .profile-analysis {
   border-top: 1px solid rgba(184, 155, 101, 0.48);
   border-bottom: 1px solid rgba(184, 155, 101, 0.34);
@@ -2077,10 +2216,11 @@ small,
 
 .profile-sources {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 0;
   display: flex;
   flex-direction: column;
   gap: 9px;
+  list-style: none;
   color: var(--ink-soft);
   font-family: "Be Vietnam Pro", sans-serif;
   font-size: 14px;

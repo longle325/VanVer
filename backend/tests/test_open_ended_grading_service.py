@@ -5,6 +5,15 @@ from services.open_ended_grading_service import OpenEndedGradingService
 
 
 class OpenEndedGradingServiceTests(unittest.TestCase):
+    def test_system_prompt_accepts_equivalent_core_ideas(self):
+        prompt = OpenEndedGradingService._system_prompt("")
+
+        self.assertIn("không phải danh sách từ khóa bắt buộc", prompt)
+        self.assertIn("nêu đúng ý trung tâm", prompt)
+        self.assertIn("không bắt học thuộc rubric", prompt)
+        self.assertIn("Đừng trừ điểm chỉ vì thiếu một ý phụ", prompt)
+        self.assertNotIn("các tiêu chí cốt lõi đều được nêu rõ", prompt)
+
     def test_grader_uses_retrieved_context_and_strict_json_result(self):
         class FakeRetriever:
             async def search_with_sources_async(self, character_slug, user_query):

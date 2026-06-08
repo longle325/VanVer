@@ -3,12 +3,11 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from openai import AsyncOpenAI
-
-from core.config import settings
-from services.knowledge_retriever import KnowledgeRetriever
+if TYPE_CHECKING:
+    from openai import AsyncOpenAI
+    from services.knowledge_retriever import KnowledgeRetriever
 
 logger = logging.getLogger(__name__)
 
@@ -18,17 +17,25 @@ class OpenEndedGradingError(RuntimeError):
 
 
 class OpenEndedGradingService:
-    """Grades one open-ended challenge answer with RAG context and a strict rubric."""
+    """Grades one open-ended challenge answer with RAG context and a rubric."""
 
     def __init__(
         self,
-        knowledge_retriever: Optional[KnowledgeRetriever] = None,
-        openai_client: Optional[AsyncOpenAI] = None,
+        knowledge_retriever: Optional["KnowledgeRetriever"] = None,
+        openai_client: Optional["AsyncOpenAI"] = None,
         chat_model: Optional[str] = None,
     ):
         self.retriever = knowledge_retriever
-        self.client = openai_client or AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-        self.chat_model = chat_model or settings.CHAT_MODEL
+        config = None
+        if openai_client is None or chat_model is None:
+            from core.config import settings as config
+
+        if openai_client is None:
+            from openai import AsyncOpenAI
+
+            openai_client = AsyncOpenAI(api_key=config.OPENAI_API_KEY)
+        self.client = openai_client
+        self.chat_model = chat_model if chat_model is not None else config.CHAT_MODEL
 
     async def grade(
         self,
@@ -158,9 +165,11 @@ Quy tắc chấm bắt buộc:
 3. Không chấm theo cảm xúc, độ dài, văn hay, hay việc dùng đúng từ khóa rời rạc.
 4. Chấp nhận diễn đạt khác, lỗi chính tả nhỏ, hoặc câu ngắn nếu ý nghĩa đúng.
 5. Nếu rubric ghi "ít nhất N ý", yêu cầu tối thiểu N ý đúng.
-6. Nếu rubric không ghi số lượng tối thiểu, tách rubric thành các tiêu chí lớn và yêu cầu các tiêu chí cốt lõi đều được nêu rõ hoặc hàm ý rõ. Nếu câu trả lời chỉ nhắc 1 ý mơ hồ trong nhiều ý, score = 0.
-7. Nếu câu trả lời có hiểu sai nghiêm trọng về văn bản/tình tiết, score = 0 dù có vài từ khóa đúng.
-8. Dùng ngữ cảnh truy xuất để kiểm tra tính đúng văn bản, nhưng rubric là chuẩn chấm chính.
+6. Nếu rubric không ghi số lượng tối thiểu, xem rubric là các gợi ý ý chính, không phải danh sách từ khóa bắt buộc. Cho score = 1 khi câu trả lời nêu đúng ý trung tâm của câu hỏi hoặc đạt khoảng một nửa số ý lớn theo cách diễn đạt tương đương, miễn là không hiểu sai nghiêm trọng.
+7. Không bắt buộc câu trả lời phải nêu đủ mọi chi tiết phụ như tên sự kiện, dẫn chứng, hoặc cách diễn đạt y hệt rubric nếu quan hệ nguyên nhân-kết quả chính đã rõ. Đừng trừ điểm chỉ vì thiếu một ý phụ khi câu trả lời đã cho thấy học sinh hiểu đúng mâu thuẫn/nguyên nhân chính.
+8. Nếu câu trả lời chỉ nhắc một từ khóa mơ hồ, lạc đề, hoặc có hiểu sai nghiêm trọng về văn bản/tình tiết, score = 0.
+9. Dùng ngữ cảnh truy xuất để kiểm tra tính đúng văn bản, nhưng ưu tiên đánh giá mức hiểu ý, không bắt học thuộc rubric.
+10. feedback chỉ một câu ngắn: giải thích vì sao đạt hoặc chưa đạt, không liệt kê lại toàn bộ rubric.
 
 JSON schema:
 {{
@@ -229,7 +238,7 @@ _service: Optional[OpenEndedGradingService] = None
 
 
 def get_open_ended_grading_service(
-    knowledge_retriever: Optional[KnowledgeRetriever] = None,
+    knowledge_retriever: Optional["KnowledgeRetriever"] = None,
 ) -> OpenEndedGradingService:
     global _service
     if _service is None:

@@ -234,13 +234,6 @@ export default function CharacterProfile() {
               </section>
             )}
 
-            {character.voice && (
-              <section className="profile-section">
-                <h2>Chất giọng</h2>
-                <p>{character.voice}</p>
-              </section>
-            )}
-
             {character.sources && character.sources.length > 0 && (
               <section className="profile-section">
                 <h2>Chi tiết then chốt</h2>
