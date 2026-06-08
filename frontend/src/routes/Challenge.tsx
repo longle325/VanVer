@@ -448,9 +448,6 @@ export default function Challenge() {
               placeholder="Viết câu trả lời 2-3 câu theo hiểu biết của bạn..."
               rows={5}
             />
-            {question.rubric && (
-              <p className="open-answer-hint">Gợi ý chấm: {question.rubric}</p>
-            )}
           </div>
         ) : (
           <div className="info-stack">
