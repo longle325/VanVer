@@ -247,6 +247,39 @@ small,
   box-shadow: 0 1px 0 var(--gold-soft), 0 4px 12px -8px rgba(58, 36, 18, 0.25);
 }
 
+.global-sound-toggle {
+  background:
+    linear-gradient(180deg, var(--surface-lowest), var(--surface-low));
+  border: 1px solid var(--wood-light);
+  color: var(--cinnabar);
+  font-family: "Noto Serif", serif;
+  font-weight: 700;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.9),
+    0 2px 4px rgba(58, 36, 18, 0.12);
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.global-sound-toggle:hover {
+  transform: translateY(-1px);
+  background:
+    linear-gradient(180deg, #fff6db, var(--surface-low));
+}
+
+.global-sound-toggle.is-on {
+  border-color: rgba(79, 107, 88, 0.68);
+  color: var(--jade);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.9),
+    0 0 0 3px rgba(79, 107, 88, 0.1),
+    0 2px 4px rgba(58, 36, 18, 0.12);
+}
+
+.global-sound-toggle:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
 .topbar-metrics .metric {
   background: var(--surface-lowest);
   border: 1px solid var(--wood-light);
