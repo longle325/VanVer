@@ -1,19 +1,15 @@
 import { useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
 import { useAppStore } from "@/stores/useAppStore";
-import { MUSIC_TRACKS } from "@/data/music";
 
-export default function BackgroundMusic() {
-  const { pathname } = useLocation();
+const AUTH_MUSIC_SRC = "/audio/across-the-jade-valley.mp3";
+
+export default function AuthBackgroundMusic() {
   const enabled = useAppStore((s) => s.music.enabled);
-  const trackId = useAppStore((s) => s.music.trackId);
   const volume = useAppStore((s) => s.music.volume);
-  const isAuthRoute = pathname === "/onboarding" || pathname.startsWith("/auth/");
-
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio();
+    audioRef.current = new Audio(AUTH_MUSIC_SRC);
     audioRef.current.loop = true;
     audioRef.current.preload = "auto";
     return () => {
@@ -31,19 +27,6 @@ export default function BackgroundMusic() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    if (isAuthRoute) {
-      audio.pause();
-      return;
-    }
-
-    const track = MUSIC_TRACKS.find((t) => t.id === trackId);
-    if (!track) return;
-
-    const expectedSrc = new URL(track.src, window.location.origin).toString();
-    if (audio.src !== expectedSrc) {
-      audio.src = track.src;
-    }
 
     if (!enabled) {
       audio.pause();
@@ -65,7 +48,7 @@ export default function BackgroundMusic() {
       window.removeEventListener("pointerdown", onUserGesture);
       window.removeEventListener("keydown", onUserGesture);
     };
-  }, [enabled, isAuthRoute, trackId]);
+  }, [enabled]);
 
   return null;
 }
