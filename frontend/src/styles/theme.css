@@ -1886,9 +1886,13 @@ small,
   color: var(--surface-lowest);
 }
 
-.answer-review-note,
-.answer-review-evidence {
+.result-review-panel > .answer-review-note,
+.result-review-panel > .answer-review-evidence {
   margin-top: 8px;
+  font-family: "Noto Serif", serif;
+  font-size: clamp(16px, 1.55vw, 18px);
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 .open-grade-summary {
