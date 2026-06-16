@@ -17,9 +17,10 @@ Bạn có tò mò hơn về Chí Phèo nếu được trò chuyện với hắn 
 
 Bạn có tập trung hơn không nếu việc khám phá nhân vật văn học có cảm giác giống như đang lướt qua các profile?
 
-Thành thật đi. Lướt Tinder thì mắt mở to lắm mà. Văn học cũng xứng đáng có được năng lượng đó.
+
 
 **Vanver giúp bạn học Văn học Việt Nam như một trò chơi.**  
+
 Thay vì xem nhân vật văn học như bài vở cần thuộc lòng, Vanver biến họ thành những con người bạn có thể khám phá, sưu tầm, trò chuyện và nâng cấp.
 
 Vuốt để gặp các nhân vật văn học, trò chuyện với những nhân vật AI (dựa trên văn bản gốc), và vượt qua thử thách ba giai đoạn để dần mở khóa chiều sâu của từng nhân vật. 
