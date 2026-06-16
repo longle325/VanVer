@@ -22,6 +22,11 @@ export const api: ApiClient = {
       ? realClient.createUser(input)
       : mockClient.createUser(input),
 
+  getCurrentUser: () =>
+    useReal("auth")
+      ? realClient.getCurrentUser()
+      : mockClient.getCurrentUser(),
+
   getDeck: () =>
     useReal("deck") ? realClient.getDeck() : mockClient.getDeck(),
 

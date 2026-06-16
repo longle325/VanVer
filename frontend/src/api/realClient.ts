@@ -4,7 +4,7 @@
  * `./adapter.ts`.
  *
  * Phase status (kept in sync with `task.md`):
- *   ✅  createUser             — Phase 2A
+ *   ✅  getCurrentUser         — OAuth session
  *   ✅  getLeaderboard         — Phase 2B
  *   ⏳  getDeck                — Phase 3 (slug merge ready, not flipped)
  *   ⏳  getCharacter           — Phase 3
@@ -48,6 +48,8 @@ interface BackendUser {
   username: string;
   grade_level: number;
   total_score: number;
+  email?: string | null;
+  display_name?: string | null;
   created_at: string;
 }
 
@@ -154,19 +156,46 @@ function backendSourceToFe(entry: BackendSourceEntry): ChatSource | null {
   };
 }
 
+function backendUserToProfile(user: BackendUser): UserProfile {
+  return {
+    username: user.display_name || user.username,
+    grade:
+      user.grade_level === 11 || user.grade_level === 12
+        ? user.grade_level
+        : 10,
+    userId: user.id,
+  };
+}
+
+function currentFrontendUrl(path: string): string {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  if (typeof window === "undefined") {
+    return `http://localhost:5173#${normalizedPath}`;
+  }
+
+  const base = `${window.location.origin}${window.location.pathname}`;
+  return `${base}#${normalizedPath}`;
+}
+
+export function getOAuthLoginUrl(
+  provider: "google" = "google",
+  nextPath = "/discover",
+): string {
+  const url = new URL(`/api/v1/auth/login/${provider}`, API_BASE_URL);
+  url.searchParams.set("next", currentFrontendUrl(nextPath));
+  return url.toString();
+}
+
 // ─── Client ───────────────────────────────────────────────────────────────
 
 export const realClient: ApiClient = {
-  async createUser(input: CreateUserInput): Promise<UserProfile> {
-    const user = await apiFetch<BackendUser>("/users", {
-      method: "POST",
-      body: { username: input.username, grade_level: input.grade },
-    });
-    return {
-      username: user.username,
-      grade: input.grade,
-      userId: user.id,
-    };
+  async createUser(_input: CreateUserInput): Promise<UserProfile> {
+    throw new ApiError("Direct user creation is disabled. Use OAuth login.", 410);
+  },
+
+  async getCurrentUser(): Promise<UserProfile> {
+    const user = await apiFetch<BackendUser>("/auth/me");
+    return backendUserToProfile(user);
   },
 
   async getDeck(): Promise<Character[]> {
@@ -338,6 +367,7 @@ async function* streamChatReal(
   try {
     response = await fetch(url, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Accept: "text/event-stream",

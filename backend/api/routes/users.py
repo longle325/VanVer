@@ -1,7 +1,7 @@
 """
 User registration / profile endpoints.
 
-POST /api/v1/users          – create a new user (onboarding)
+POST /api/v1/users          – disabled; users must sign in with OAuth
 GET  /api/v1/users/{user_id} – get user profile
 """
 
@@ -27,21 +27,15 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post(
     "",
-    response_model=UserResponse,
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_410_GONE,
 )
 async def create_user(
-    body: UserCreate,
-    session: AsyncSession = Depends(get_db),
+    _body: UserCreate,
 ):
-    existing = await db.get_user_by_username(session, body.username)
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Username already taken.",
-        )
-    user = await db.create_user(session, body.username, body.grade_level)
-    return user
+    raise HTTPException(
+        status_code=status.HTTP_410_GONE,
+        detail="Direct user creation is disabled. Use OAuth login.",
+    )
 
 
 @router.get("/{user_id}", response_model=UserResponse)

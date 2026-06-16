@@ -4,11 +4,10 @@ export interface UserProfile {
   username: string;
   grade: Grade;
   /**
-   * Backend-issued user UUID, present once `POST /users` has run.
+   * Backend-issued user UUID, present once `/auth/me` has resolved.
    * Optional for two reasons:
    *   1. Mock-only mode never sets it.
-   *   2. Migration path — when real auth/sessions land, this field is
-   *      replaced by a session token read from cookies/headers. Always go
+   *   2. The OAuth session itself lives in an HTTP-only cookie. Always go
    *      through `getCurrentUserId()` in src/api/adapter.ts rather than
    *      reading this directly.
    */

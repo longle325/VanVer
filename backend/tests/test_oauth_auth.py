@@ -164,6 +164,8 @@ class OAuthRouteTests(unittest.TestCase):
             self.assertEqual(me.json()["email"], "student@example.com")
 
     def test_logout_clears_session(self):
+        from core.config import settings
+
         client = TestClient(self.app)
         self.addCleanup(client.close)
 
@@ -171,7 +173,25 @@ class OAuthRouteTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"ok": True})
-        self.assertIn("vanver_session=", response.headers.get("set-cookie", ""))
+        self.assertIn(
+            f"{settings.SESSION_COOKIE_NAME}=",
+            response.headers.get("set-cookie", ""),
+        )
+
+    def test_legacy_direct_user_creation_is_disabled(self):
+        client = TestClient(self.app, raise_server_exceptions=False)
+        self.addCleanup(client.close)
+
+        response = client.post(
+            "/api/v1/users",
+            json={"username": "student", "grade_level": 10},
+        )
+
+        self.assertEqual(response.status_code, 410)
+        self.assertEqual(
+            response.json()["detail"],
+            "Direct user creation is disabled. Use OAuth login.",
+        )
 
 
 if __name__ == "__main__":

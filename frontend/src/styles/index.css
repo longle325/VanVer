@@ -58,15 +58,20 @@
   outline-offset: 2px;
 }
 
-.grade-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 .error-text {
   color: #b3261e;
   font-size: 12px;
+}
+
+.onboarding-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.onboarding-actions .btn {
+  width: 100%;
 }
 
 /* === Collection sort dropdown === */

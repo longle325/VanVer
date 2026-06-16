@@ -5,8 +5,8 @@
  *   1. Per-endpoint mock/real flag (`useReal`)
  *   2. Base URL + fetch wrapper (`apiFetch`)
  *   3. Slug ↔ UUID translation (backend uses UUIDs everywhere; FE uses slugs)
- *   4. Current-user identity (`getCurrentUserId`) — single seam to swap from
- *      Zustand-stored UUID to a session token when auth lands.
+ *   4. Current-user identity (`getCurrentUserId`) — single place that reads
+ *      the OAuth-backed user id persisted after `/auth/me`.
  *   5. Character merge (backend dynamic fields + FE static lore)
  */
 
@@ -57,9 +57,7 @@ export function useReal(endpoint: EndpointKey): boolean {
 /**
  * Returns the current backend user id.
  *
- * Today: pulls `profile.userId` from Zustand (set after `POST /users`).
- * Tomorrow (auth/sessions): swap this body to read from a cookie or
- * `Authorization` header — no callers need to change.
+ * Pulls the backend user id that RequireProfile stores after `/auth/me`.
  */
 export function getCurrentUserId(): string | undefined {
   return useAppStore.getState().profile?.userId;
@@ -136,6 +134,7 @@ export async function apiFetch<T = unknown>(
 
   const init: RequestInit = {
     method: options.method ?? "GET",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     signal: options.signal,
   };
