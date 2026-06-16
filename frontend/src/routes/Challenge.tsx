@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { Check, CheckCircle, Sparkles } from "lucide-react";
+import { CheckCircle, Sparkles } from "lucide-react";
 import { api } from "@/api/client";
 import { useCharacter, useSubmitChallengeMutation } from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
@@ -373,8 +373,15 @@ export default function Challenge() {
 
   const questions = levelChallenge?.questions ?? character.challenge;
   const levelImages = getLevelImages(character, levelResults);
-  const activeLevelImage =
-    levelImages[activeQuestion % Math.max(1, levelImages.length)];
+  const activeLevelImage = levelImages[0];
+  const activeLevelTitle =
+    character.levels?.find((level) => level.level === activeLevel)?.title ??
+    levelChallenge?.phaseTitle;
+  const challengeBackgroundStyle = activeLevelImage
+    ? ({
+        "--challenge-bg-image": `url(${activeLevelImage})`,
+      } as CSSProperties)
+    : undefined;
   const question = questions[activeQuestion];
   const total = questions.length;
   const isLast = activeQuestion === total - 1;
@@ -455,128 +462,93 @@ export default function Challenge() {
   };
 
   return (
-    <section className="page narrow reference-challenge">
-      <div className="challenge-progress-top">
-        <span style={{ width: `${((activeQuestion + 1) / total) * 100}%` }} />
-      </div>
-      <p className="kicker">
-        {levelChallenge
-          ? `Level ${levelChallenge.level}: ${levelChallenge.phaseTitle}`
-          : "Thử thách"}
-      </p>
-      <h1 className="headline-lg">Thử thách nhân vật: {character.name}</h1>
-      {levelChallenge && (
-        <LevelProgress
-          character={character}
-          levelResults={levelResults}
-          className="challenge-level-progress"
-        />
-      )}
-      {activeLevelImage && (
-        <div className="challenge-level-preview">
-          <img
-            src={activeLevelImage}
-            alt={`${character.name} level ${activeLevel}`}
-          />
-          <span>
-            Level {activeLevel}
-            {character.levels?.find((level) => level.level === activeLevel)
-              ?.title
-              ? ` · ${
-                  character.levels?.find((level) => level.level === activeLevel)
-                    ?.title
-                }`
-              : ""}
-          </span>
-        </div>
-      )}
-      <div className="question-progress">
-        <ol
-          className="question-pips"
-          aria-label={`Tiến độ câu hỏi: câu ${activeQuestion + 1} trên ${total}`}
+    <section
+      className="reference-challenge challenge-stage"
+      style={challengeBackgroundStyle}
+    >
+      <div className="challenge-stage-art" aria-hidden="true" />
+      <div className="challenge-stage-inner">
+        <header className="challenge-hero">
+          <p className="challenge-eyebrow">Thử thách nhân vật</p>
+          <h1 className="headline-lg">{character.name}</h1>
+          <div className="challenge-level-strip">
+            <p>
+              {levelChallenge ? `Level ${levelChallenge.level}` : "Thử thách"}
+              {activeLevelTitle ? ` · ${activeLevelTitle}` : ""}
+            </p>
+            {levelChallenge && (
+              <LevelProgress
+                character={character}
+                levelResults={levelResults}
+                compact
+                className="challenge-level-progress"
+              />
+            )}
+          </div>
+        </header>
+
+        <div
+          className="challenge-question-meta"
+          aria-label={`Tiến độ câu hỏi: câu ${
+            activeQuestion + 1
+          } trên ${total}. Đã trả lời ${answeredCount} trên ${total}.`}
         >
-          {questions.map((q, index) => {
-            const answered = isAnswered(q, index);
-            const state =
-              index === activeQuestion
-                ? "current"
-                : answered
-                  ? "answered"
-                  : "todo";
-            return (
-              <li key={index}>
-                <button
-                  type="button"
-                  className={`question-pip ${state}`}
-                  onClick={() => setActiveQuestion(index)}
-                  aria-current={index === activeQuestion ? "step" : undefined}
-                  aria-label={`Câu ${index + 1}${
-                    index === activeQuestion
-                      ? " · đang làm"
-                      : answered
-                        ? " · đã trả lời"
-                        : " · chưa trả lời"
-                  }`}
-                >
-                  {answered && index !== activeQuestion ? (
-                    <Check size={14} strokeWidth={2.6} />
-                  ) : (
-                    index + 1
-                  )}
-                </button>
-              </li>
-            );
-          })}
-        </ol>
-        <p className="question-progress-caption">
-          Câu {activeQuestion + 1}/{total} · Đã trả lời {answeredCount}/{total}
-        </p>
-      </div>
-      <div className="challenge-card card">
-        <p className="question">{question.text}</p>
-        {isOpenQuestion(question) ? (
-          <div className="open-answer-block">
-            <textarea
-              value={typeof selected === "string" ? selected : ""}
-              onChange={(event) => setAnswer(event.target.value)}
-              placeholder="Viết câu trả lời 2-3 câu theo hiểu biết của bạn..."
-              rows={5}
+          <span>
+            Câu {activeQuestion + 1}/{total}
+          </span>
+          <div className="challenge-progress-top" aria-hidden="true">
+            <span
+              style={{ width: `${((activeQuestion + 1) / total) * 100}%` }}
             />
           </div>
-        ) : (
-          <div className="info-stack">
-            {question.options.map((option, index) => {
-              const active = selected === index;
-              return (
-                <button
-                  key={index}
-                  className={`option${active ? " active" : ""}`}
-                  onClick={() => setAnswer(index)}
-                  type="button"
-                >
-                  <strong>{String.fromCharCode(65 + index)}</strong>
-                  <span>{option}</span>
-                  {active && <CheckCircle size={18} />}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-      {gradeError && <p className="form-error">{gradeError}</p>}
-      <div className="challenge-actions">
-        <button
-          className="btn primary"
-          type="button"
-          disabled={!canAdvance || submit.isPending || isGradingOpenAnswer}
-          onClick={handleNext}
-        >
-          {isGradingOpenAnswer
-            ? "Đang chấm..."
-            : isLast
-              ? "Nộp bài"
-              : "Câu tiếp theo"}
-        </button>
+        </div>
+
+        <div className="challenge-card challenge-question-card card">
+          <p className="question">{question.text}</p>
+          {isOpenQuestion(question) ? (
+            <div className="open-answer-block">
+              <textarea
+                value={typeof selected === "string" ? selected : ""}
+                onChange={(event) => setAnswer(event.target.value)}
+                placeholder="Viết câu trả lời 2-3 câu theo hiểu biết của bạn..."
+                rows={5}
+              />
+            </div>
+          ) : (
+            <div className="info-stack">
+              {question.options.map((option, index) => {
+                const active = selected === index;
+                return (
+                  <button
+                    key={index}
+                    className={`option${active ? " active" : ""}`}
+                    onClick={() => setAnswer(index)}
+                    type="button"
+                  >
+                    <strong>{String.fromCharCode(65 + index)}</strong>
+                    <span>{option}</span>
+                    {active && <CheckCircle size={18} />}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        {gradeError && <p className="form-error">{gradeError}</p>}
+        <div className="challenge-actions">
+          <button
+            className="btn primary"
+            type="button"
+            disabled={!canAdvance || submit.isPending || isGradingOpenAnswer}
+            onClick={handleNext}
+          >
+            {isGradingOpenAnswer
+              ? "Đang chấm..."
+              : isLast
+                ? "Nộp bài"
+                : "Câu tiếp theo"}
+          </button>
+        </div>
       </div>
     </section>
   );
