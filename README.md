@@ -9,7 +9,7 @@ Bạn gập sách lại. Thở một hơi dài.
 
 Và điều tệ nhất là gì?
 
-Có khi câu chuyện đó *thật sự* hay.Chỉ là nó không còn hay nữa khi bạn bị ép phải học thuộc nó như học thuộc danh sách đi chợ.
+Có khi câu chuyện đó *thật sự* hay. Chỉ là nó không còn hay nữa khi bạn bị ép phải học thuộc nó như học thuộc danh sách đi chợ.
 
 Nhưng học văn không nhất thiết phải là một cuộc thi xem ai chịu đựng được bản tóm tắt khô khan nhất. Nếu bạn có thể gặp các nhân vật văn học như những con người thật thì sao? Những con người "bằng da bằng thịt", với đời sống nội tâm phong phú đang chờ bạn khám phá.
 
