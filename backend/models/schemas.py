@@ -163,7 +163,7 @@ class SwipeResponse(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    user_id: UUID
+    user_id: Optional[UUID] = None
     character_id: UUID
     message: str = Field(..., min_length=1, max_length=2000)
 

@@ -344,6 +344,37 @@ async def list_recent_chat_messages(
     return list(reversed(messages))
 
 
+async def get_monthly_chat_quota_usage(
+    db: AsyncSession,
+    user_id: UUID,
+    character_id: UUID,
+    since: datetime,
+) -> dict[str, int]:
+    base_filters = (
+        ChatMessage.user_id == user_id,
+        ChatMessage.role == ChatRole.USER,
+        ChatMessage.created_at >= since,
+    )
+    used_characters_result = await db.execute(
+        select(func.count(func.distinct(ChatMessage.character_id))).where(
+            *base_filters
+        )
+    )
+    messages_for_character_result = await db.execute(
+        select(func.count(ChatMessage.id)).where(
+            *base_filters,
+            ChatMessage.character_id == character_id,
+        )
+    )
+
+    return {
+        "used_characters": int(used_characters_result.scalar_one() or 0),
+        "messages_for_character": int(
+            messages_for_character_result.scalar_one() or 0
+        ),
+    }
+
+
 # ── Leaderboard ───────────────────────────────────────────────────────────
 
 

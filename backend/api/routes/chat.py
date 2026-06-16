@@ -20,15 +20,18 @@ import logging
 logger = logging.getLogger(__name__)
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sse_starlette.sse import EventSourceResponse
 
 from api.deps import get_chat, get_db
+from api.routes.auth import SESSION_USER_ID_KEY
+from core.config import settings
 from models.db_models import ChatRole, MatchStatus
 from models.schemas import ChatHistoryResponse, ChatRequest, ChatMessageResponse
 from services import db_postgres as db
 from services.chat_service import ChatService
+from services.chat_quota import ChatQuotaExceeded, enforce_monthly_chat_quota
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -56,6 +59,41 @@ async def _validate_chat_access(
     return user, character, match
 
 
+def _session_user_id(request: Request) -> UUID | None:
+    value = request.session.get(SESSION_USER_ID_KEY)
+    if not value:
+        return None
+    try:
+        return UUID(str(value))
+    except ValueError:
+        request.session.clear()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated.",
+        )
+
+
+def _resolve_chat_user_id(
+    request: Request,
+    requested_user_id: UUID | None,
+) -> UUID:
+    session_user_id = _session_user_id(request)
+    if session_user_id is not None:
+        if requested_user_id is not None and requested_user_id != session_user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Authenticated session does not match request user.",
+            )
+        return session_user_id
+
+    if requested_user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated.",
+        )
+    return requested_user_id
+
+
 @router.get("/history", response_model=ChatHistoryResponse)
 async def chat_history(
     user_id: UUID = Query(..., description="Current user's UUID"),
@@ -77,32 +115,36 @@ async def chat_history(
 
 @router.post("/stream")
 async def chat_stream(
+    request: Request,
     body: ChatRequest,
     session: AsyncSession = Depends(get_db),
     chat_service: ChatService = Depends(get_chat),
 ):
+    user_id = _resolve_chat_user_id(request, body.user_id)
     _, character, _ = await _validate_chat_access(
         session,
-        body.user_id,
+        user_id,
         body.character_id,
     )
+    try:
+        await enforce_monthly_chat_quota(
+            session,
+            user_id=user_id,
+            character_id=body.character_id,
+        )
+    except ChatQuotaExceeded as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
+
     recent_messages = await db.list_recent_chat_messages(
         session,
-        user_id=body.user_id,
+        user_id=user_id,
         character_id=body.character_id,
-        limit=8,
+        limit=settings.CHAT_PROMPT_HISTORY_MAX_MESSAGES,
     )
     chat_history = [
         {"role": message.role.value, "content": message.content}
         for message in recent_messages
     ]
-    await db.create_chat_message(
-        session,
-        user_id=body.user_id,
-        character_id=body.character_id,
-        role=ChatRole.USER,
-        content=body.message,
-    )
 
     async def event_generator():
         assistant_chunks: list[str] = []
@@ -122,6 +164,13 @@ async def chat_stream(
             ),
         }
         try:
+            await db.create_chat_message(
+                session,
+                user_id=user_id,
+                character_id=body.character_id,
+                role=ChatRole.USER,
+                content=body.message,
+            )
             async for chunk in chat_service.stream_response(
                 character_slug=character.slug,
                 character_name=character.name,
@@ -146,7 +195,7 @@ async def chat_stream(
         if assistant_message:
             await db.create_chat_message(
                 session,
-                user_id=body.user_id,
+                user_id=user_id,
                 character_id=body.character_id,
                 role=ChatRole.ASSISTANT,
                 content=assistant_message,
