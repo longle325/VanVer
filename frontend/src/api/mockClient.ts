@@ -68,6 +68,14 @@ export const mockClient: ApiClient = {
       userId: `mock-${input.username}`,
     };
   },
+  async getCurrentUser(): Promise<UserProfile> {
+    await delay(0);
+    return {
+      username: "Demo",
+      grade: 10,
+      userId: "mock-demo",
+    };
+  },
   async getDeck(): Promise<Character[]> {
     await delay(0);
     return characters;
