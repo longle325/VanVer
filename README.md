@@ -1,114 +1,118 @@
 # LitMatch
 
-A gamified Vietnamese literature learning app. Swipe to discover characters, chat with source-grounded AI personas, complete challenges, climb the leaderboard.
+**Học văn học Việt Nam như chơi một trò chơi.** LitMatch turns Vietnamese
+literature study into character discovery: swipe to meet literary characters,
+chat with source-grounded AI personas, and climb a three-phase challenge that
+*levels each character's portrait up* — card-game style — on the way to the
+leaderboard. **Ten canonical characters** ship today (Chí Phèo, Mị, Xuân Tóc Đỏ,
+Lục Vân Tiên, Thúy Kiều, Lão Hạc, Chị Dậu, Ông Sáu, Ông Hai, Vũ Nương).
 
-## Stack
+---
 
-- **Frontend**: React 18 + TypeScript + Vite, Zustand, TanStack Query, react-tinder-card
-- **Backend**: FastAPI, SQLAlchemy (async), Postgres + pgvector, OpenAI GPT-4o + `text-embedding-3-large`, SSE streaming
-- **Infra**: Postgres in Docker (`pgvector/pgvector:pg17`)
+## The experience
 
-## Prerequisites
+### 1 · Onboarding
+Pick a display name and grade level, then step into the journey.
 
-- Node 18+, npm
-- Python 3.11+
-- Docker Desktop for Mac installed and running (`docker --version` and `docker compose version` should both work)
-- An OpenAI API key
+![Onboarding](docs/screenshots/01-onboarding.png)
 
-## First-time setup
+### 2 · Discover
+Swipe through a deck of literary characters rendered as aged-parchment, Đông Hồ /
+Hàng Trống–style portraits. Swipe right to add a character to your collection and
+unlock their chat.
 
-Run these commands from the project root unless a step explicitly changes
-directory.
+![Discover deck](docs/screenshots/02-discover.png)
+
+### 3 · Challenge
+Each character has a **three-phase challenge** (4 multiple-choice + 1
+rubric-graded open-ended question per phase). A numbered question-pip row and a
+phase stepper keep you oriented; the open-ended answer is graded server-side
+against a rubric using pgvector retrieval + an LLM.
+
+![Challenge with phase stepper and question pips](docs/screenshots/03-challenge.png)
+
+### 4 · Level up
+Pass a phase and the character's portrait **brightens and ascends to its next
+level** with a star-burst reveal and a chime — earning a parchment → gold → Tết-red
+badge as the story deepens.
+
+![Level-up reveal](docs/screenshots/04-levelup.png)
+
+> Rounding out the loop: a **Collection** view that sorts characters by level
+> with per-level badges, source-grounded **Chat**, and a **Leaderboard**.
+
+---
+
+## Run it locally
+
+**Prerequisites:** Node 18+, Python 3.11+, Docker Desktop, and an OpenAI API key.
 
 ```sh
-# 1. Env
-cp .env.example .env   # then add OPENAI_API_KEY
+# 1. Env — put OPENAI_API_KEY in the repo-root .env (Vite + backend both read it)
+cp .env.example .env
 
-# 2. Frontend dependencies
-cd frontend
-npm install
-cd ..
+# 2. Frontend deps
+cd frontend && npm install && cd ..
 
-# 3. Backend dependencies
-cd backend
-python3 -m venv .venv
-./.venv/bin/pip install -r requirements.txt
-cd ..
+# 3. Backend deps
+cd backend && python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt && cd ..
 
 # 4. Postgres + schema + seed (characters, challenges, demo users)
-docker compose up -d postgres
+docker compose up -d postgres          # wait until `docker compose ps postgres` is healthy
+unset DEBUG                             # backend expects DEBUG to be a boolean
+cd backend && ./.venv/bin/python scripts/seed_database.py && cd ..
 
-# Wait until `docker compose ps postgres` shows the service as healthy.
-# If your shell exports DEBUG=release, unset it first because the backend
-# expects DEBUG to be a boolean.
-unset DEBUG
-cd backend
-./.venv/bin/python scripts/seed_database.py
-cd ..
-
-# 5. Knowledge-base embeddings — restore the team's pre-embedded
-#    pgvector dump from Drive (no OpenAI cost, ~1s):
-#    https://drive.google.com/file/d/1cGlRIXH9EOJEwfb22USsUhSV6NCAcq_D/view
+# 5. Knowledge-base embeddings — restore the team's pre-embedded pgvector dump
+#    (no OpenAI cost, ~1s): https://drive.google.com/file/d/1cGlRIXH9EOJEwfb22USsUhSV6NCAcq_D/view
 bash scripts/restore-knowledge-chunks.sh
 ```
 
-## Run locally
+Then run the three processes (each from the project root):
 
 ```sh
-# Terminal 1: database, from the project root
-docker compose up -d postgres
-
-# Terminal 2: backend API, from the project root
-unset DEBUG
-cd backend
-./.venv/bin/python -m uvicorn main:app --reload --port 8081
-
-# Terminal 3: frontend, from the project root
-cd frontend
-npm run dev
+docker compose up -d postgres                                   # database
+cd backend && unset DEBUG && ./.venv/bin/python -m uvicorn main:app --reload --port 8081
+cd frontend && npm run dev                                      # → http://localhost:5173
 ```
 
-Open <http://127.0.0.1:5173/>.
+The frontend can also run **offline in mock mode** (no backend) for UI demos —
+`VITE_REAL_ENDPOINTS` in the root `.env` whitelists which endpoints hit the real
+backend (empty = all mock). FE state persists to `localStorage`; reset via
+**Hồ sơ → Đặt lại dữ liệu thử nghiệm**.
 
-## Troubleshooting Setup
+<details>
+<summary>Troubleshooting setup</summary>
 
-- `npm ERR! enoent Could not read package.json`: run npm commands from
-  `frontend/`, or use `npm --prefix frontend run dev` from the project root.
-- `cd: no such file or directory: backend`: you are already inside `backend/`.
-  Run `pwd` to confirm, then run `./.venv/bin/python scripts/seed_database.py`
-  directly.
-- `ConnectionResetError: [Errno 54] Connection reset by peer` while seeding:
-  Postgres may still be finishing first-time initialization. Wait until
-  `docker compose ps postgres` shows `healthy`, then rerun the seed command.
-- `DEBUG Input should be a valid boolean`: your shell is overriding `.env` with
-  a non-boolean value such as `DEBUG=release`. Run `unset DEBUG`, or prefix the
-  command with `env DEBUG=false`.
+- `npm ERR! enoent`: run npm from `frontend/`, or `npm --prefix frontend run dev`.
+- `cd: no such file or directory: backend`: you're already inside `backend/`.
+- `ConnectionResetError` while seeding: Postgres is still initializing — wait for
+  `docker compose ps postgres` to show `healthy`, then rerun.
+- `DEBUG Input should be a valid boolean`: `unset DEBUG` (or prefix `env DEBUG=false`).
 
-## Project layout
+</details>
+
+---
+
+## Under the hood
+
+- **Frontend** — React 18 + TypeScript + Vite, Zustand, TanStack Query,
+  react-tinder-card; Capacitor for iOS/Android packaging.
+- **Backend** — FastAPI, async SQLAlchemy, Postgres + pgvector, OpenAI GPT-4o +
+  `text-embedding-3-large`, SSE streaming for chat.
+- **RAG** — per-character curated knowledge base embedded into `knowledge_chunks`;
+  chat and open-ended grading retrieve real evidence (lexical fallback if vectors
+  are unavailable).
 
 ```
-frontend/        React 18 + TS + Vite + Capacitor (Android/iOS)
-backend/         FastAPI + PostgreSQL + pgvector + OpenAI
-scripts/         Bash: dump/restore knowledge-chunks
-docs/
-  API.md         Backend API contract
-  DEPLOYMENT.md  Full deployment guide (Cloud Run, Android APK, mobile testing)
-PRD.md, task.md  Product spec + task tracker
+frontend/   React + TS + Vite + Capacitor
+backend/    FastAPI + Postgres + pgvector + OpenAI
+docs/       API.md (backend contract) · DEPLOYMENT.md (Cloud Run, Android, env)
 ```
 
-## Deployment
+## More docs
 
-See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for the complete guide covering:
-- Local development (frontend-only and full-stack)
-- Frontend ↔ Backend connection (mock/real endpoint switching)
-- Cloud Run deployment (GCP + Workload Identity Federation)
-- Android APK build (CI and local CLI)
-- Mobile testing (WiFi, ngrok, Capacitor live reload)
-- Environment variables reference
-- CI/CD workflows
-- Troubleshooting
-
-## Notes
-
-- `VITE_REAL_ENDPOINTS` in `.env` whitelists which endpoints hit the real backend; empty = all mock (no backend needed for offline UI demos).
-- The FE persists user state to `localStorage` under `litmatch-state`. Reset via `/profile` → **Đặt lại dữ liệu thử nghiệm**.
+- **[docs/API.md](docs/API.md)** — live backend API (endpoints, schemas, the
+  open-ended grading contract).
+- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** — local, Cloud Run, Android APK,
+  mobile testing, env reference, CI/CD.
+- **[PRD.md](PRD.md)** — product spec.

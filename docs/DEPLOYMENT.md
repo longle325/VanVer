@@ -122,14 +122,16 @@ bash scripts/restore-knowledge-chunks.sh
 ## 3. Frontend ↔ Backend Connection
 
 The frontend has a **per-endpoint mock/real router** (`src/api/adapter.ts`).
-By default everything uses the mock client. To switch endpoints to the real
-backend, set environment variables in `frontend/.env`:
+The mock client is the offline fallback; the project ships a **repo-root**
+`.env` that points the app at the real backend. Vite reads that repo-root
+`.env` (`envDir: ".."` in `frontend/vite.config.ts`), so set these there — not
+in `frontend/.env`:
 
 ```bash
 # Backend URL (Vite proxy handles this in dev, needed for production)
 VITE_API_BASE_URL=http://localhost:8081/api/v1
 
-# Which endpoints hit the real backend
+# Which endpoints hit the real backend (empty = all mock)
 # Options: auth, characters, deck, match, challenge, leaderboard, chat
 VITE_REAL_ENDPOINTS=all
 ```
