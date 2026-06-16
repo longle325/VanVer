@@ -67,8 +67,6 @@ LitMatch reframes literature study as character discovery. Students meet charact
 
 **Description:** A short first-run screen where the user enters a username and chooses a grade level.
 
-**Design reference:** Use the existing mockup set and shared app shell as the onboarding reference. Follow the typography, palette, spacing, and control styling from `design reference/Design style/DESIGN.md`, and keep the layout consistent with the other screen mockups in `design reference/`.
-
 **MVP Requirements:**
 
 - Username input.
@@ -86,7 +84,7 @@ LitMatch reframes literature study as character discovery. Students meet charact
 
 **Description:** Users browse literary characters through swipeable profile cards. The experience should feel like character discovery, not dating.
 
-**Design reference:** Use `design reference/Thuy_Kieu card/` as the reference for the discovery deck and swipe-card layout. The Thúy Kiều card should be generalized into a reusable character card component for every character in the deck.
+The Thúy Kiều card is generalized into a reusable character card component for every character in the deck.
 
 **Content source:** Use `Content_reference.csv` as the canonical source for character profile and visual-design content. Each character card must be generated from the CSV fields: `Tên`, `Tác phẩm`, `Tác giả`, `Image or illustration`, `Dòng bio ngắn`, `Quote nổi tiếng`, `Tính cách`, `Những mâu thuẫn về cảm xúc nếu có`, `Bối cảnh xã hội`, and `Câu hỏi challenge`.
 
@@ -126,8 +124,6 @@ All user-facing card content, including section labels, generated captions, fall
 
 **Description:** After matching with a character, users can chat with the character. The chatbot responds in the voice of the character while staying grounded in source texts and curated notes.
 
-**Design reference:** Use `design reference/chat/` as the reference for the character chat screen, message layout, source/context panel, quick prompts, and challenge entry point.
-
 **AI Behavior:**
 
 - Speak in a style that reflects the character's personality, social background, emotional conflict, and literary context.
@@ -164,8 +160,6 @@ All user-facing card content, including section labels, generated captions, fall
 
 **Description:** Users take a short quiz after chatting with a character. The challenge tests understanding beyond surface-level facts.
 
-**Design reference:** Use `design reference/challenge/` as the reference for the challenge screen, progress indicator, question card, answer options, source-review link, and submit action.
-
 **Question Types:**
 
 - Multiple choice.
@@ -194,8 +188,6 @@ All user-facing card content, including section labels, generated captions, fall
 
 **Description:** Users earn points by discovering characters, completing challenges, and answering accurately. A leaderboard shows user rank.
 
-**Design reference:** Use `design reference/Leaderboard/` as the reference for the leaderboard screen, ranking table, leaderboard tabs, current-user highlight, points display, and achievement indicators.
-
 **MVP Point System:**
 
 - Match with a character: +10 points.
@@ -223,8 +215,6 @@ All user-facing card content, including section labels, generated captions, fall
 
 **Description:** Users can view all characters they have discovered, see unlock progress, and return to chat or challenge flows.
 
-**Design reference:** Use `design reference/Character screen/` as the reference for the matched characters or collection screen. The current English placeholder copy in this mockup must be translated to Vietnamese during implementation.
-
 **MVP Requirements:**
 
 - Display all right-swiped characters.
@@ -247,7 +237,7 @@ All user-facing card content, including section labels, generated captions, fall
 - All navigation, buttons, labels, empty states, errors, onboarding text, challenge text, chat helper text, leaderboard labels, and profile/collection status text must be in Vietnamese.
 - Literary work titles, character names, author names, and excerpts must use correct Vietnamese diacritics.
 - HTML document language should be `vi`.
-- English text inside design references is placeholder copy only and must not ship in the app UI.
+- Any English placeholder copy from early mockups is not shipped in the app UI.
 - Internal code identifiers, route names, API names, and developer comments may remain English.
 
 **Required Vietnamese UI Terms:**
@@ -363,22 +353,7 @@ The chatbot should receive:
 
 ## 10. Design Direction
 
-LitMatch should use the existing Modern Literary design direction in `design reference/Design style/DESIGN.md`.
-
-### Design Reference Mapping
-
-The `design reference/` folder contains static HTML and screenshots for the target UI direction. These files should be used as visual and interaction references during implementation.
-
-| Product area | Route or component | Design reference | Implementation notes |
-| --- | --- | --- | --- |
-| Global visual system | App shell, colors, typography, spacing | `design reference/Design style/DESIGN.md` | Use as the source for the Modern Literary palette, typography, spacing, and component tone. |
-| Discovery swipe deck | `/discover`, `CharacterCard`, `SwipeDeck` | `design reference/Thuy_Kieu card/` | Generalize the Thúy Kiều mock into a reusable card for all characters. Keep the visual card structure, action buttons, bottom navigation, streak, and points treatment. |
-| Matched characters collection | `/collection`, `CharacterCollection`, collection card | `design reference/Character screen/` | Use the grid, progress states, image cards, and status badges. Translate all English placeholder copy to Vietnamese. |
-| Character chat | `/characters/:characterId/chat`, `ChatScreen` | `design reference/chat/` | Use the chat layout, character header, side context panel, quick prompts, and challenge CTA. Translate any remaining English strings such as source titles and helper copy. |
-| Character challenge | `/characters/:characterId/challenge`, `ChallengeScreen` | `design reference/challenge/` | Use the progress bar, question card, option states, review-source link, and submit button. |
-| Leaderboard | `/leaderboard`, `LeaderboardScreen` | `design reference/Leaderboard/` | Use the ranking table, tabs, top-rank styling, current-user highlight, points, and unlocked-character counts. |
-| Onboarding | `/onboarding`, `OnboardingScreen` | Provided start-screen screenshot + `design reference/Design style/DESIGN.md` | Standalone first-run screen without authenticated sidebar/topbar chrome; reuse Modern Literary typography, palette, card, input, chip, and primary button styles. |
-| Results modal | Challenge result modal or inline result section | Extend `design reference/challenge/` | Reuse the challenge card style for score, explanations, points earned, and next actions. |
+LitMatch uses the Modern Literary design direction — an aged-parchment, wood-and-gold palette with Noto Serif display type — now implemented in the app's stylesheets under `frontend/src/styles/`. The original static HTML/screenshot mockups have been removed; the shipped screens are the reference.
 
 The interface should feel:
 
@@ -394,7 +369,6 @@ Important UI principles:
 - Make challenge feedback clear and educational.
 - Use subtle animation for swipe, chat streaming, and score reveal.
 - Avoid making the product feel like a generic social app.
-- Treat design-reference HTML as layout guidance, not final production markup.
 - Replace all English placeholder text from the mockups with Vietnamese before shipping.
 
 ## 11. Success Metrics
@@ -486,7 +460,6 @@ Mitigation: Future versions should support personal progress, badges, streaks, a
 
 - Build character card component.
 - Build swipe deck screen with `react-tinder-card`.
-- Use `design reference/Thuy_Kieu card/` as the visual reference.
 - Implement left and right swipe actions.
 - Add match animation and points update for right swipe.
 - Add empty deck state.
@@ -495,7 +468,6 @@ Mitigation: Future versions should support personal progress, badges, streaks, a
 ### Phase 5: Character Chat
 
 - Build chat route and message list.
-- Use `design reference/chat/` as the visual reference.
 - Add message input and send behavior.
 - Build mock chat API that retrieves relevant snippets from local character data.
 - Simulate SSE chunking or wire actual SSE if backend exists.
@@ -507,7 +479,6 @@ Mitigation: Future versions should support personal progress, badges, streaks, a
 ### Phase 6: Challenge Flow
 
 - Build challenge route.
-- Use `design reference/challenge/` as the visual reference.
 - Render five questions.
 - Support multiple choice and short answer fields.
 - Validate submission.
@@ -519,7 +490,6 @@ Mitigation: Future versions should support personal progress, badges, streaks, a
 ### Phase 7: Matched Characters Collection
 
 - Build collection route.
-- Use `design reference/Character screen/` as the visual reference.
 - Render matched characters in a responsive grid.
 - Show unlock progress, challenge status, and fully unlocked state.
 - Add sorting by recently added and completion progress.
@@ -529,7 +499,6 @@ Mitigation: Future versions should support personal progress, badges, streaks, a
 ### Phase 8: Leaderboard
 
 - Build leaderboard route.
-- Use `design reference/Leaderboard/` as the visual reference.
 - Merge current user score with demo leaderboard users.
 - Sort users by total points.
 - Highlight current user.
@@ -539,7 +508,7 @@ Mitigation: Future versions should support personal progress, badges, streaks, a
 ### Phase 9: Polish and Design Pass
 
 - Apply Modern Literary color and typography direction.
-- Audit against the design reference mapping table.
+- Audit against the shipped Modern Literary design direction.
 - Replace any remaining English placeholder UI copy with Vietnamese.
 - Set document language to Vietnamese with `lang="vi"`.
 - Add motion for deck, chat typing, challenge submission, and score reveal.
@@ -591,11 +560,7 @@ As of 2026-05-07, the local static prototype has implemented:
 
 - Standalone Vietnamese onboarding/start screen matching the supplied screenshot direction.
 - Authenticated app shell aligned to the reference sidebar and top metric treatment.
-- Discovery screen aligned to `design reference/Thuy_Kieu card/screen.png`.
-- Collection screen aligned to `design reference/Character screen/screen.png`.
-- Chat screen aligned to `design reference/chat/screen.png`.
-- Challenge screen aligned to `design reference/challenge/screen.png`.
-- Leaderboard screen aligned to `design reference/Leaderboard/screen.png`.
+- Discovery, collection, chat, challenge, and leaderboard screens implemented.
 - Local profile creation with username and grade selection.
 - Vite development server support through `npm run dev`.
 - Seeded discovery deck for the five MVP CSV characters.
@@ -605,6 +570,6 @@ As of 2026-05-07, the local static prototype has implemented:
 Remaining prototype gaps:
 
 - Browser screenshot verification is still needed after local browser tooling is available.
-- Some characters still use generated CSS art placeholders where the design-reference folders did not provide a concrete image asset.
+- Some characters still use generated CSS art placeholders where a concrete image asset was not provided.
 - Chat response simulation is local and non-streaming.
 - Data remains inline in `app.js` rather than a dedicated seed module or typed store.

@@ -1,8 +1,18 @@
 # Handoff — adding new characters to LitMatch
 
-You are extending LitMatch (a gamified Vietnamese-literature roleplay app) by adding one or more new characters alongside the existing five (`chi-pheo`, `mi`, `xuan-toc-do`, `luc-van-tien`, `thuy-kieu`). The product is shipped — the matched five characters work end to end against gpt-4o + RAG retrieval, with a chat typing indicator, source citation chips, and a 5-question challenge per character. Your job is to add new characters with the **same fidelity** the existing five have, with no shortcuts.
+You are extending LitMatch (a gamified Vietnamese-literature roleplay app) by adding one or more new characters alongside the existing ten (`chi-pheo`, `mi`, `xuan-toc-do`, `luc-van-tien`, `thuy-kieu`, `lao-hac`, `chi-dau`, `ong-sau`, `ong-hai`, `vu-nuong`). The product is shipped — these characters work end to end against gpt-4o + RAG retrieval, with a chat typing indicator and source citation chips. Your job is to add new characters with the **same fidelity** the existing ones have, with no shortcuts.
 
 This document gives you every touchpoint, the exact data shape at each, and the order in which to do them. Read it through once before you write any code.
+
+> **Challenge model update (current).** Each character now has *two* challenge
+> systems: the legacy single multiple-choice challenge described below (the
+> `challenge` field in `frontend/src/data/characters.ts`, backend-graded), **and**
+> a three-phase level challenge in `frontend/src/data/levelChallenges.ts` — 3
+> phases × 5 questions (4 multiple-choice + 1 rubric-graded open-ended), where the
+> open-ended question is graded by `POST /api/v1/challenges/grade-open-ended`. A
+> new character needs entries in *both*. The "EXACTLY 5 questions" notes further
+> down refer to the legacy `challenge` field only. (The character preview-video
+> feature this doc may reference has been removed.)
 
 ---
 
