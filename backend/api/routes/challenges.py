@@ -15,7 +15,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.deps import get_db
+from api.deps import get_db, get_open_ended_grader
 from core.config import settings
 from models.db_models import MatchStatus
 from models.schemas import (
@@ -24,8 +24,14 @@ from models.schemas import (
     ChallengeQuestionsResponse,
     ChallengeResult,
     ChallengeSubmission,
+    OpenEndedGradeResult,
+    OpenEndedGradeSubmission,
 )
 from services import db_postgres as db
+from services.open_ended_grading_service import (
+    OpenEndedGradingError,
+    OpenEndedGradingService,
+)
 
 router = APIRouter(tags=["challenges"])
 
@@ -194,3 +200,30 @@ async def submit_challenge(
         explanations=explanations,
         correct_answers=correct_answers,
     )
+
+
+@router.post(
+    "/challenges/grade-open-ended",
+    response_model=OpenEndedGradeResult,
+)
+async def grade_open_ended_challenge_answer(
+    body: OpenEndedGradeSubmission,
+    grader: OpenEndedGradingService = Depends(get_open_ended_grader),
+):
+    try:
+        result = await grader.grade(
+            character_slug=body.character_slug,
+            character_name=body.character_name,
+            work_title=body.work_title,
+            phase_title=body.phase_title,
+            question=body.question,
+            answer=body.answer,
+            rubric=body.rubric,
+            evidence=body.evidence,
+        )
+    except OpenEndedGradingError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="Không chấm được câu tự luận. Vui lòng thử lại.",
+        ) from exc
+    return OpenEndedGradeResult(**result)

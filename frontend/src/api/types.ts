@@ -6,6 +6,8 @@ import type {
   ChatSource,
   Grade,
   LeaderboardEntry,
+  OpenEndedGradeRequest,
+  OpenEndedGradeResult,
   UserProfile,
 } from "@/types";
 
@@ -48,6 +50,9 @@ export interface ApiClient {
     id: string,
     answers: number[],
   ) => Promise<ChallengeResult>;
+  gradeOpenEndedAnswer: (
+    input: OpenEndedGradeRequest,
+  ) => Promise<OpenEndedGradeResult>;
   getLeaderboard: () => Promise<LeaderboardEntry[]>;
   getChatHistory: (characterId: string) => Promise<ChatMessage[]>;
   /**

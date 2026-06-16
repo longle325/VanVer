@@ -6,6 +6,8 @@ import type {
   ChallengeQuestion,
   ChallengeResult,
   LeaderboardEntry,
+  OpenEndedGradeRequest,
+  OpenEndedGradeResult,
   UserProfile,
 } from "@/types";
 import type {
@@ -109,6 +111,23 @@ export const mockClient: ApiClient = {
     const character = getCharacter(id);
     if (!character) throw new Error(`Unknown character: ${id}`);
     return scoreChallenge(character, answers);
+  },
+  async gradeOpenEndedAnswer(
+    input: OpenEndedGradeRequest,
+  ): Promise<OpenEndedGradeResult> {
+    await delay(0);
+    const hasAnswer = input.answer.trim().length > 0;
+    return {
+      score: hasAnswer ? 1 : 0,
+      passed: hasAnswer,
+      feedback: hasAnswer
+        ? "Mock mode: câu trả lời có nội dung, được tính đạt."
+        : "Mock mode: câu trả lời còn trống.",
+      matchedCriteria: hasAnswer ? ["Có trả lời theo rubric."] : [],
+      missingCriteria: hasAnswer ? [] : ["Cần trả lời theo rubric."],
+      confidence: 1,
+      retrievalMode: "mock",
+    };
   },
   async getLeaderboard(): Promise<LeaderboardEntry[]> {
     await delay(0);

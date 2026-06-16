@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { BookOpen, Send, Sparkles, Pencil, AlertCircle } from "lucide-react";
 import { useCharacter } from "@/api/queries";
 import { api, ApiError } from "@/api/client";
 import { useAppStore } from "@/stores/useAppStore";
+import { getLevelImages } from "@/lib/characterLevels";
 import type { Character, ChatMessage, ChatSource } from "@/types";
 
 const defaultOpening = (character: Character) =>
@@ -338,7 +339,15 @@ export default function Chat() {
   const appendChat = useAppStore((s) => s.appendChat);
   const setChat = useAppStore((s) => s.setChat);
   const removeMatch = useAppStore((s) => s.removeMatch);
+  const levelResults = useAppStore((s) => s.levelResults);
   const { data: character, isLoading } = useCharacter(id);
+  const displayCharacter = useMemo(() => {
+    if (!character) return undefined;
+    const images = getLevelImages(character, levelResults);
+    return images.length
+      ? { ...character, image: images[0], images }
+      : character;
+  }, [character, levelResults]);
 
   // Rehydrate chat history from the backend on mount. Mock returns [] so
   // existing local-only state is left untouched.
@@ -487,23 +496,23 @@ export default function Chat() {
   return (
     <section className="page chat-layout reference-chat">
       <div className="chat-card">
-        <ChatHeader character={character} />
+        <ChatHeader character={displayCharacter ?? character} />
         <div className="chat-thread" ref={threadRef}>
           {messages.map((message, index) => (
             <CharacterMessage
               key={index}
               message={message}
-              character={character}
+              character={displayCharacter ?? character}
             />
           ))}
           {streaming && (
             <CharacterMessage
               message={{ from: "bot", text: streaming }}
-              character={character}
+              character={displayCharacter ?? character}
             />
           )}
           {awaiting && !streaming && (
-            <ThinkingBubble character={character} />
+            <ThinkingBubble character={displayCharacter ?? character} />
           )}
           {(streaming || awaiting) && (
             <div className="typing-line">

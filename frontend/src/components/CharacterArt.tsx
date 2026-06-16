@@ -1,28 +1,23 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Character } from "@/types";
 
 export default function CharacterArt({ character }: { character: Character }) {
-  const images = useMemo(
-    () =>
-      character.images?.length
-        ? character.images
-        : character.image
-          ? [character.image]
-          : [],
-    [character.image, character.images],
-  );
-  const [activeImage, setActiveImage] = useState(0);
+  const images = character.images?.length
+    ? character.images
+    : character.image
+      ? [character.image]
+      : [];
+
+  const [active, setActive] = useState(0);
   const hasGallery = images.length > 1;
 
   const showPrevious = () => {
-    setActiveImage((current) =>
-      current === 0 ? images.length - 1 : current - 1,
-    );
+    setActive((current) => (current === 0 ? images.length - 1 : current - 1));
   };
 
   const showNext = () => {
-    setActiveImage((current) => (current + 1) % images.length);
+    setActive((current) => (current + 1) % images.length);
   };
 
   if (images.length) {
@@ -32,16 +27,16 @@ export default function CharacterArt({ character }: { character: Character }) {
           className="gallery-track"
           style={
             {
-              "--active-image": activeImage,
+              "--active-image": active,
             } as React.CSSProperties
           }
         >
-          {images.map((image, index) => (
+          {images.map((src, index) => (
             <img
-              key={image}
-              src={image}
+              key={`img-${src}`}
+              src={src}
               alt={
-                hasGallery
+                images.length > 1
                   ? `${character.name} - ảnh ${index + 1}/${images.length}`
                   : character.name
               }
@@ -73,15 +68,15 @@ export default function CharacterArt({ character }: { character: Character }) {
                 <ChevronLeft size={20} />
               </button>
               <div className="gallery-dots" role="tablist">
-                {images.map((image, index) => (
+                {images.map((src, index) => (
                   <button
-                    key={image}
+                    key={`dot-${src}`}
                     type="button"
-                    className={index === activeImage ? "active" : ""}
+                    className={index === active ? "active" : ""}
                     aria-label={`Xem ảnh ${index + 1}`}
-                    aria-selected={index === activeImage}
+                    aria-selected={index === active}
                     role="tab"
-                    onClick={() => setActiveImage(index)}
+                    onClick={() => setActive(index)}
                   />
                 ))}
               </div>

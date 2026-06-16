@@ -10,7 +10,7 @@ export const POINTS = {
 } as const;
 
 /* ── Storage key ── */
-export const STORAGE_KEY = "litmatch-state";
+export const STORAGE_KEY = "peakverse-state";
 
 /* ── API ── */
 export const API_BASE =

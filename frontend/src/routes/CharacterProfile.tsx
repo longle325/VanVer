@@ -4,6 +4,8 @@ import { useCharacter } from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
 import CharacterArt from "@/components/CharacterArt";
 import VoicePlayButton from "@/components/VoicePlayButton";
+import LevelProgress from "@/components/LevelProgress";
+import { getLevelImages, getUnlockedCharacterLevel } from "@/lib/characterLevels";
 import type { Character } from "@/types";
 
 interface ProfileCopy {
@@ -116,6 +118,7 @@ export default function CharacterProfile() {
   const { data: character, isLoading, isError } = useCharacter(id);
   const matches = useAppStore((s) => s.matches);
   const completed = useAppStore((s) => s.completed);
+  const levelResults = useAppStore((s) => s.levelResults);
 
   if (isLoading) {
     return (
@@ -131,7 +134,9 @@ export default function CharacterProfile() {
     return <Navigate to="/collection" replace />;
   }
 
-  const portrait = getPortrait(character);
+  const levelImages = getLevelImages(character, levelResults);
+  const portrait = character.portrait || levelImages[0] || getPortrait(character);
+  const unlockedLevel = getUnlockedCharacterLevel(character, levelResults);
   const copy = getProfileCopy(character);
   const genre = formatGenre(character.genre);
   const isMatched = matches.includes(character.id);
@@ -160,6 +165,14 @@ export default function CharacterProfile() {
               {character.work} · {character.author}
             </p>
             <h1 className="headline-lg">{character.name}</h1>
+            {character.levelChallenges?.length ? (
+              <p className="profile-location">
+                <BookOpen size={14} />
+                Level {unlockedLevel}:{" "}
+                {character.levels?.find((level) => level.level === unlockedLevel)
+                  ?.title ?? "Giai đoạn hiện tại"}
+              </p>
+            ) : null}
             {character.artTitle && (
               <p className="profile-location">
                 <MapPin size={14} />
@@ -169,6 +182,14 @@ export default function CharacterProfile() {
             <p className="profile-summary">{copy.summary}</p>
           </div>
         </div>
+
+        {character.levelChallenges?.length ? (
+          <LevelProgress
+            character={character}
+            levelResults={levelResults}
+            className="profile-level-progress"
+          />
+        ) : null}
 
         <div className="quote-row profile-quote-card">
           <blockquote className="quote profile-quote">
@@ -209,13 +230,6 @@ export default function CharacterProfile() {
               <section className="profile-section">
                 <h2>Bối cảnh</h2>
                 <p>{character.context}</p>
-              </section>
-            )}
-
-            {character.voice && (
-              <section className="profile-section">
-                <h2>Chất giọng</h2>
-                <p>{character.voice}</p>
               </section>
             )}
 

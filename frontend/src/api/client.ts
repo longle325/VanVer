@@ -58,6 +58,11 @@ export const api: ApiClient = {
       ? realClient.submitChallenge(id, answers)
       : mockClient.submitChallenge(id, answers),
 
+  gradeOpenEndedAnswer: (input) =>
+    useReal("challenge")
+      ? realClient.gradeOpenEndedAnswer(input)
+      : mockClient.gradeOpenEndedAnswer(input),
+
   getLeaderboard: () =>
     useReal("leaderboard")
       ? realClient.getLeaderboard()

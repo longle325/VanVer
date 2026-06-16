@@ -221,6 +221,28 @@ class ChallengeResult(BaseModel):
     correct_answers: List[int]
 
 
+class OpenEndedGradeSubmission(BaseModel):
+    character_slug: str = Field(..., min_length=1)
+    character_name: str = Field(..., min_length=1)
+    work_title: Optional[str] = None
+    phase_title: Optional[str] = None
+    question: str = Field(..., min_length=1)
+    answer: str = Field(..., min_length=1)
+    rubric: str = Field(..., min_length=1)
+    evidence: Optional[str] = None
+
+
+class OpenEndedGradeResult(BaseModel):
+    score: int = Field(..., ge=0, le=1)
+    passed: bool
+    feedback: str
+    matched_criteria: List[str] = Field(default_factory=list)
+    missing_criteria: List[str] = Field(default_factory=list)
+    confidence: float = Field(..., ge=0, le=1)
+    retrieval_mode: str
+    sources: List[dict] = Field(default_factory=list)
+
+
 class ChallengeAttemptResponse(BaseModel):
     """Persisted attempt row. Does not include `correct_answers` because
     the DB doesn't store them — they're derived from the challenge questions

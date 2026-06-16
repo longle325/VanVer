@@ -10,6 +10,8 @@ import type {
 import {
   POINTS_PER_MATCH,
 } from "@/lib/scoring";
+import { STORAGE_KEY } from "@/lib/constants";
+import type { LevelResults } from "@/lib/characterLevels";
 import { DEFAULT_TRACK_ID, type MusicTrack } from "@/data/music";
 
 export interface MusicSettings {
@@ -25,6 +27,7 @@ interface AppState {
   matches: string[];
   skipped: string[];
   completed: Record<string, ChallengeResult>;
+  levelResults: LevelResults;
   chats: Record<string, ChatMessage[]>;
   music: MusicSettings;
 
@@ -39,6 +42,12 @@ interface AppState {
   setChat: (id: string, messages: ChatMessage[]) => void;
   saveChallenge: (id: string, result: ChallengeResult) => void;
   retryChallenge: (id: string) => void;
+  saveLevelChallenge: (
+    id: string,
+    level: 1 | 2 | 3,
+    result: ChallengeResult,
+  ) => void;
+  retryLevelChallenge: (id: string, level: 1 | 2 | 3) => void;
   setMusicEnabled: (enabled: boolean) => void;
   setMusicTrack: (trackId: MusicTrack["id"]) => void;
   setMusicVolume: (volume: number) => void;
@@ -52,6 +61,7 @@ const initial = {
   matches: [] as string[],
   skipped: [] as string[],
   completed: {} as Record<string, ChallengeResult>,
+  levelResults: {} as LevelResults,
   chats: {} as Record<string, ChatMessage[]>,
   music: {
     enabled: false,
@@ -146,6 +156,73 @@ export const useAppStore = create<AppState>()(
           };
         }),
 
+      saveLevelChallenge: (id, level, result) =>
+        set((state) => {
+          const previous = state.levelResults[id]?.[level];
+          const characterLevels = {
+            ...(state.levelResults[id] ?? {}),
+            [level]: result,
+          };
+          const levelResults = {
+            ...state.levelResults,
+            [id]: characterLevels,
+          };
+          const allLevelsPassed = ([1, 2, 3] as const).every(
+            (item) => characterLevels[item]?.passed,
+          );
+          const completed = { ...state.completed };
+
+          if (allLevelsPassed) {
+            const results = ([1, 2, 3] as const).map(
+              (item) => characterLevels[item] as ChallengeResult,
+            );
+            completed[id] = {
+              score: results.reduce((sum, item) => sum + item.score, 0),
+              total: results.reduce(
+                (sum, item) => sum + (item.total ?? 5),
+                0,
+              ),
+              passed: true,
+              perfect: results.every((item) => item.perfect),
+              awarded: 0,
+              answers: results.flatMap((item) => item.answers),
+              correctAnswers: results.flatMap(
+                (item) => item.correctAnswers ?? [],
+              ),
+            };
+          } else {
+            delete completed[id];
+          }
+
+          return {
+            completed,
+            levelResults,
+            points:
+              state.points - (previous?.awarded ?? 0) + result.awarded,
+          };
+        }),
+
+      retryLevelChallenge: (id, level) =>
+        set((state) => {
+          const previous = state.levelResults[id]?.[level];
+          if (!previous) return state;
+          const characterLevels = { ...(state.levelResults[id] ?? {}) };
+          delete characterLevels[level];
+          const levelResults = { ...state.levelResults };
+          if (Object.keys(characterLevels).length) {
+            levelResults[id] = characterLevels;
+          } else {
+            delete levelResults[id];
+          }
+          const completed = { ...state.completed };
+          delete completed[id];
+          return {
+            completed,
+            levelResults,
+            points: Math.max(0, state.points - previous.awarded),
+          };
+        }),
+
       setMusicEnabled: (enabled) =>
         set((state) => ({ music: { ...state.music, enabled } })),
 
@@ -163,7 +240,7 @@ export const useAppStore = create<AppState>()(
       resetAll: () => set({ ...initial }),
     }),
     {
-      name: "litmatch-state",
+      name: STORAGE_KEY,
       storage: appStorage,
     },
   ),

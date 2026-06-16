@@ -27,10 +27,40 @@ export interface ChallengeQuestion {
    * backend is expected to assign and persist these per docs/API.md §5.2.
    */
   id: string;
+  type?: "multiple_choice" | "open_ended";
+  level?: 1 | 2 | 3;
+  phaseTitle?: string;
   text: string;
   options: string[];
   answer: number;
   explanation: string;
+  rubric?: string;
+  evidence?: string;
+  sourceKey?: string;
+  sourceUrl?: string;
+}
+
+export interface CharacterLevelChallenge {
+  level: 1 | 2 | 3;
+  phaseTitle: string;
+  questions: ChallengeQuestion[];
+}
+
+export interface CharacterLevel {
+  level: 1 | 2 | 3;
+  title: string;
+  /**
+   * Primary image for the level. Use `images` when a view supports the
+   * full three-image character set.
+   */
+  image: string;
+  images: string[];
+  referenceImage: string;
+  referenceImages: string[];
+  assetStatus: "existing" | "needs_generation";
+  unlockRequirement: string;
+  promptFocus: string;
+  visualPrompt: string;
 }
 
 export interface Character {
@@ -59,6 +89,8 @@ export interface Character {
   suggestedQuestions?: string[];
   interpretationThemes?: string[];
   symbols?: string[];
+  levels?: CharacterLevel[];
+  levelChallenges?: CharacterLevelChallenge[];
   challenge: ChallengeQuestion[];
 }
 
@@ -75,11 +107,14 @@ export interface ChatMessage {
 }
 
 export interface ChallengeResult {
+  level?: 1 | 2 | 3;
+  phaseTitle?: string;
   score: number;
+  total?: number;
   passed: boolean;
   perfect: boolean;
   awarded: number;
-  answers: number[];
+  answers: Array<number | string>;
   /**
    * Per-question correct answer indices, populated post-submission.
    * Real mode receives them in the backend response; mock mode sources
@@ -88,6 +123,28 @@ export interface ChallengeResult {
    * "Đáp án đúng" indicator on the result page.
    */
   correctAnswers?: number[];
+  openResponses?: Record<string, string>;
+  openGrades?: Record<string, OpenEndedGradeResult>;
+  nextLevelUnlocked?: 2 | 3;
+}
+
+export interface OpenEndedGradeRequest {
+  characterId: string;
+  characterName: string;
+  workTitle?: string;
+  phaseTitle?: string;
+  question: ChallengeQuestion;
+  answer: string;
+}
+
+export interface OpenEndedGradeResult {
+  score: 0 | 1;
+  passed: boolean;
+  feedback: string;
+  matchedCriteria: string[];
+  missingCriteria: string[];
+  confidence: number;
+  retrievalMode: string;
 }
 
 export interface LeaderboardEntry {

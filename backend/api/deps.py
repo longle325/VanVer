@@ -12,6 +12,10 @@ from core.database import async_session_factory
 from services.chat_service import ChatService, get_chat_service
 from services.codex_agent import CodexKnowledgeAgent, get_codex_agent
 from services.knowledge_retriever import KnowledgeRetriever, get_knowledge_retriever
+from services.open_ended_grading_service import (
+    OpenEndedGradingService,
+    get_open_ended_grading_service,
+)
 
 
 # ── Database session ──────────────────────────────────────────────────────
@@ -45,3 +49,10 @@ def get_chat() -> ChatService:
 
 def get_retriever() -> KnowledgeRetriever:
     return get_knowledge_retriever()
+
+
+# ── Open-ended challenge grading ──────────────────────────────────────────
+
+
+def get_open_ended_grader() -> OpenEndedGradingService:
+    return get_open_ended_grading_service(knowledge_retriever=get_retriever())
