@@ -144,6 +144,37 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
         self.assertIn("Nhân vật: Ta đã nghe tiếng sáo gọi về tuổi trẻ.", system_prompt)
         self.assertEqual(chunks, ["tôi nhớ"])
 
+    def test_format_chat_history_limits_prompt_context(self):
+        history = [
+            {"role": "user", "content": f"old message {index}"}
+            for index in range(6)
+        ]
+        history.extend(
+            [
+                {
+                    "role": "assistant",
+                    "content": "assistant says " + ("x" * 80),
+                },
+                {
+                    "role": "user",
+                    "content": "latest user asks about the next moment",
+                },
+            ]
+        )
+
+        formatted = ChatService._format_chat_history(
+            history,
+            max_messages=3,
+            max_chars_per_message=32,
+            max_total_chars=140,
+        )
+
+        self.assertLessEqual(len(formatted), 140)
+        self.assertNotIn("old message 0", formatted)
+        self.assertNotIn("old message 4", formatted)
+        self.assertIn("Người học: latest user asks about", formatted)
+        self.assertIn("... [truncated]", formatted)
+
     def test_prepare_retrieval_returns_sources_for_frontend(self):
         class FakeRetriever:
             async def search_with_sources_async(self, character_slug, user_query):

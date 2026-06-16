@@ -165,15 +165,47 @@ class ChatService:
         return kwargs
 
     @staticmethod
-    def _format_chat_history(chat_history: list[dict[str, str]]) -> str:
+    def _format_chat_history(
+        chat_history: list[dict[str, str]],
+        *,
+        max_messages: Optional[int] = None,
+        max_chars_per_message: Optional[int] = None,
+        max_total_chars: Optional[int] = None,
+    ) -> str:
+        resolved_max_messages = (
+            settings.CHAT_PROMPT_HISTORY_MAX_MESSAGES
+            if max_messages is None
+            else max_messages
+        )
+        resolved_max_chars = (
+            settings.CHAT_PROMPT_HISTORY_MAX_CHARS_PER_MESSAGE
+            if max_chars_per_message is None
+            else max_chars_per_message
+        )
+        resolved_max_total = (
+            settings.CHAT_PROMPT_HISTORY_MAX_TOTAL_CHARS
+            if max_total_chars is None
+            else max_total_chars
+        )
+        if resolved_max_messages <= 0:
+            return ""
+
         lines: list[str] = []
-        for message in chat_history:
+        for message in chat_history[-resolved_max_messages:]:
             content = message.get("content", "").strip()
             if not content:
                 continue
+            if resolved_max_chars > 0 and len(content) > resolved_max_chars:
+                content = f"{content[:resolved_max_chars].rstrip()}... [truncated]"
             role = message.get("role")
             label = "Nhân vật" if role == "assistant" else "Người học"
             lines.append(f"{label}: {content}")
+
+        while lines and resolved_max_total > 0:
+            formatted = "\n".join(lines)
+            if len(formatted) <= resolved_max_total:
+                return formatted
+            lines.pop(0)
         return "\n".join(lines)
 
 

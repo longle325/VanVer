@@ -86,6 +86,13 @@ class Settings(BaseSettings):
     POINTS_CHALLENGE_PASS_BONUS: int = 40  # >= 4/5
     CHALLENGE_PASS_THRESHOLD: int = 4  # out of 5
 
+    # --- Chat quota / prompt cost controls ---
+    CHAT_MONTHLY_CHARACTER_LIMIT: int = 5
+    CHAT_MONTHLY_MESSAGES_PER_CHARACTER_LIMIT: int = 5
+    CHAT_PROMPT_HISTORY_MAX_MESSAGES: int = 6
+    CHAT_PROMPT_HISTORY_MAX_CHARS_PER_MESSAGE: int = 600
+    CHAT_PROMPT_HISTORY_MAX_TOTAL_CHARS: int = 2400
+
     model_config = {
         # Tuple of .env paths — pydantic reads the first one found.
         # Empty tuple is fine (no .env in production containers).
