@@ -63,17 +63,6 @@ export interface CharacterLevel {
   visualPrompt: string;
 }
 
-export interface CharacterVideo {
-  id: string;
-  title: string;
-  /** Public path under `frontend/public/character-videos/<slug>/`. */
-  src: string;
-  poster?: string;
-  /** Optional WebVTT subtitles/captions track next to the MP4. */
-  captions?: string;
-  description?: string;
-}
-
 export interface Character {
   id: string;
   name: string;
@@ -102,13 +91,6 @@ export interface Character {
   symbols?: string[];
   levels?: CharacterLevel[];
   levelChallenges?: CharacterLevelChallenge[];
-  /**
-   * Final character journey videos, rendered after `images` in the Discover
-   * gallery and at the bottom of the profile. Add a new character video by
-   * appending an entry here and placing the MP4 under
-   * `frontend/public/character-videos/<slug>/`.
-   */
-  videos?: CharacterVideo[];
   challenge: ChallengeQuestion[];
 }
 

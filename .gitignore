@@ -19,6 +19,5 @@ backend/data/*.sql.gz
 Content for Hackathon game *.pdf
 image.png
 
-# Generated character preview videos are too large for normal commits.
-# Keep subtitles/metadata tracked; add MP4s to the matching public folder locally.
-frontend/public/character-videos/**/*.mp4
+# Character preview videos (from a prior project) — kept locally, not in git.
+frontend/public/character-videos/

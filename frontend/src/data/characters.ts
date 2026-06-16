@@ -1,5 +1,4 @@
 import type { Character, ChallengeQuestion, CharacterLevel } from "@/types";
-import { buildCharacterVideos } from "./characterVideos";
 import { levelChallengeMap } from "./levelChallenges";
 
 // Question id is auto-generated below, so the seed data only supplies
@@ -1342,7 +1341,6 @@ export const characters: Character[] = rawCharacters.map((character) => ({
   ...character,
   levels: buildLevels(character),
   levelChallenges: levelChallengeMap[character.id],
-  videos: character.videos ?? buildCharacterVideos(character),
   challenge: character.challenge.map((question, index) => ({
     ...question,
     id: `${character.id}-q${index + 1}`,
