@@ -2,7 +2,7 @@
 
 Prompts and image rules for the LitMatch character cards, written for ChatGPT image generation or any DALL·E / SDXL-class model.
 
-Style direction targets the two reference images in `mock style images/`: aged Vietnamese parchment / Đông Hồ folk woodblock + Hàng Trống classical scroll painting. The cultural guardrails block exists because gpt-image models otherwise default to Chinese tropes for "Asian historical figure" — keep that block in the prompt; it makes a measurable difference.
+Style direction is aged Vietnamese parchment / Đông Hồ folk woodblock + Hàng Trống classical scroll painting. The cultural guardrails block exists because gpt-image models otherwise default to Chinese tropes for "Asian historical figure" — keep that block in the prompt; it makes a measurable difference.
 
 ## Level image rule
 

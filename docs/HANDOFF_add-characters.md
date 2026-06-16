@@ -361,7 +361,7 @@ Provide at least 2 stages so timeline progression is wired and ready (the `curre
 - File format: PNG, recommended **1024×1536 portrait**.
 - Naming: `<kebab-slug>.png` for the primary, optional `<kebab-slug>-2.png`, `<kebab-slug>-3.png` for swipeable extras.
 - See `docs/image-prompts.md` for the team's image-gen prompts and cultural guardrails (Vietnamese folk illustration style, **explicitly NOT Chinese/Japanese/Korean** — gpt-image otherwise defaults to Chinese hanfu for "Asian historical figure"; that block matters).
-- Reference images in `mock style images/` (parchment / Đông Hồ + Hàng Trống style).
+- Target style: aged parchment / Đông Hồ folk woodblock + Hàng Trống classical scroll painting (see `docs/image-prompts.md`).
 
 ---
 
