@@ -9,6 +9,11 @@ const coveredCharacters = [
   "xuan-toc-do",
   "luc-van-tien",
   "thuy-kieu",
+  "lao-hac",
+  "chi-dau",
+  "ong-sau",
+  "ong-hai",
+  "vu-nuong",
 ] as const;
 
 describe("level challenge data", () => {
