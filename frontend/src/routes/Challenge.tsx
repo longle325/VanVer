@@ -12,6 +12,7 @@ import {
 } from "@/lib/characterLevels";
 import { scoreLevelChallenge } from "@/lib/scoring";
 import LevelProgress from "@/components/LevelProgress";
+import LevelUpOverlay from "@/components/LevelUpOverlay";
 import type {
   Character,
   CharacterLevelChallenge,
@@ -262,6 +263,10 @@ export default function Challenge() {
   } | null>(null);
   const [isGradingOpenAnswer, setIsGradingOpenAnswer] = useState(false);
   const [gradeError, setGradeError] = useState<string | null>(null);
+  const [levelUpView, setLevelUpView] = useState<{
+    completed: 1 | 2 | 3;
+    unlocked: 2 | 3;
+  } | null>(null);
 
   const activeLevel = useMemo(
     () => (character ? getActiveChallengeLevel(character, levelResults) : 1),
@@ -276,6 +281,7 @@ export default function Challenge() {
     setAnswers([]);
     setRecentLevelResult(null);
     setGradeError(null);
+    setLevelUpView(null);
   }, [id]);
 
   if (!id) return <Navigate to="/discover" replace />;
@@ -303,25 +309,47 @@ export default function Challenge() {
       : undefined;
   const existing = levelChallenge ? existingLevelResult : completed[id];
   if (recent) {
+    const advanceToNextLevel = () => {
+      setLevelUpView(null);
+      setRecentLevelResult(null);
+      setActiveQuestion(0);
+      setAnswers([]);
+    };
     return (
-      <ResultView
-        character={character}
-        questions={recent.challenge.questions}
-        result={recent.result}
-        levelChallenge={recent.challenge}
-        levelResults={levelResults}
-        onContinue={() => {
-          setRecentLevelResult(null);
-          setActiveQuestion(0);
-          setAnswers([]);
-        }}
-        onRetry={() => {
-          retryLevelChallenge(id, recent.challenge.level);
-          setActiveQuestion(0);
-          setAnswers([]);
-          setRecentLevelResult(null);
-        }}
-      />
+      <>
+        <ResultView
+          character={character}
+          questions={recent.challenge.questions}
+          result={recent.result}
+          levelChallenge={recent.challenge}
+          levelResults={levelResults}
+          onContinue={() => {
+            if (recent.result.nextLevelUnlocked) {
+              setLevelUpView({
+                completed: recent.result.level ?? recent.challenge.level,
+                unlocked: recent.result.nextLevelUnlocked,
+              });
+            } else {
+              advanceToNextLevel();
+            }
+          }}
+          onRetry={() => {
+            setLevelUpView(null);
+            retryLevelChallenge(id, recent.challenge.level);
+            setActiveQuestion(0);
+            setAnswers([]);
+            setRecentLevelResult(null);
+          }}
+        />
+        {levelUpView && (
+          <LevelUpOverlay
+            character={character}
+            completedLevel={levelUpView.completed}
+            unlockedLevel={levelUpView.unlocked}
+            onContinue={advanceToNextLevel}
+          />
+        )}
+      </>
     );
   }
 
