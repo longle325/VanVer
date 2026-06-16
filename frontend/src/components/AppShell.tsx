@@ -34,6 +34,7 @@ export default function AppShell() {
   const setMusicEnabled = useAppStore((s) => s.setMusicEnabled);
   const location = useLocation();
   const isLeaderboard = location.pathname.startsWith("/leaderboard");
+  const isChallengeRoute = location.pathname.includes("/challenge");
 
   return (
     <div className="app-shell">
@@ -108,7 +109,7 @@ export default function AppShell() {
       <main className="main">
         <Outlet />
       </main>
-      {profile && (
+      {profile && !isChallengeRoute && (
         <nav className="mobile-nav">
           {items
             .filter((item) => item.key !== "profile")
