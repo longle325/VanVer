@@ -540,8 +540,8 @@ h3 {
   border: 0;
   background: linear-gradient(to bottom, transparent, var(--surface-lowest) 82%);
   z-index: 1;
-  /* Decorative bottom scrim — must never intercept clicks, or it swallows
-     the native video control bar on the video slide. */
+  /* Decorative bottom scrim — must never intercept clicks so the gallery
+     arrows and dots underneath stay usable. */
   pointer-events: none;
 }
 
