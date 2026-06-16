@@ -1,6 +1,6 @@
 import type { CharacterLevelChallenge } from "@/types";
 
-// Generated from docs/litmatch_challenge_5_nhan_vat_admin_key-1.xlsx.
+// Generated from docs/vanver_challenge_5_nhan_vat_admin_key-1.xlsx.
 // The workbook is the source of truth for phase-level challenge copy.
 export const levelChallengeMap: Record<string, CharacterLevelChallenge[]> = {
   "chi-pheo": [

@@ -550,7 +550,7 @@ async def run_seed(include_demo_users: bool = True) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Seed LitMatch backend data.")
+    parser = argparse.ArgumentParser(description="Seed Vanver backend data.")
     parser.add_argument(
         "--skip-demo-users",
         action="store_true",

@@ -1,10 +1,10 @@
-# LitMatch PRD
+# Vanver PRD
 
 ## 1. Product Summary
 
-**Product name:** LitMatch
+**Product name:** Vanver
 
-**Description:** LitMatch is a gamified Vietnamese literature learning app that helps students discover literary characters through swipe cards, chat with source-grounded AI character personas, complete character challenges, and compete on a leaderboard.
+**Description:** Vanver is a gamified Vietnamese literature learning app that helps students discover literary characters through swipe cards, chat with source-grounded AI character personas, complete character challenges, and compete on a leaderboard.
 
 **Core promise:** Make Vietnamese literature feel less like memorization and more like emotionally connecting with characters.
 
@@ -16,7 +16,7 @@
 
 Many high school students approach Vietnamese literature as a memorization subject. They often remember sample essay structures but struggle to connect emotionally with characters, understand motivations, or explain themes in their own words.
 
-LitMatch reframes literature study as character discovery. Students meet characters through visually engaging profile cards, choose who to explore, ask questions in conversational form, and prove understanding through short challenges.
+Vanver reframes literature study as character discovery. Students meet characters through visually engaging profile cards, choose who to explore, ask questions in conversational form, and prove understanding through short challenges.
 
 ## 3. Goals
 
@@ -49,7 +49,7 @@ LitMatch reframes literature study as character discovery. Students meet charact
 
 ## 5. Core User Journey
 
-1. User opens LitMatch.
+1. User opens Vanver.
 2. User enters a username and selects a grade level.
 3. User sees the discovery deck.
 4. User swipes left to skip or right to match with a character.
@@ -353,7 +353,7 @@ The chatbot should receive:
 
 ## 10. Design Direction
 
-LitMatch uses the Modern Literary design direction — an aged-parchment, wood-and-gold palette with Noto Serif display type — now implemented in the app's stylesheets under `frontend/src/styles/`. The original static HTML/screenshot mockups have been removed; the shipped screens are the reference.
+Vanver uses the Modern Literary design direction — an aged-parchment, wood-and-gold palette with Noto Serif display type — now implemented in the app's stylesheets under `frontend/src/styles/`. The original static HTML/screenshot mockups have been removed; the shipped screens are the reference.
 
 The interface should feel:
 

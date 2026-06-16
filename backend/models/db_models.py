@@ -1,5 +1,5 @@
 """
-SQLAlchemy ORM models for LitMatch.
+SQLAlchemy ORM models for Vanver.
 
 Tables:
   users       - student accounts and scores

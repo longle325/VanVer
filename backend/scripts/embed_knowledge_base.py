@@ -166,7 +166,7 @@ async def embed_knowledge_base(
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Embed LitMatch knowledge chunks.")
+    parser = argparse.ArgumentParser(description="Embed Vanver knowledge chunks.")
     parser.add_argument(
         "--chunks-path",
         type=Path,

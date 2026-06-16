@@ -1,5 +1,5 @@
 """
-LitMatch API  –  FastAPI application factory.
+Vanver API  –  FastAPI application factory.
 
 Start locally:
     uvicorn main:app --reload --port 8081
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Create tables on startup, dispose engine on shutdown."""
-    logger.info("Starting LitMatch API …")
+    logger.info("Starting Vanver API …")
     await ensure_vector_extension()
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -86,7 +86,7 @@ app.add_middleware(
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key=settings.SESSION_SECRET_KEY or "litmatch-dev-session-secret-change-me",
+    secret_key=settings.SESSION_SECRET_KEY or "vanver-dev-session-secret-change-me",
     session_cookie=settings.SESSION_COOKIE_NAME,
     max_age=settings.SESSION_MAX_AGE_SECONDS,
     same_site=settings.SESSION_COOKIE_SAMESITE,

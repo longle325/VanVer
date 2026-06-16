@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">LitMatch</string>
-    <string name="title_activity_main">LitMatch</string>
-    <string name="package_name">com.litmatch.app</string>
-    <string name="custom_url_scheme">com.litmatch.app</string>
+    <string name="app_name">Vanver</string>
+    <string name="title_activity_main">Vanver</string>
+    <string name="package_name">com.vanver.app</string>
+    <string name="custom_url_scheme">com.vanver.app</string>
 </resources>

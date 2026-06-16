@@ -1,4 +1,4 @@
-"""Initial LitMatch schema
+"""Initial Vanver schema
 
 Revision ID: 0001_initial_schema
 Revises:

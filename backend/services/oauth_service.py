@@ -21,7 +21,7 @@ class OAuthProfile:
 
 
 def normalize_oidc_userinfo(provider: str, userinfo: dict[str, Any]) -> OAuthProfile:
-    """Normalize provider claims into the stable identity persisted by LitMatch."""
+    """Normalize provider claims into the stable identity persisted by Vanver."""
     subject = str(userinfo.get("sub") or "").strip()
     if not subject:
         raise ValueError("OIDC userinfo is missing required subject claim.")

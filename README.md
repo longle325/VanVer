@@ -1,6 +1,6 @@
-# LitMatch
+# Vanver
 
-**Học văn học Việt Nam như chơi một trò chơi.** LitMatch turns Vietnamese
+**Học văn học Việt Nam như chơi một trò chơi.** Vanver turns Vietnamese
 literature study into character discovery: swipe to meet literary characters,
 chat with source-grounded AI personas, and climb a three-phase challenge that
 *levels each character's portrait up* — card-game style — on the way to the

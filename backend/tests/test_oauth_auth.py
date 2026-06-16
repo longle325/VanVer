@@ -171,7 +171,7 @@ class OAuthRouteTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"ok": True})
-        self.assertIn("litmatch_session=", response.headers.get("set-cookie", ""))
+        self.assertIn("vanver_session=", response.headers.get("set-cookie", ""))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
-# Handoff — adding new characters to LitMatch
+# Handoff — adding new characters to Vanver
 
-You are extending LitMatch (a gamified Vietnamese-literature roleplay app) by adding one or more new characters alongside the existing ten (`chi-pheo`, `mi`, `xuan-toc-do`, `luc-van-tien`, `thuy-kieu`, `lao-hac`, `chi-dau`, `ong-sau`, `ong-hai`, `vu-nuong`). The product is shipped — these characters work end to end against gpt-4o + RAG retrieval, with a chat typing indicator and source citation chips. Your job is to add new characters with the **same fidelity** the existing ones have, with no shortcuts.
+You are extending Vanver (a gamified Vietnamese-literature roleplay app) by adding one or more new characters alongside the existing ten (`chi-pheo`, `mi`, `xuan-toc-do`, `luc-van-tien`, `thuy-kieu`, `lao-hac`, `chi-dau`, `ong-sau`, `ong-hai`, `vu-nuong`). The product is shipped — these characters work end to end against gpt-4o + RAG retrieval, with a chat typing indicator and source citation chips. Your job is to add new characters with the **same fidelity** the existing ones have, with no shortcuts.
 
 This document gives you every touchpoint, the exact data shape at each, and the order in which to do them. Read it through once before you write any code.
 

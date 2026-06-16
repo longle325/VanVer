@@ -19,9 +19,9 @@
 
 set -euo pipefail
 
-CONTAINER="${LITMATCH_PG_CONTAINER:-litmatch-postgres}"
-DB="${LITMATCH_PG_DB:-litmatch}"
-PGUSER_NAME="${LITMATCH_PG_USER:-postgres}"
+CONTAINER="${VANVER_PG_CONTAINER:-vanver-postgres}"
+DB="${VANVER_PG_DB:-vanver}"
+PGUSER_NAME="${VANVER_PG_USER:-postgres}"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="$REPO_ROOT/backend/data/knowledge_chunks.sql.gz"

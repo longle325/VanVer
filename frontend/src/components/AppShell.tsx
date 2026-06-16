@@ -40,7 +40,7 @@ export default function AppShell() {
     <div className="app-shell">
       <aside className="side-nav">
         <div className="brand">
-          <h1 className="brand-title">LitMatch</h1>
+          <h1 className="brand-title">Vanver</h1>
           <p className="brand-subtitle">Văn học Việt Nam</p>
         </div>
         <nav className="nav-links">
@@ -67,7 +67,7 @@ export default function AppShell() {
               fontSize: 20,
             }}
           >
-            LitMatch
+            Vanver
           </strong>
           {profile && (
             <span style={{ marginLeft: 8, color: "var(--muted)", fontSize: 12 }}>

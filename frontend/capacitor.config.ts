@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.litmatch.app",
-  appName: "LitMatch",
+  appId: "com.vanver.app",
+  appName: "Vanver",
   webDir: "dist",
   server: {
     // Allow all navigation so BrowserRouter-style paths work if needed

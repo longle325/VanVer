@@ -1,6 +1,6 @@
-# LitMatch Backend API
+# Vanver Backend API
 
-This documents the **live** LitMatch backend (FastAPI + Postgres/pgvector +
+This documents the **live** Vanver backend (FastAPI + Postgres/pgvector +
 OpenAI). It is no longer a forward-looking mock contract — the backend is
 implemented and runs at `http://localhost:8081` in local dev.
 

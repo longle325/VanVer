@@ -1,4 +1,4 @@
-package com.litmatch.app;
+package com.vanver.app;
 
 import com.getcapacitor.BridgeActivity;
 

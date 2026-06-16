@@ -1,4 +1,4 @@
-# LitMatch Task Tracker
+# Vanver Task Tracker
 
 Last updated: 2026-05-08 (backend wire-up Phase 4 — chat SSE flipped, all endpoints real)
 
@@ -14,7 +14,7 @@ Last updated: 2026-05-08 (backend wire-up Phase 4 — chat SSE flipped, all endp
 - [x] Replaced vanilla JS prototype with React + TypeScript + Vite scaffold.
 - [x] Added Tailwind CSS, PostCSS, Autoprefixer.
 - [x] Added React Router DOM with nested routing and onboarding guard.
-- [x] Added Zustand store with `persist` middleware (key `litmatch-state`).
+- [x] Added Zustand store with `persist` middleware (key `vanver-state`).
 - [x] Added TanStack Query with mock API client implementing PRD §9 endpoints.
 - [x] Added Framer Motion, Lucide icons, react-hook-form, react-tinder-card to deps.
 - [x] Defined typed data model in `src/types/`.

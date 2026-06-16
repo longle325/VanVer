@@ -71,7 +71,7 @@ def extract_all(knowledge_base_dir: Path) -> list[Path]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Extract full text from LitMatch knowledge-base PDFs."
+        description="Extract full text from Vanver knowledge-base PDFs."
     )
     parser.add_argument(
         "--knowledge-base-dir",

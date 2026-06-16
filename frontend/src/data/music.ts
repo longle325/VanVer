@@ -1,9 +1,16 @@
 export interface MusicTrack {
-  id: "vet-muc-tren-giay" | "duoi-anh-den-dau";
+  id: "vet-muc-tren-giay" | "duoi-anh-den-dau" | "across-the-jade-valley";
   title: string;
   mood: string;
   src: string;
 }
+
+export const CHALLENGE_MUSIC_TRACK: MusicTrack = {
+  id: "across-the-jade-valley",
+  title: "Across the Jade Valley",
+  mood: "Tươi sáng, cổ trang — đàn gảy nhanh và nhịp trống nhẹ",
+  src: "/audio/across-the-jade-valley.mp3",
+};
 
 export const MUSIC_TRACKS: MusicTrack[] = [
   {
@@ -18,6 +25,11 @@ export const MUSIC_TRACKS: MusicTrack[] = [
     mood: "Trầm tĩnh, thiền định — đàn tranh dẫn dắt",
     src: "/audio/vet-muc-tren-giay.mp3",
   },
+];
+
+export const MUSIC_LIBRARY: MusicTrack[] = [
+  ...MUSIC_TRACKS,
+  CHALLENGE_MUSIC_TRACK,
 ];
 
 export const DEFAULT_TRACK_ID: MusicTrack["id"] = "duoi-anh-den-dau";

@@ -26,7 +26,7 @@ def _find_env_files() -> list[str]:
 
 class Settings(BaseSettings):
     # --- Database ---
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/litmatch"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/vanver"
 
     # --- OpenAI ---
     OPENAI_API_KEY: str = ""
@@ -54,7 +54,7 @@ class Settings(BaseSettings):
 
     # --- Auth / OAuth ---
     SESSION_SECRET_KEY: str = ""
-    SESSION_COOKIE_NAME: str = "litmatch_session"
+    SESSION_COOKIE_NAME: str = "vanver_session"
     SESSION_COOKIE_SECURE: bool = False
     SESSION_COOKIE_SAMESITE: str = "lax"
     SESSION_MAX_AGE_SECONDS: int = 60 * 60 * 24 * 14
@@ -76,7 +76,7 @@ class Settings(BaseSettings):
     OAUTH_GOOGLE_SCOPE: str = "openid email profile"
 
     # --- App ---
-    APP_TITLE: str = "LitMatch API"
+    APP_TITLE: str = "Vanver API"
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = False
 

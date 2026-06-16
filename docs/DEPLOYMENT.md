@@ -1,6 +1,6 @@
-# LitMatch — Deployment Guide
+# Vanver — Deployment Guide
 
-Complete guide for running, building, and deploying LitMatch across all targets:
+Complete guide for running, building, and deploying Vanver across all targets:
 local development, Cloud Run (GCP), and Android APK.
 
 ---
@@ -200,7 +200,7 @@ GitHub Actions workflow
         └── Deploy to Cloud Run
                 │
                 ▼
-        https://litmatch-frontend-xxxxx.run.app
+        https://vanver-frontend-xxxxx.run.app
 ```
 
 ### One-time GCP setup
@@ -248,7 +248,7 @@ gcloud iam service-accounts add-iam-policy-binding $SA \
 #### 4.4 Create Artifact Registry repository
 
 ```bash
-gcloud artifacts repositories create litmatch \
+gcloud artifacts repositories create vanver \
   --repository-format=docker \
   --location=asia-southeast1 \
   --project=$PROJECT_ID
@@ -280,13 +280,13 @@ GitHub Actions job summary.
 cd frontend
 
 # Build and push
-docker build -t asia-southeast1-docker.pkg.dev/$PROJECT_ID/litmatch/litmatch-frontend:latest .
-docker push asia-southeast1-docker.pkg.dev/$PROJECT_ID/litmatch/litmatch-frontend:latest
+docker build -t asia-southeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest .
+docker push asia-southeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest
 
 # Deploy
-gcloud run deploy litmatch-frontend \
+gcloud run deploy vanver-frontend \
   --project $PROJECT_ID \
-  --image asia-southeast1-docker.pkg.dev/$PROJECT_ID/litmatch/litmatch-frontend:latest \
+  --image asia-southeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest \
   --region asia-southeast1 \
   --port 8080 \
   --allow-unauthenticated
@@ -311,7 +311,7 @@ gcloud run deploy litmatch-frontend \
 
 Push to `deploy` branch → GitHub Actions builds the APK automatically.
 
-Download: **GitHub → Actions → latest run → Artifacts → `litmatch-debug-apk`**
+Download: **GitHub → Actions → latest run → Artifacts → `vanver-debug-apk`**
 
 ### Via CLI (local)
 
@@ -413,7 +413,7 @@ npx cap run android --livereload --external
 
 ```bash
 # Database
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/litmatch
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/vanver
 
 # OpenAI
 OPENAI_API_KEY=sk-your-key-here
@@ -487,7 +487,7 @@ Checkout → Node 22 → JDK 21 → Android SDK
 → Upload artifact (30-day retention)
 ```
 
-Download: GitHub → Actions → run → Artifacts → `litmatch-debug-apk`
+Download: GitHub → Actions → run → Artifacts → `vanver-debug-apk`
 
 ### `deploy-cloudrun.yml` — Cloud Run
 

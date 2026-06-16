@@ -54,7 +54,7 @@ export default function Onboarding() {
     <section className="onboarding-screen">
       <div className="onboarding-card">
         <p className="kicker">Bắt đầu hành trình</p>
-        <h1 className="headline-lg">Chào mừng đến với LitMatch</h1>
+        <h1 className="headline-lg">Chào mừng đến với Vanver</h1>
         <p className="lead">
           Khám phá nhân vật văn học Việt Nam qua thẻ vuốt, trò chuyện và thử
           thách. Hãy giới thiệu bạn một chút.
