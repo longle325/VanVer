@@ -1,7 +1,7 @@
 # Vanver
 
 
-You close the book.You sigh.
+You close the book. You sigh.
 
 It has been two hours, and somehow the plot of tomorrow’s literature text is still refusing to stay in your brain. The character analysis sounds like something written by a committee of very tired adults.
 
