@@ -22,7 +22,7 @@ local development, Cloud Run (GCP), and Android APK.
 ## 1. Project Structure
 
 ```
-Husky/
+Vanver/
 ├── frontend/                    # React 18 + TypeScript + Vite + Capacitor
 │   ├── src/
 │   │   ├── api/
@@ -196,12 +196,16 @@ GitHub push to deploy
 GitHub Actions workflow
         │
         ├── Build Docker image (Node 22 + nginx)
-        ├── Push to Artifact Registry (asia-southeast1)
+        ├── Push to Artifact Registry (us-central1)
         └── Deploy to Cloud Run
                 │
                 ▼
         https://vanver-frontend-xxxxx.run.app
 ```
+
+The default deployment region is `us-central1` to stay on Cloud Run Tier 1
+pricing and make best use of free-tier credits. Use `asia-southeast1` only when
+Singapore latency is worth the higher Tier 2 pricing.
 
 ### One-time GCP setup
 
@@ -242,7 +246,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 gcloud iam service-accounts add-iam-policy-binding $SA \
   --project=$PROJECT_ID \
   --role="roles/iam.workloadIdentityUser" \
-  --member="principalSet://iam.googleapis.com/projects/433856687458/locations/global/workloadIdentityPools/github-actions-pool/attribute.repository/longle325/Husky"
+  --member="principalSet://iam.googleapis.com/projects/724238746267/locations/global/workloadIdentityPools/github-actions/attribute.repository/longle325/Vanver"
 ```
 
 #### 4.4 Create Artifact Registry repository
@@ -250,9 +254,21 @@ gcloud iam service-accounts add-iam-policy-binding $SA \
 ```bash
 gcloud artifacts repositories create vanver \
   --repository-format=docker \
-  --location=asia-southeast1 \
+  --location=us-central1 \
   --project=$PROJECT_ID
 ```
+
+Apply the cleanup policy so per-deploy images do not accumulate indefinitely:
+
+```bash
+gcloud artifacts repositories set-cleanup-policies vanver \
+  --project=$PROJECT_ID \
+  --location=us-central1 \
+  --policy=.github/artifact-registry-cleanup-policy.json
+```
+
+The policy deletes images older than 14 days while keeping the 5 most recent
+versions of each package.
 
 #### 4.5 Set GitHub repository variables
 
@@ -280,14 +296,14 @@ GitHub Actions job summary.
 cd frontend
 
 # Build and push
-docker build -t asia-southeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest .
-docker push asia-southeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest
+docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest .
+docker push us-central1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest
 
 # Deploy
 gcloud run deploy vanver-frontend \
   --project $PROJECT_ID \
-  --image asia-southeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest \
-  --region asia-southeast1 \
+  --image us-central1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest \
+  --region us-central1 \
   --port 8080 \
   --allow-unauthenticated
 ```
@@ -428,10 +444,17 @@ RAG_MIN_SIMILARITY=0.0
 
 # OAuth / backend session
 SESSION_SECRET_KEY=replace-with-a-long-random-secret
+SESSION_COOKIE_NAME=litmatch_session
+SESSION_COOKIE_SECURE=false
+SESSION_COOKIE_SAMESITE=lax
+SESSION_MAX_AGE_SECONDS=1209600
 OAUTH_POST_LOGIN_REDIRECT=http://localhost:5173
+OAUTH_ALLOWED_REDIRECT_ORIGINS=["http://localhost:5173","http://127.0.0.1:5173","capacitor://localhost","https://localhost"]
 OAUTH_CALLBACK_BASE_URL=http://localhost:8081
 OAUTH_GOOGLE_CLIENT_ID=your-google-client-id
 OAUTH_GOOGLE_CLIENT_SECRET=your-google-client-secret
+OAUTH_GOOGLE_SERVER_METADATA_URL=https://accounts.google.com/.well-known/openid-configuration
+OAUTH_GOOGLE_SCOPE=openid email profile
 
 # Frontend (VITE_ prefix required for Vite to expose to client)
 VITE_API_BASE_URL=http://localhost:8081/api/v1
@@ -458,12 +481,17 @@ VITE_REAL_ENDPOINTS=all
 | `RAG_TOP_K` | `5` | Number of RAG chunks to retrieve |
 | `RAG_MIN_SIMILARITY` | `0.0` | Minimum cosine similarity threshold |
 | `SESSION_SECRET_KEY` | — | Required for OAuth login session signing |
+| `SESSION_COOKIE_NAME` | `litmatch_session` | Browser cookie name for the backend session |
 | `SESSION_COOKIE_SECURE` | `false` | Set `true` behind HTTPS in production |
+| `SESSION_COOKIE_SAMESITE` | `lax` | SameSite policy for the backend session cookie |
+| `SESSION_MAX_AGE_SECONDS` | `1209600` | Session cookie lifetime in seconds |
 | `OAUTH_POST_LOGIN_REDIRECT` | `http://localhost:5173` | Default safe redirect after login |
 | `OAUTH_ALLOWED_REDIRECT_ORIGINS` | local dev origins | Allowed absolute `next` URL origins |
 | `OAUTH_CALLBACK_BASE_URL` | request host | Public backend origin used for OAuth callback URLs |
 | `OAUTH_GOOGLE_CLIENT_ID` | — | Google OAuth client ID |
 | `OAUTH_GOOGLE_CLIENT_SECRET` | — | Google OAuth client secret |
+| `OAUTH_GOOGLE_SERVER_METADATA_URL` | Google OpenID metadata URL | OpenID provider discovery URL |
+| `OAUTH_GOOGLE_SCOPE` | `openid email profile` | Requested Google OAuth scopes |
 | `DEBUG` | `false` | Enable debug logging |
 
 ### GitHub Actions variables (repo settings)

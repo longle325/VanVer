@@ -18,7 +18,7 @@ This document gives you every touchpoint, the exact data shape at each, and the 
 
 ## 0. Repo orientation (read first)
 
-- Working directory: `/Users/PhatNguyen/Desktop/Husky` (single repo).
+- Working directory: `/Users/PhatNguyen/Desktop/Vanver` (single repo).
 - Primary config: a single `.env` at the repo root. Backend reads it via `pydantic-settings`; frontend reads it via Vite (`frontend/vite.config.ts` sets `envDir: "../"`). Don't split it.
 - Default models: `CHAT_MODEL=gpt-4o`, `EMBEDDING_MODEL=text-embedding-3-large` (3072 dims).
 - Branch from `main`. After your work, open a PR titled e.g. `Add character: <Name> (<Work>)`.

@@ -4,11 +4,17 @@ on:
   push:
     branches:
       - deploy
+      - feat/rank
 
 env:
-  PROJECT_ID: husky-car
-  REGION: asia-southeast1
-  REGISTRY: asia-southeast1-docker.pkg.dev
+  PROJECT_ID: cs317-mlops
+  REGION: us-central1
+  REGISTRY: us-central1-docker.pkg.dev
+  ARTIFACT_REPOSITORY: vanver
+  BACKEND_SERVICE: vanver-backend
+  FRONTEND_SERVICE: vanver-frontend
+  WORKLOAD_IDENTITY_PROVIDER: projects/724238746267/locations/global/workloadIdentityPools/github-actions/providers/vanver
+  SERVICE_ACCOUNT: github-actions-deployer@cs317-mlops.iam.gserviceaccount.com
 
 jobs:
   # ── Backend ──────────────────────────────────────────────────────────────
@@ -28,8 +34,8 @@ jobs:
       - name: Auth GCP
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/433856687458/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
-          service_account: github-actions-deployer@husky-car.iam.gserviceaccount.com
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
 
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
@@ -41,20 +47,57 @@ jobs:
         working-directory: backend
         run: |
           docker build \
-            -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-backend:${{ github.sha }} \
-            -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-backend:latest \
+            -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.BACKEND_SERVICE }}:${{ github.sha }} \
+            -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.BACKEND_SERVICE }}:latest \
             .
 
       - name: Push backend image
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-backend:${{ github.sha }}
-          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-backend:latest
+          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.BACKEND_SERVICE }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.BACKEND_SERVICE }}:latest
 
       - name: Deploy backend to Cloud Run
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SESSION_SECRET_KEY: ${{ secrets.SESSION_SECRET_KEY }}
+          SESSION_COOKIE_NAME: ${{ secrets.SESSION_COOKIE_NAME }}
+          SESSION_COOKIE_SECURE: ${{ secrets.SESSION_COOKIE_SECURE }}
+          SESSION_COOKIE_SAMESITE: ${{ secrets.SESSION_COOKIE_SAMESITE }}
+          SESSION_MAX_AGE_SECONDS: ${{ secrets.SESSION_MAX_AGE_SECONDS }}
+          OAUTH_POST_LOGIN_REDIRECT: ${{ secrets.OAUTH_POST_LOGIN_REDIRECT }}
+          OAUTH_ALLOWED_REDIRECT_ORIGINS: ${{ secrets.OAUTH_ALLOWED_REDIRECT_ORIGINS }}
+          OAUTH_CALLBACK_BASE_URL: ${{ secrets.OAUTH_CALLBACK_BASE_URL }}
+          OAUTH_GOOGLE_CLIENT_ID: ${{ secrets.OAUTH_GOOGLE_CLIENT_ID }}
+          OAUTH_GOOGLE_CLIENT_SECRET: ${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET }}
+          OAUTH_GOOGLE_SERVER_METADATA_URL: ${{ secrets.OAUTH_GOOGLE_SERVER_METADATA_URL }}
+          OAUTH_GOOGLE_SCOPE: ${{ secrets.OAUTH_GOOGLE_SCOPE }}
         run: |
-          gcloud run deploy litmatch-backend \
+          : "${DATABASE_URL:?DATABASE_URL secret is required}"
+          : "${OPENAI_API_KEY:?OPENAI_API_KEY secret is required}"
+
+          ENV_VARS="DATABASE_URL=${DATABASE_URL}||OPENAI_API_KEY=${OPENAI_API_KEY}||CHAT_MODEL=gpt-5-mini||EMBEDDING_MODEL=text-embedding-3-large||EMBEDDING_DIMENSIONS=3072||SESSION_COOKIE_SECURE=true||CORS_ORIGINS=[\"*\"]"
+
+          append_env() {
+            local name="$1"
+            local value="${!name:-}"
+            if [ -n "$value" ]; then
+              ENV_VARS="${ENV_VARS}||${name}=${value}"
+            fi
+          }
+
+          append_env SESSION_SECRET_KEY
+          append_env SESSION_COOKIE_NAME
+          append_env SESSION_COOKIE_SAMESITE
+          append_env SESSION_MAX_AGE_SECONDS
+          append_env OAUTH_GOOGLE_CLIENT_ID
+          append_env OAUTH_GOOGLE_CLIENT_SECRET
+          append_env OAUTH_GOOGLE_SERVER_METADATA_URL
+          append_env OAUTH_GOOGLE_SCOPE
+
+          gcloud run deploy ${{ env.BACKEND_SERVICE }} \
             --project ${{ env.PROJECT_ID }} \
-            --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-backend:${{ github.sha }} \
+            --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.BACKEND_SERVICE }}:${{ github.sha }} \
             --region ${{ env.REGION }} \
             --platform managed \
             --port 8081 \
@@ -63,28 +106,15 @@ jobs:
             --cpu 1 \
             --min-instances 0 \
             --max-instances 5 \
-            --set-env-vars "^||^DATABASE_URL=${{ secrets.DATABASE_URL }}||OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}||CHAT_MODEL=gpt-5-mini||EMBEDDING_MODEL=text-embedding-3-large||EMBEDDING_DIMENSIONS=3072" \
+            --set-env-vars "^||^${ENV_VARS}" \
             --quiet
 
       - name: Get backend URL
         id: get-url
         run: |
-          URL=$(gcloud run services describe litmatch-backend --project ${{ env.PROJECT_ID }} --region ${{ env.REGION }} --format 'value(status.url)')
+          URL=$(gcloud run services describe ${{ env.BACKEND_SERVICE }} --project ${{ env.PROJECT_ID }} --region ${{ env.REGION }} --format 'value(status.url)')
           echo "url=$URL" >> $GITHUB_OUTPUT
           echo "Backend URL: $URL"
-
-      - name: Update backend CORS with frontend URL
-        run: |
-          FRONTEND_URL=$(gcloud run services describe litmatch-frontend --project ${{ env.PROJECT_ID }} --region ${{ env.REGION }} --format 'value(status.url)' 2>/dev/null || echo "")
-          BACKEND_URL=${{ steps.get-url.outputs.url }}
-          CORS='["'"${BACKEND_URL}"'","'"${FRONTEND_URL}"'","http://localhost:5173","http://localhost:5169","capacitor://localhost","https://localhost"]'
-
-          # Use ^ as delimiter so commas inside JSON don't break gcloud parsing
-          gcloud run services update litmatch-backend \
-            --project ${{ env.PROJECT_ID }} \
-            --region ${{ env.REGION }} \
-            --update-env-vars "^||^CORS_ORIGINS=${CORS}" \
-            --quiet
 
   # ── Frontend ─────────────────────────────────────────────────────────────
   deploy-frontend:
@@ -102,8 +132,8 @@ jobs:
       - name: Auth GCP
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/433856687458/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
-          service_account: github-actions-deployer@husky-car.iam.gserviceaccount.com
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
 
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
@@ -116,20 +146,20 @@ jobs:
         run: |
           docker build \
             --build-arg VITE_API_BASE_URL=${{ needs.deploy-backend.outputs.url }} \
-            -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-frontend:${{ github.sha }} \
-            -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-frontend:latest \
+            -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.FRONTEND_SERVICE }}:${{ github.sha }} \
+            -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.FRONTEND_SERVICE }}:latest \
             .
 
       - name: Push frontend image
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-frontend:${{ github.sha }}
-          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-frontend:latest
+          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.FRONTEND_SERVICE }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.FRONTEND_SERVICE }}:latest
 
       - name: Deploy frontend to Cloud Run
         run: |
-          gcloud run deploy litmatch-frontend \
+          gcloud run deploy ${{ env.FRONTEND_SERVICE }} \
             --project ${{ env.PROJECT_ID }} \
-            --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/litmatch/litmatch-frontend:${{ github.sha }} \
+            --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.FRONTEND_SERVICE }}:${{ github.sha }} \
             --region ${{ env.REGION }} \
             --platform managed \
             --port 8080 \
@@ -140,9 +170,21 @@ jobs:
             --max-instances 3 \
             --quiet
 
+      - name: Update backend public origins
+        run: |
+          BACKEND=${{ needs.deploy-backend.outputs.url }}
+          FRONTEND=$(gcloud run services describe ${{ env.FRONTEND_SERVICE }} --project ${{ env.PROJECT_ID }} --region ${{ env.REGION }} --format 'value(status.url)')
+          ALLOWED_REDIRECTS='["'"${FRONTEND}"'","http://localhost:5173","http://127.0.0.1:5173","capacitor://localhost","https://localhost"]'
+
+          gcloud run services update ${{ env.BACKEND_SERVICE }} \
+            --project ${{ env.PROJECT_ID }} \
+            --region ${{ env.REGION }} \
+            --update-env-vars "^||^CORS_ORIGINS=[\"*\"]||OAUTH_CALLBACK_BASE_URL=${BACKEND}||OAUTH_POST_LOGIN_REDIRECT=${FRONTEND}||OAUTH_ALLOWED_REDIRECT_ORIGINS=${ALLOWED_REDIRECTS}" \
+            --quiet
+
       - name: Show deployed URLs
         run: |
-          FRONTEND=$(gcloud run services describe litmatch-frontend --project ${{ env.PROJECT_ID }} --region ${{ env.REGION }} --format 'value(status.url)')
+          FRONTEND=$(gcloud run services describe ${{ env.FRONTEND_SERVICE }} --project ${{ env.PROJECT_ID }} --region ${{ env.REGION }} --format 'value(status.url)')
           BACKEND=${{ needs.deploy-backend.outputs.url }}
           echo "## Deployed to Cloud Run" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
