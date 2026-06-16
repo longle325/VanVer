@@ -33,7 +33,7 @@ Chí Phèo, Mị, Xuân Tóc Đỏ, Lục Vân Tiên, Thúy Kiều, Lão Hạc, 
 ## Trải nghiệm
 
 ### 1 · Bắt đầu
-Chọn tên hiển thị rồi bước vào hành trình học văn.
+Đăng nhập bằng Google rồi bước vào hành trình học văn.
 
 ![Màn hình bắt đầu](docs/screenshots/01-onboarding.png)
 

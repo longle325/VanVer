@@ -31,7 +31,7 @@ Chí Phèo, Mị, Xuân Tóc Đỏ, Lục Vân Tiên, Thúy Kiều, Lão Hạc, 
 
 ### 1 · Onboarding
 
-Start simple: choose your display name then step into the story.
+Start simple: sign in with Google, then step into the story.
 
 No heavy setup. No intimidating dashboard. Just you, your literature journey, and a cast of characters who are much more interesting than their exam summaries make them seem.
 
