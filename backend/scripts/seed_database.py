@@ -241,10 +241,48 @@ CHARACTER_SEEDS: list[dict[str, Any]] = [
 
 
 DEMO_USER_SEEDS: list[dict[str, Any]] = [
-    {"username": "Minh Trần", "grade_level": 11, "total_score": 1450},
-    {"username": "Lan Ngọc", "grade_level": 12, "total_score": 1280},
-    {"username": "Anh Nguyễn", "grade_level": 10, "total_score": 1185},
-    {"username": "Tú Uyên", "grade_level": 11, "total_score": 920},
+    {
+        "username": "Minh Trần",
+        "grade_level": 11,
+        "total_score": 1450,
+        "unlocked_character_slugs": [
+            "chi_pheo",
+            "mi",
+            "xuan_toc_do",
+            "luc_van_tien",
+            "thuy_kieu",
+        ],
+    },
+    {
+        "username": "Lan Ngọc",
+        "grade_level": 12,
+        "total_score": 1280,
+        "unlocked_character_slugs": [
+            "chi_pheo",
+            "mi",
+            "xuan_toc_do",
+            "luc_van_tien",
+        ],
+    },
+    {
+        "username": "Anh Nguyễn",
+        "grade_level": 10,
+        "total_score": 1185,
+        "unlocked_character_slugs": [
+            "chi_pheo",
+            "mi",
+            "xuan_toc_do",
+        ],
+    },
+    {
+        "username": "Tú Uyên",
+        "grade_level": 11,
+        "total_score": 920,
+        "unlocked_character_slugs": [
+            "chi_pheo",
+            "mi",
+        ],
+    },
 ]
 
 
@@ -509,8 +547,26 @@ async def seed_relationships_and_events(session) -> tuple[int, int]:
 
 
 async def seed_demo_users(session) -> int:
-    from models.db_models import User
+    from models.db_models import Character, Match, MatchStatus, User
     from sqlalchemy import select  # type: ignore[reportMissingImports]
+
+    character_slugs = {
+        slug
+        for seed in DEMO_USER_SEEDS
+        for slug in seed.get("unlocked_character_slugs", [])
+    }
+    character_result = await session.execute(
+        select(Character).where(Character.slug.in_(character_slugs))
+    )
+    characters_by_slug = {
+        character.slug: character for character in character_result.scalars().all()
+    }
+    missing_slugs = character_slugs - set(characters_by_slug)
+    if missing_slugs:
+        raise ValueError(
+            "Demo user seed references unknown character slugs: "
+            + ", ".join(sorted(missing_slugs))
+        )
 
     seeded_count = 0
     for seed in DEMO_USER_SEEDS:
@@ -519,10 +575,36 @@ async def seed_demo_users(session) -> int:
         )
         user = result.scalar_one_or_none()
         if user is None:
-            session.add(User(**seed))
+            user = User(
+                username=seed["username"],
+                grade_level=seed["grade_level"],
+                total_score=seed["total_score"],
+            )
+            session.add(user)
+            await session.flush()
         else:
             user.grade_level = seed["grade_level"]
             user.total_score = seed["total_score"]
+
+        for slug in seed.get("unlocked_character_slugs", []):
+            character = characters_by_slug[slug]
+            match_result = await session.execute(
+                select(Match).where(
+                    Match.user_id == user.id,
+                    Match.character_id == character.id,
+                )
+            )
+            match = match_result.scalar_one_or_none()
+            if match is None:
+                session.add(
+                    Match(
+                        user_id=user.id,
+                        character_id=character.id,
+                        status=MatchStatus.CHALLENGE_PASSED,
+                    )
+                )
+            else:
+                match.status = MatchStatus.CHALLENGE_PASSED
         seeded_count += 1
     return seeded_count
 

@@ -29,6 +29,13 @@ from models.db_models import (
 from services.oauth_service import OAuthProfile
 
 
+UNLOCKED_MATCH_STATUSES = (
+    MatchStatus.SWIPED_RIGHT,
+    MatchStatus.CHAT_UNLOCKED,
+    MatchStatus.CHALLENGE_PASSED,
+)
+
+
 # ── Users ─────────────────────────────────────────────────────────────────
 
 
@@ -382,15 +389,15 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
     """
     Return top users ranked by total_score.
 
-    Each row includes the count of CHALLENGE_PASSED matches as
-    `characters_unlocked`.
+    Each row includes the count of matched/unlocked characters as
+    `characters_unlocked`. Left-swiped characters are intentionally excluded.
     """
     unlocked_count = (
         select(
             Match.user_id,
             func.count(Match.id).label("characters_unlocked"),
         )
-        .where(Match.status == MatchStatus.CHALLENGE_PASSED)
+        .where(Match.status.in_(UNLOCKED_MATCH_STATUSES))
         .group_by(Match.user_id)
         .subquery()
     )
