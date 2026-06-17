@@ -164,6 +164,7 @@ function backendUserToProfile(user: BackendUser): UserProfile {
         ? user.grade_level
         : 10,
     userId: user.id,
+    points: user.total_score,
   };
 }
 

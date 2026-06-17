@@ -31,7 +31,12 @@ interface AppState {
   chats: Record<string, ChatMessage[]>;
   music: MusicSettings;
 
-  setProfile: (username: string, grade: Grade, userId?: string) => void;
+  setProfile: (
+    username: string,
+    grade: Grade,
+    userId?: string,
+    points?: number,
+  ) => void;
   setUserId: (userId: string) => void;
   matchCharacter: (id: string) => void;
   setMatches: (ids: string[]) => void;
@@ -75,13 +80,14 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       ...initial,
 
-      setProfile: (username, grade, userId) =>
+      setProfile: (username, grade, userId, points) =>
         set((state) => ({
           profile: {
             username,
             grade,
             userId: userId ?? state.profile?.userId,
           },
+          points: points ?? state.points,
         })),
 
       setUserId: (userId) =>

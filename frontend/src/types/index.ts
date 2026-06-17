@@ -12,6 +12,7 @@ export interface UserProfile {
    *      reading this directly.
    */
   userId?: string;
+  points?: number;
 }
 
 export interface ChatSource {

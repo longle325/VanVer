@@ -25,7 +25,7 @@ export default function RequireProfile({ children }: { children: ReactNode }) {
       .getCurrentUser()
       .then((current) => {
         if (cancelled) return;
-        setProfile(current.username, current.grade, current.userId);
+        setProfile(current.username, current.grade, current.userId, current.points);
         setBoot("ready");
       })
       .catch((err) => {
