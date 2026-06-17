@@ -12,7 +12,34 @@ class OpenEndedGradingServiceTests(unittest.TestCase):
         self.assertIn("nêu đúng ý trung tâm", prompt)
         self.assertIn("không bắt học thuộc rubric", prompt)
         self.assertIn("Đừng trừ điểm chỉ vì thiếu một ý phụ", prompt)
+        self.assertIn("feedback tối đa 25 từ", prompt)
         self.assertNotIn("các tiêu chí cốt lõi đều được nêu rõ", prompt)
+
+    def test_gpt_5_grader_uses_larger_completion_budget(self):
+        service = OpenEndedGradingService(
+            knowledge_retriever=None,
+            openai_client=object(),
+            chat_model="gpt-5-mini",
+        )
+
+        kwargs = service._completion_kwargs("system", "user")
+
+        self.assertEqual(kwargs["max_completion_tokens"], 2048)
+        self.assertNotIn("max_tokens", kwargs)
+        self.assertNotIn("temperature", kwargs)
+
+    def test_legacy_grader_uses_standard_token_budget(self):
+        service = OpenEndedGradingService(
+            knowledge_retriever=None,
+            openai_client=object(),
+            chat_model="gpt-4o",
+        )
+
+        kwargs = service._completion_kwargs("system", "user")
+
+        self.assertEqual(kwargs["max_tokens"], 1000)
+        self.assertEqual(kwargs["temperature"], 0)
+        self.assertNotIn("max_completion_tokens", kwargs)
 
     def test_grader_uses_retrieved_context_and_strict_json_result(self):
         class FakeRetriever:

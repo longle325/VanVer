@@ -116,20 +116,29 @@ class OpenEndedGradingService:
         evidence: str | None,
         retrieved_context: str,
     ) -> dict[str, Any]:
-        response = await self.client.chat.completions.create(
-            **self._completion_kwargs(
-                self._system_prompt(retrieved_context),
-                self._user_prompt(
-                    character_name=character_name,
-                    work_title=work_title,
-                    phase_title=phase_title,
-                    question=question,
-                    answer=answer,
-                    rubric=rubric,
-                    evidence=evidence,
-                ),
+        try:
+            response = await self.client.chat.completions.create(
+                **self._completion_kwargs(
+                    self._system_prompt(retrieved_context),
+                    self._user_prompt(
+                        character_name=character_name,
+                        work_title=work_title,
+                        phase_title=phase_title,
+                        question=question,
+                        answer=answer,
+                        rubric=rubric,
+                        evidence=evidence,
+                    ),
+                )
             )
-        )
+        except Exception as exc:
+            from openai import OpenAIError
+
+            if not isinstance(exc, OpenAIError):
+                raise
+            logger.warning("Open-ended grader request failed: %s", exc)
+            raise OpenEndedGradingError("Open-ended grader request failed.") from exc
+
         content = response.choices[0].message.content or ""
         try:
             return self._parse_json_object(content)
@@ -147,10 +156,10 @@ class OpenEndedGradingService:
             "response_format": {"type": "json_object"},
         }
         if self.chat_model.startswith(("gpt-5", "o1", "o3", "o4")):
-            kwargs["max_completion_tokens"] = 700
+            kwargs["max_completion_tokens"] = 2048
         else:
             kwargs["temperature"] = 0
-            kwargs["max_tokens"] = 700
+            kwargs["max_tokens"] = 1000
         return kwargs
 
     @staticmethod
@@ -170,6 +179,7 @@ Quy tắc chấm bắt buộc:
 8. Nếu câu trả lời chỉ nhắc một từ khóa mơ hồ, lạc đề, hoặc có hiểu sai nghiêm trọng về văn bản/tình tiết, score = 0.
 9. Dùng ngữ cảnh truy xuất để kiểm tra tính đúng văn bản, nhưng ưu tiên đánh giá mức hiểu ý, không bắt học thuộc rubric.
 10. feedback chỉ một câu ngắn: giải thích vì sao đạt hoặc chưa đạt, không liệt kê lại toàn bộ rubric.
+11. Giữ JSON thật gọn: feedback tối đa 25 từ; matched_criteria và missing_criteria mỗi mảng tối đa 3 mục, mỗi mục tối đa 12 từ.
 
 JSON schema:
 {{
