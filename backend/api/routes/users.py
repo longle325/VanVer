@@ -18,6 +18,8 @@ from models.schemas import (
     MatchedCharacter,
     MatchedCharactersResponse,
     UserCreate,
+    UserProgressPayload,
+    UserProgressResponse,
     UserResponse,
 )
 from services import db_postgres as db
@@ -76,3 +78,57 @@ async def get_user_matched_characters(
         for match in matches
     ]
     return MatchedCharactersResponse(characters=characters)
+
+
+@router.get("/{user_id}/progress", response_model=UserProgressResponse)
+async def get_user_progress(
+    user_id: UUID,
+    session: AsyncSession = Depends(get_db),
+):
+    user = await db.get_user(session, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    progress = await db.get_user_progress(session, user_id)
+    if progress is None:
+        return UserProgressResponse(
+            user_id=user_id,
+            completed={},
+            level_results={},
+            skipped=[],
+            updated_at=None,
+        )
+
+    return UserProgressResponse(
+        user_id=progress.user_id,
+        completed=progress.completed,
+        level_results=progress.level_results,
+        skipped=progress.skipped,
+        updated_at=progress.updated_at,
+    )
+
+
+@router.put("/{user_id}/progress", response_model=UserProgressResponse)
+async def save_user_progress(
+    user_id: UUID,
+    body: UserProgressPayload,
+    session: AsyncSession = Depends(get_db),
+):
+    user = await db.get_user(session, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    progress = await db.upsert_user_progress(
+        session,
+        user_id,
+        completed=body.completed,
+        level_results=body.level_results,
+        skipped=body.skipped,
+    )
+    return UserProgressResponse(
+        user_id=progress.user_id,
+        completed=progress.completed,
+        level_results=progress.level_results,
+        skipped=progress.skipped,
+        updated_at=progress.updated_at,
+    )

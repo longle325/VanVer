@@ -128,6 +128,17 @@ export interface ChallengeResult {
   nextLevelUnlocked?: 2 | 3;
 }
 
+export type LevelResultsState = Record<
+  string,
+  Partial<Record<1 | 2 | 3, ChallengeResult>>
+>;
+
+export interface SyncedProgress {
+  completed: Record<string, ChallengeResult>;
+  levelResults: LevelResultsState;
+  skipped: string[];
+}
+
 export interface OpenEndedGradeRequest {
   characterId: string;
   characterName: string;

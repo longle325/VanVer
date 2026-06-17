@@ -6,6 +6,7 @@ import type {
   ChatMessage,
   UserProfile,
   Grade,
+  SyncedProgress,
 } from "@/types";
 import {
   POINTS_PER_MATCH,
@@ -43,6 +44,7 @@ interface AppState {
   removeMatch: (id: string) => void;
   skipCharacter: (id: string) => void;
   resetSkipped: () => void;
+  setProgress: (progress: SyncedProgress) => void;
   appendChat: (id: string, message: ChatMessage) => void;
   setChat: (id: string, messages: ChatMessage[]) => void;
   saveChallenge: (id: string, result: ChallengeResult) => void;
@@ -81,14 +83,30 @@ export const useAppStore = create<AppState>()(
       ...initial,
 
       setProfile: (username, grade, userId, points) =>
-        set((state) => ({
-          profile: {
-            username,
-            grade,
-            userId: userId ?? state.profile?.userId,
-          },
-          points: points ?? state.points,
-        })),
+        set((state) => {
+          const previousUserId = state.profile?.userId;
+          const nextUserId = userId ?? previousUserId;
+          const switchedUser =
+            Boolean(previousUserId) &&
+            Boolean(nextUserId) &&
+            previousUserId !== nextUserId;
+
+          return {
+            profile: {
+              username,
+              grade,
+              userId: nextUserId,
+            },
+            points: points ?? (switchedUser ? initial.points : state.points),
+            matches: switchedUser ? initial.matches : state.matches,
+            skipped: switchedUser ? initial.skipped : state.skipped,
+            completed: switchedUser ? initial.completed : state.completed,
+            levelResults: switchedUser
+              ? initial.levelResults
+              : state.levelResults,
+            chats: switchedUser ? initial.chats : state.chats,
+          };
+        }),
 
       setUserId: (userId) =>
         set((state) =>
@@ -130,6 +148,13 @@ export const useAppStore = create<AppState>()(
         ),
 
       resetSkipped: () => set({ skipped: [] }),
+
+      setProgress: (progress) =>
+        set(() => ({
+          completed: progress.completed,
+          levelResults: progress.levelResults,
+          skipped: progress.skipped,
+        })),
 
       appendChat: (id, message) =>
         set((state) => ({

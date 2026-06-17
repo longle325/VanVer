@@ -25,6 +25,7 @@ from models.db_models import (
     Match,
     MatchStatus,
     User,
+    UserProgress,
 )
 from services.oauth_service import OAuthProfile
 
@@ -122,6 +123,48 @@ async def _unique_username(db: AsyncSession, seed: str) -> str:
         candidate = f"{base[: 50 - len(suffix_text)]}{suffix_text}"
         suffix += 1
     return candidate
+
+
+# ── User progress ─────────────────────────────────────────────────────────
+
+
+async def get_user_progress(
+    db: AsyncSession,
+    user_id: UUID,
+) -> Optional[UserProgress]:
+    result = await db.execute(
+        select(UserProgress).where(UserProgress.user_id == user_id)
+    )
+    return result.scalar_one_or_none()
+
+
+async def upsert_user_progress(
+    db: AsyncSession,
+    user_id: UUID,
+    completed: dict,
+    level_results: dict,
+    skipped: list[str],
+) -> UserProgress:
+    progress = await get_user_progress(db, user_id)
+    now = datetime.now(timezone.utc)
+    if progress is None:
+        progress = UserProgress(
+            user_id=user_id,
+            completed=completed,
+            level_results=level_results,
+            skipped=skipped,
+            updated_at=now,
+        )
+        db.add(progress)
+    else:
+        progress.completed = completed
+        progress.level_results = level_results
+        progress.skipped = skipped
+        progress.updated_at = now
+
+    await db.commit()
+    await db.refresh(progress)
+    return progress
 
 
 # ── Characters ────────────────────────────────────────────────────────────

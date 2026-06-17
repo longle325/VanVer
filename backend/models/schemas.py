@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Any, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -50,6 +50,17 @@ class UserResponse(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class UserProgressPayload(BaseModel):
+    completed: dict[str, Any] = Field(default_factory=dict)
+    level_results: dict[str, Any] = Field(default_factory=dict)
+    skipped: List[str] = Field(default_factory=list)
+
+
+class UserProgressResponse(UserProgressPayload):
+    user_id: UUID
+    updated_at: Optional[datetime] = None
 
 
 # ── Character ─────────────────────────────────────────────────────────────
