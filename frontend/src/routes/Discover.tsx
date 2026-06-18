@@ -4,6 +4,7 @@ import TinderCard from "react-tinder-card";
 import { useDeck, useMatchMutation, useSkipMutation } from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
 import CharacterCard from "@/components/CharacterCard";
+import { countPassedChallenges } from "@/lib/progressStats";
 import type { Character } from "@/types";
 
 type SwipeDirection = "left" | "right" | "up" | "down";
@@ -14,9 +15,11 @@ export default function Discover() {
   const skipped = useAppStore((s) => s.skipped);
   const points = useAppStore((s) => s.points);
   const completed = useAppStore((s) => s.completed);
+  const levelResults = useAppStore((s) => s.levelResults);
   const resetSkipped = useAppStore((s) => s.resetSkipped);
   const matchMutation = useMatchMutation();
   const skipMutation = useSkipMutation();
+  const completedChallenges = countPassedChallenges(completed, levelResults);
 
   const available = useMemo<Character[]>(
     () =>
@@ -124,7 +127,7 @@ export default function Discover() {
             <span>Điểm</span>
           </div>
           <div className="panel stat">
-            <strong>{Object.keys(completed).length}</strong>
+            <strong>{completedChallenges}</strong>
             <span>Hoàn thành</span>
           </div>
         </div>

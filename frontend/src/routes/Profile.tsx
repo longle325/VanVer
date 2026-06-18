@@ -1,24 +1,21 @@
-import { useNavigate } from "react-router-dom";
 import { useAppStore } from "@/stores/useAppStore";
 import MusicSettingsCard from "@/components/MusicSettingsCard";
+import { countAttemptedChallenges } from "@/lib/progressStats";
 
 export default function Profile() {
-  const navigate = useNavigate();
   const profile = useAppStore((s) => s.profile);
   const points = useAppStore((s) => s.points);
   const matches = useAppStore((s) => s.matches);
   const completed = useAppStore((s) => s.completed);
-  const resetAll = useAppStore((s) => s.resetAll);
+  const levelResults = useAppStore((s) => s.levelResults);
+  const attemptedChallenges = countAttemptedChallenges(completed, levelResults);
 
   return (
     <section className="page narrow">
       <div className="profile-card card">
         <p className="kicker">Hồ sơ</p>
         <h1 className="headline-lg">{profile?.username}</h1>
-        <p className="lead">
-          Lớp {profile?.grade}. Dữ liệu thử nghiệm đang được lưu cục bộ trong
-          trình duyệt.
-        </p>
+        <p className="lead">Lớp {profile?.grade}</p>
         <div className="profile-meta">
           <div className="panel stat">
             <strong>{points}</strong>
@@ -29,20 +26,9 @@ export default function Profile() {
             <span>Nhân vật đã chọn</span>
           </div>
           <div className="panel stat">
-            <strong>{Object.keys(completed).length}</strong>
+            <strong>{attemptedChallenges}</strong>
             <span>Thử thách đã làm</span>
           </div>
-        </div>
-        <div className="actions-row">
-          <button
-            className="btn ghost"
-            onClick={() => {
-              resetAll();
-              navigate("/onboarding", { replace: true });
-            }}
-          >
-            Đặt lại dữ liệu thử nghiệm
-          </button>
         </div>
       </div>
       <MusicSettingsCard />
