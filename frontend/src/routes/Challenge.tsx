@@ -1,8 +1,13 @@
 import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle, Sparkles } from "lucide-react";
 import { api } from "@/api/client";
-import { useCharacter, useSubmitChallengeMutation } from "@/api/queries";
+import {
+  queryKeys,
+  useCharacter,
+  useSubmitChallengeMutation,
+} from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
 import {
   getActiveChallengeLevel,
@@ -19,12 +24,22 @@ import type {
   ChallengeQuestion,
   ChallengeResult,
   OpenEndedGradeResult,
+  SyncedProgress,
 } from "@/types";
 
 type AnswerValue = number | string;
 
 function isOpenQuestion(question: ChallengeQuestion): boolean {
   return question.type === "open_ended";
+}
+
+function currentProgressSnapshot(): SyncedProgress {
+  const state = useAppStore.getState();
+  return {
+    completed: state.completed,
+    levelResults: state.levelResults,
+    skipped: state.skipped,
+  };
 }
 
 function ResultView({
@@ -312,6 +327,7 @@ export default function Challenge() {
   const saveLevelChallenge = useAppStore((s) => s.saveLevelChallenge);
   const retryLevelChallenge = useAppStore((s) => s.retryLevelChallenge);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: character, isLoading } = useCharacter(id);
   const submit = useSubmitChallengeMutation();
 
@@ -505,6 +521,14 @@ export default function Challenge() {
         const openGrades = await gradeOpenAnswers(levelChallenge);
         const result = scoreLevelChallenge(levelChallenge, answers, openGrades);
         saveLevelChallenge(id, levelChallenge.level, result);
+        try {
+          await api.saveProgress(currentProgressSnapshot());
+          await queryClient.invalidateQueries({
+            queryKey: queryKeys.leaderboard,
+          });
+        } catch (err) {
+          console.warn("level challenge progress save failed", err);
+        }
         setRecentLevelResult({ challenge: levelChallenge, result });
       } catch (err) {
         setGradeError(

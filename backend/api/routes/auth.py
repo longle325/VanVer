@@ -143,7 +143,10 @@ async def get_current_session_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated.",
         )
-    return user
+    total_score = await db.get_effective_total_score(session, user)
+    return UserResponse.model_validate(user).model_copy(
+        update={"total_score": total_score}
+    )
 
 
 @router.post("/logout")

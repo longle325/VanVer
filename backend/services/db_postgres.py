@@ -37,6 +37,35 @@ UNLOCKED_MATCH_STATUSES = (
 )
 
 
+def calculate_progress_points(level_results: dict | None) -> int:
+    """Return points awarded by synced frontend level challenge results."""
+    if not isinstance(level_results, dict):
+        return 0
+
+    total = 0
+    for character_results in level_results.values():
+        if not isinstance(character_results, dict):
+            continue
+        for result in character_results.values():
+            if not isinstance(result, dict):
+                continue
+            awarded = result.get("awarded", 0)
+            if isinstance(awarded, bool):
+                continue
+            if isinstance(awarded, (int, float)):
+                total += int(awarded)
+    return total
+
+
+async def get_effective_total_score(db: AsyncSession, user: User) -> int:
+    """Combine persisted account score with synced level challenge awards."""
+    progress = await get_user_progress(db, user.id)
+    progress_points = calculate_progress_points(
+        progress.level_results if progress is not None else None
+    )
+    return int(user.total_score or 0) + progress_points
+
+
 # ── Users ─────────────────────────────────────────────────────────────────
 
 
@@ -430,10 +459,12 @@ async def get_monthly_chat_quota_usage(
 
 async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
     """
-    Return top users ranked by total_score.
+    Return top users ranked by effective total score.
 
     Each row includes the count of matched/unlocked characters as
     `characters_unlocked`. Left-swiped characters are intentionally excluded.
+    Level challenge progress is synced into user_progress rather than legacy
+    challenge_attempts, so include those awards in the displayed score.
     """
     unlocked_count = (
         select(
@@ -450,25 +481,36 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
             User.id.label("user_id"),
             User.username,
             User.total_score,
+            UserProgress.level_results,
             func.coalesce(unlocked_count.c.characters_unlocked, 0).label(
                 "characters_unlocked"
             ),
         )
         .outerjoin(unlocked_count, User.id == unlocked_count.c.user_id)
-        .order_by(User.total_score.desc())
-        .limit(limit)
+        .outerjoin(UserProgress, User.id == UserProgress.user_id)
     )
 
     result = await db.execute(stmt)
     rows = result.all()
+    ranked = sorted(
+        rows,
+        key=lambda row: (
+            -(
+                int(row.total_score or 0)
+                + calculate_progress_points(row.level_results)
+            ),
+            row.username.lower(),
+        ),
+    )[:limit]
 
     return [
         {
             "rank": idx + 1,
             "user_id": row.user_id,
             "username": row.username,
-            "total_score": row.total_score,
+            "total_score": int(row.total_score or 0)
+            + calculate_progress_points(row.level_results),
             "characters_unlocked": row.characters_unlocked,
         }
-        for idx, row in enumerate(rows)
+        for idx, row in enumerate(ranked)
     ]

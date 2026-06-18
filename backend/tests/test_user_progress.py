@@ -27,6 +27,37 @@ class UserProgressSchemaTests(unittest.TestCase):
         self.assertEqual(payload.skipped, [])
 
 
+class UserProgressScoreTests(unittest.TestCase):
+    def test_calculates_points_from_level_results(self):
+        from services.db_postgres import calculate_progress_points
+
+        level_results = {
+            "xuan-toc-do": {
+                "1": {"awarded": 30, "passed": False},
+                "2": {"awarded": 50, "passed": True},
+            },
+            "chi-pheo": {
+                "1": {"awarded": 50, "passed": True},
+            },
+        }
+
+        self.assertEqual(calculate_progress_points(level_results), 130)
+
+    def test_ignores_malformed_progress_points(self):
+        from services.db_postgres import calculate_progress_points
+
+        level_results = {
+            "xuan-toc-do": {
+                "1": {"awarded": "30"},
+                "2": {"awarded": True},
+                "3": {"awarded": 50},
+            },
+            "broken": None,
+        }
+
+        self.assertEqual(calculate_progress_points(level_results), 50)
+
+
 class UserProgressRouteTests(unittest.TestCase):
     def setUp(self):
         from main import app

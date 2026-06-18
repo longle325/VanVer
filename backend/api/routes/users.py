@@ -48,7 +48,10 @@ async def get_user(
     user = await db.get_user(session, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
-    return user
+    total_score = await db.get_effective_total_score(session, user)
+    return UserResponse.model_validate(user).model_copy(
+        update={"total_score": total_score}
+    )
 
 
 @router.get("/{user_id}/matches", response_model=MatchedCharactersResponse)

@@ -146,6 +146,11 @@ class OAuthRouteTests(unittest.TestCase):
                 new=AsyncMock(return_value=user),
             ) as upsert_user,
             patch.object(auth.db, "get_user", new=AsyncMock(return_value=user)),
+            patch.object(
+                auth.db,
+                "get_effective_total_score",
+                new=AsyncMock(return_value=60),
+            ),
         ):
             client = TestClient(self.app)
             self.addCleanup(client.close)
@@ -162,6 +167,7 @@ class OAuthRouteTests(unittest.TestCase):
             self.assertEqual(me.status_code, 200)
             self.assertEqual(me.json()["id"], str(user_id))
             self.assertEqual(me.json()["email"], "student@example.com")
+            self.assertEqual(me.json()["total_score"], 60)
 
     def test_logout_clears_session(self):
         from core.config import settings
