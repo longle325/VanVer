@@ -22,6 +22,7 @@ import type {
   LeaderboardEntry,
   OpenEndedGradeRequest,
   OpenEndedGradeResult,
+  SyncedProgress,
   UserProfile,
 } from "@/types";
 import {
@@ -106,6 +107,14 @@ interface BackendSwipeResponse {
   match_status: string | null;
 }
 
+interface BackendProgressResponse {
+  user_id: string;
+  completed: SyncedProgress["completed"];
+  level_results: SyncedProgress["levelResults"];
+  skipped: string[];
+  updated_at?: string | null;
+}
+
 // Backend `sources` SSE event payload — see backend/api/routes/chat.py and
 // backend/services/knowledge_retriever.py:_format_sources for the source
 // of truth.
@@ -164,6 +173,7 @@ function backendUserToProfile(user: BackendUser): UserProfile {
         ? user.grade_level
         : 10,
     userId: user.id,
+    points: user.total_score,
   };
 }
 
@@ -244,6 +254,38 @@ export const realClient: ApiClient = {
     return res.characters
       .map((card) => mergeBackendCharacter(card)?.id)
       .filter((s): s is string => typeof s === "string");
+  },
+
+  async getProgress(): Promise<SyncedProgress> {
+    const userId = requireCurrentUserId();
+    const res = await apiFetch<BackendProgressResponse>(
+      `/users/${userId}/progress`,
+    );
+    return {
+      completed: res.completed ?? {},
+      levelResults: res.level_results ?? {},
+      skipped: res.skipped ?? [],
+    };
+  },
+
+  async saveProgress(progress: SyncedProgress): Promise<SyncedProgress> {
+    const userId = requireCurrentUserId();
+    const res = await apiFetch<BackendProgressResponse>(
+      `/users/${userId}/progress`,
+      {
+        method: "PUT",
+        body: {
+          completed: progress.completed,
+          level_results: progress.levelResults,
+          skipped: progress.skipped,
+        },
+      },
+    );
+    return {
+      completed: res.completed ?? {},
+      levelResults: res.level_results ?? {},
+      skipped: res.skipped ?? [],
+    };
   },
 
   async recordSkip(slug: string): Promise<{ ok: true }> {

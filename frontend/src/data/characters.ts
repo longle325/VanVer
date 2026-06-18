@@ -32,7 +32,7 @@ const visualUpgradeTreatment: Record<CharacterLevel["level"], string> = {
 function plannedLevelImages(characterId: string, level: 2 | 3): string[] {
   return Array.from(
     { length: imagesPerLevel },
-    (_, index) => `/characters/${characterId}-level-${level}-${index + 1}.png`,
+    (_, index) => `/characters/${characterId}-level-${level}-${index + 1}.webp`,
   );
 }
 
@@ -361,11 +361,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#2c1f1b",
     artB: "#8a3d22",
     artTitle: "Làng Vũ Đại",
-    image: "/characters/chi-pheo.png",
+    image: "/characters/chi-pheo.webp",
     images: [
-      "/characters/chi-pheo.png",
-      "/characters/chi-pheo-2.png",
-      "/characters/chi-pheo-3.png",
+      "/characters/chi-pheo.webp",
+      "/characters/chi-pheo-2.webp",
+      "/characters/chi-pheo-3.webp",
     ],
     genre: "truyện ngắn",
     imageBrief:
@@ -463,11 +463,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#1f2930",
     artB: "#6c7b58",
     artTitle: "Căn buồng Hồng Ngài",
-    image: "/characters/mi-1.png",
+    image: "/characters/mi-1.webp",
     images: [
-      "/characters/mi-1.png",
-      "/characters/mi-2.png",
-      "/characters/mi-3.png",
+      "/characters/mi-1.webp",
+      "/characters/mi-2.webp",
+      "/characters/mi-3.webp",
     ],
     genre: "Văn học hiện thực",
     imageBrief:
@@ -553,11 +553,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#78341d",
     artB: "#0d2b45",
     artTitle: "Hà Nội Âu hóa",
-    image: "/characters/xuan-toc-do-1.png",
+    image: "/characters/xuan-toc-do-1.webp",
     images: [
-      "/characters/xuan-toc-do-1.png",
-      "/characters/xuan-toc-do-2.png",
-      "/characters/xuan-toc-do-3.png",
+      "/characters/xuan-toc-do-1.webp",
+      "/characters/xuan-toc-do-2.webp",
+      "/characters/xuan-toc-do-3.webp",
     ],
     genre: "Tiểu thuyết trào phúng",
     imageBrief:
@@ -643,11 +643,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#183b32",
     artB: "#b78a3a",
     artTitle: "Chính khí Nam Bộ",
-    image: "/characters/luc-van-tien.png",
+    image: "/characters/luc-van-tien.webp",
     images: [
-      "/characters/luc-van-tien.png",
-      "/characters/luc-van-tien-2.png",
-      "/characters/luc-van-tien-3.png",
+      "/characters/luc-van-tien.webp",
+      "/characters/luc-van-tien-2.webp",
+      "/characters/luc-van-tien-3.webp",
     ],
     genre: "Truyện Thơ Nôm",
     imageBrief:
@@ -733,11 +733,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#0d2b45",
     artB: "#6c2d35",
     artTitle: "Lầu Ngưng Bích",
-    image: "/characters/thuy-kieu-1.png",
+    image: "/characters/thuy-kieu-1.webp",
     images: [
-      "/characters/thuy-kieu-1.png",
-      "/characters/thuy-kieu-2.png",
-      "/characters/thuy-kieu-3.png",
+      "/characters/thuy-kieu-1.webp",
+      "/characters/thuy-kieu-2.webp",
+      "/characters/thuy-kieu-3.webp",
     ],
     genre: "Truyện Thơ Nôm",
     imageBrief:
@@ -825,11 +825,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#4b3427",
     artB: "#8c6a3f",
     artTitle: "Vườn cũ và cậu Vàng",
-    image: "/characters/lao-hac.png",
+    image: "/characters/lao-hac.webp",
     images: [
-      "/characters/lao-hac.png",
-      "/characters/lao-hac-2.png",
-      "/characters/lao-hac-3.png",
+      "/characters/lao-hac.webp",
+      "/characters/lao-hac-2.webp",
+      "/characters/lao-hac-3.webp",
     ],
     genre: "truyện ngắn",
     imageBrief:
@@ -927,11 +927,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#3f2a1d",
     artB: "#a05b32",
     artTitle: "Đông Xá mùa sưu",
-    image: "/characters/chi-dau.png",
+    image: "/characters/chi-dau.webp",
     images: [
-      "/characters/chi-dau.png",
-      "/characters/chi-dau-2.png",
-      "/characters/chi-dau-3.png",
+      "/characters/chi-dau.webp",
+      "/characters/chi-dau-2.webp",
+      "/characters/chi-dau-3.webp",
     ],
     genre: "tiểu thuyết hiện thực",
     imageBrief:
@@ -1024,11 +1024,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#2f4538",
     artB: "#b88a45",
     artTitle: "Căn cứ Nam Bộ",
-    image: "/characters/ong-sau.png",
+    image: "/characters/ong-sau.webp",
     images: [
-      "/characters/ong-sau.png",
-      "/characters/ong-sau-2.png",
-      "/characters/ong-sau-3.png",
+      "/characters/ong-sau.webp",
+      "/characters/ong-sau-2.webp",
+      "/characters/ong-sau-3.webp",
     ],
     genre: "truyện ngắn",
     imageBrief:
@@ -1131,11 +1131,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#33422f",
     artB: "#b9914b",
     artTitle: "Làng Chợ Dầu",
-    image: "/characters/ong-hai.png",
+    image: "/characters/ong-hai.webp",
     images: [
-      "/characters/ong-hai.png",
-      "/characters/ong-hai-2.png",
-      "/characters/ong-hai-3.png",
+      "/characters/ong-hai.webp",
+      "/characters/ong-hai-2.webp",
+      "/characters/ong-hai-3.webp",
     ],
     genre: "truyện ngắn",
     imageBrief:
@@ -1234,11 +1234,11 @@ const rawCharacters: SeedCharacter[] = [
     artA: "#27433d",
     artB: "#c1926a",
     artTitle: "Bến Hoàng Giang",
-    image: "/characters/vu-nuong.png",
+    image: "/characters/vu-nuong.webp",
     images: [
-      "/characters/vu-nuong.png",
-      "/characters/vu-nuong-2.png",
-      "/characters/vu-nuong-3.png",
+      "/characters/vu-nuong.webp",
+      "/characters/vu-nuong-2.webp",
+      "/characters/vu-nuong-3.webp",
     ],
     genre: "truyền kỳ",
     imageBrief:

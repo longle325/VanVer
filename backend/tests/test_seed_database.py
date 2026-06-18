@@ -44,6 +44,20 @@ class SeedDatabaseTests(unittest.TestCase):
 
         self.assertEqual(len(usernames), len(set(usernames)))
         self.assertTrue(all(user["total_score"] > 0 for user in DEMO_USER_SEEDS))
+        self.assertTrue(
+            all(user["unlocked_character_slugs"] for user in DEMO_USER_SEEDS)
+        )
+
+    def test_demo_user_unlocked_characters_exist(self):
+        character_slugs = {character["slug"] for character in CHARACTER_SEEDS}
+        demo_unlocked_slugs = {
+            slug
+            for user in DEMO_USER_SEEDS
+            for slug in user["unlocked_character_slugs"]
+        }
+
+        self.assertTrue(demo_unlocked_slugs)
+        self.assertTrue(demo_unlocked_slugs.issubset(character_slugs))
 
     def test_relationship_and_event_seeds_cover_each_character(self):
         character_slugs = {character["slug"] for character in CHARACTER_SEEDS}

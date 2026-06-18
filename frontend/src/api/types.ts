@@ -8,6 +8,7 @@ import type {
   LeaderboardEntry,
   OpenEndedGradeRequest,
   OpenEndedGradeResult,
+  SyncedProgress,
   UserProfile,
 } from "@/types";
 
@@ -46,6 +47,8 @@ export interface ApiClient {
   /** Authoritative list of slugs the user has right-swiped on. Real
    *  backend reads `GET /users/{id}/matches`; mock returns []. */
   getMatchedSlugs: () => Promise<string[]>;
+  getProgress: () => Promise<SyncedProgress>;
+  saveProgress: (progress: SyncedProgress) => Promise<SyncedProgress>;
   getChallenge: (id: string) => Promise<ChallengeQuestion[]>;
   submitChallenge: (
     id: string,

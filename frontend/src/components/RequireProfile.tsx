@@ -3,15 +3,54 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAppStore } from "@/stores/useAppStore";
 import { realClient } from "@/api/realClient";
 import { useReal } from "@/api/adapter";
+import type { SyncedProgress } from "@/types";
 
 type BootState = "checking" | "ready" | "missing";
 
+function mergeProgress(
+  local: SyncedProgress,
+  remote: SyncedProgress,
+): SyncedProgress {
+  const characterIds = new Set([
+    ...Object.keys(local.levelResults),
+    ...Object.keys(remote.levelResults),
+  ]);
+  const levelResults: SyncedProgress["levelResults"] = {};
+
+  for (const characterId of characterIds) {
+    levelResults[characterId] = {
+      ...(local.levelResults[characterId] ?? {}),
+      ...(remote.levelResults[characterId] ?? {}),
+    };
+  }
+
+  return {
+    completed: { ...local.completed, ...remote.completed },
+    levelResults,
+    skipped: Array.from(new Set([...local.skipped, ...remote.skipped])),
+  };
+}
+
+function currentProgressSnapshot(): SyncedProgress {
+  const state = useAppStore.getState();
+  return {
+    completed: state.completed,
+    levelResults: state.levelResults,
+    skipped: state.skipped,
+  };
+}
+
 export default function RequireProfile({ children }: { children: ReactNode }) {
   const profile = useAppStore((s) => s.profile);
+  const completed = useAppStore((s) => s.completed);
+  const levelResults = useAppStore((s) => s.levelResults);
+  const skipped = useAppStore((s) => s.skipped);
   const setProfile = useAppStore((s) => s.setProfile);
   const setMatches = useAppStore((s) => s.setMatches);
+  const setProgress = useAppStore((s) => s.setProgress);
   const location = useLocation();
   const [boot, setBoot] = useState<BootState>("checking");
+  const [progressHydrated, setProgressHydrated] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -25,7 +64,7 @@ export default function RequireProfile({ children }: { children: ReactNode }) {
       .getCurrentUser()
       .then((current) => {
         if (cancelled) return;
-        setProfile(current.username, current.grade, current.userId);
+        setProfile(current.username, current.grade, current.userId, current.points);
         setBoot("ready");
       })
       .catch((err) => {
@@ -79,6 +118,56 @@ export default function RequireProfile({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [boot, profile?.userId, setMatches]);
+
+  useEffect(() => {
+    if (boot !== "ready") return;
+    if (!profile?.userId) return;
+    if (!useReal("auth")) {
+      setProgressHydrated(true);
+      return;
+    }
+
+    let cancelled = false;
+    setProgressHydrated(false);
+    realClient.getProgress().then(
+      (remote) => {
+        if (cancelled) return;
+        const merged = mergeProgress(currentProgressSnapshot(), remote);
+        setProgress(merged);
+        setProgressHydrated(true);
+      },
+      (err) => {
+        if (cancelled) return;
+        console.warn("progress sync failed", err);
+        setProgressHydrated(true);
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [boot, profile?.userId, setProgress]);
+
+  useEffect(() => {
+    if (boot !== "ready") return;
+    if (!profile?.userId) return;
+    if (!progressHydrated) return;
+    if (!useReal("auth")) return;
+
+    const progress = { completed, levelResults, skipped };
+    const timeout = window.setTimeout(() => {
+      realClient.saveProgress(progress).catch((err) => {
+        console.warn("progress save failed", err);
+      });
+    }, 500);
+    return () => window.clearTimeout(timeout);
+  }, [
+    boot,
+    profile?.userId,
+    progressHydrated,
+    completed,
+    levelResults,
+    skipped,
+  ]);
 
   if (boot === "checking") {
     return (

@@ -53,6 +53,14 @@ export const api: ApiClient = {
       ? realClient.getMatchedSlugs()
       : mockClient.getMatchedSlugs(),
 
+  getProgress: () =>
+    useReal("auth") ? realClient.getProgress() : mockClient.getProgress(),
+
+  saveProgress: (progress) =>
+    useReal("auth")
+      ? realClient.saveProgress(progress)
+      : mockClient.saveProgress(progress),
+
   getChallenge: (id) =>
     useReal("challenge")
       ? realClient.getChallenge(id)

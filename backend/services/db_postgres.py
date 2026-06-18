@@ -25,8 +25,16 @@ from models.db_models import (
     Match,
     MatchStatus,
     User,
+    UserProgress,
 )
 from services.oauth_service import OAuthProfile
+
+
+UNLOCKED_MATCH_STATUSES = (
+    MatchStatus.SWIPED_RIGHT,
+    MatchStatus.CHAT_UNLOCKED,
+    MatchStatus.CHALLENGE_PASSED,
+)
 
 
 # ── Users ─────────────────────────────────────────────────────────────────
@@ -115,6 +123,48 @@ async def _unique_username(db: AsyncSession, seed: str) -> str:
         candidate = f"{base[: 50 - len(suffix_text)]}{suffix_text}"
         suffix += 1
     return candidate
+
+
+# ── User progress ─────────────────────────────────────────────────────────
+
+
+async def get_user_progress(
+    db: AsyncSession,
+    user_id: UUID,
+) -> Optional[UserProgress]:
+    result = await db.execute(
+        select(UserProgress).where(UserProgress.user_id == user_id)
+    )
+    return result.scalar_one_or_none()
+
+
+async def upsert_user_progress(
+    db: AsyncSession,
+    user_id: UUID,
+    completed: dict,
+    level_results: dict,
+    skipped: list[str],
+) -> UserProgress:
+    progress = await get_user_progress(db, user_id)
+    now = datetime.now(timezone.utc)
+    if progress is None:
+        progress = UserProgress(
+            user_id=user_id,
+            completed=completed,
+            level_results=level_results,
+            skipped=skipped,
+            updated_at=now,
+        )
+        db.add(progress)
+    else:
+        progress.completed = completed
+        progress.level_results = level_results
+        progress.skipped = skipped
+        progress.updated_at = now
+
+    await db.commit()
+    await db.refresh(progress)
+    return progress
 
 
 # ── Characters ────────────────────────────────────────────────────────────
@@ -382,15 +432,15 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
     """
     Return top users ranked by total_score.
 
-    Each row includes the count of CHALLENGE_PASSED matches as
-    `characters_unlocked`.
+    Each row includes the count of matched/unlocked characters as
+    `characters_unlocked`. Left-swiped characters are intentionally excluded.
     """
     unlocked_count = (
         select(
             Match.user_id,
             func.count(Match.id).label("characters_unlocked"),
         )
-        .where(Match.status == MatchStatus.CHALLENGE_PASSED)
+        .where(Match.status.in_(UNLOCKED_MATCH_STATUSES))
         .group_by(Match.user_id)
         .subquery()
     )

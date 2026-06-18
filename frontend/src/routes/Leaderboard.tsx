@@ -38,9 +38,7 @@ export default function Leaderboard() {
         Việt Nam.
       </p>
       <div className="leader-tabs">
-        <button className="active">Toàn cầu</button>
-        <button>Lớp học</button>
-        <button>Hằng tuần</button>
+        <button className="active">Global</button>
       </div>
       <div className="card leaderboard">
         <div className="leader-row header">

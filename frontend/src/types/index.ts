@@ -12,6 +12,7 @@ export interface UserProfile {
    *      reading this directly.
    */
   userId?: string;
+  points?: number;
 }
 
 export interface ChatSource {
@@ -125,6 +126,17 @@ export interface ChallengeResult {
   openResponses?: Record<string, string>;
   openGrades?: Record<string, OpenEndedGradeResult>;
   nextLevelUnlocked?: 2 | 3;
+}
+
+export type LevelResultsState = Record<
+  string,
+  Partial<Record<1 | 2 | 3, ChallengeResult>>
+>;
+
+export interface SyncedProgress {
+  completed: Record<string, ChallengeResult>;
+  levelResults: LevelResultsState;
+  skipped: string[];
 }
 
 export interface OpenEndedGradeRequest {

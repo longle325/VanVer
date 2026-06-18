@@ -8,6 +8,7 @@ import type {
   LeaderboardEntry,
   OpenEndedGradeRequest,
   OpenEndedGradeResult,
+  SyncedProgress,
   UserProfile,
 } from "@/types";
 import type {
@@ -104,6 +105,14 @@ export const mockClient: ApiClient = {
     // so callers that respect the real/mock split must skip the
     // reconciliation entirely when in mock mode.
     return [];
+  },
+  async getProgress(): Promise<SyncedProgress> {
+    await delay(0);
+    return { completed: {}, levelResults: {}, skipped: [] };
+  },
+  async saveProgress(progress: SyncedProgress): Promise<SyncedProgress> {
+    await delay(0);
+    return progress;
   },
   async getChallenge(id: string): Promise<ChallengeQuestion[]> {
     await delay(0);

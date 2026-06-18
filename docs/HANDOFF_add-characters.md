@@ -18,7 +18,7 @@ This document gives you every touchpoint, the exact data shape at each, and the 
 
 ## 0. Repo orientation (read first)
 
-- Working directory: `/Users/PhatNguyen/Desktop/Husky` (single repo).
+- Working directory: `/Users/PhatNguyen/Desktop/Vanver` (single repo).
 - Primary config: a single `.env` at the repo root. Backend reads it via `pydantic-settings`; frontend reads it via Vite (`frontend/vite.config.ts` sets `envDir: "../"`). Don't split it.
 - Default models: `CHAT_MODEL=gpt-4o`, `EMBEDDING_MODEL=text-embedding-3-large` (3072 dims).
 - Branch from `main`. After your work, open a PR titled e.g. `Add character: <Name> (<Work>)`.
@@ -39,7 +39,7 @@ Conversion is one-way at the API boundary: `frontend/src/api/adapter.ts:normaliz
 
 **Frontend:**
 1. `frontend/src/data/characters.ts` — the live FE seed (`rawCharacters` array)
-2. `frontend/public/characters/<slug>.png` (+ optional `<slug>-2.png`, `<slug>-3.png`)
+2. `frontend/public/characters/<slug>.webp` (+ optional `<slug>-2.webp`, `<slug>-3.webp`)
 
 **Backend:**
 3. `backend/scripts/seed_database.py` — three lists/dicts: `CHARACTER_SEEDS`, `CHARACTER_RELATIONSHIP_SEEDS`, `CHARACTER_EVENT_SEEDS`
@@ -93,11 +93,11 @@ Append a new entry to `rawCharacters: SeedCharacter[]`. Required fields (`Charac
   artA: "#2c1f1b",                    // gradient color A (hex) — used by avatar fallback
   artB: "#8a3d22",                    // gradient color B (hex)
   artTitle: "Làng Vũ Đại",            // short label shown on the discover card
-  image: "/characters/chi-pheo.png",  // primary portrait
+  image: "/characters/chi-pheo.webp",  // primary portrait
   images: [                           // additional swipeable portraits (optional)
-    "/characters/chi-pheo.png",
-    "/characters/chi-pheo-2.png",
-    "/characters/chi-pheo-3.png",
+    "/characters/chi-pheo.webp",
+    "/characters/chi-pheo-2.webp",
+    "/characters/chi-pheo-3.webp",
   ],
   genre: "truyện ngắn",               // "truyện ngắn" | "tiểu thuyết" | "truyện thơ" | etc.
   imageBrief: "Người đàn ông gầy gò, mặt đầy sẹo...",  // 1-line image description
@@ -359,7 +359,7 @@ Provide at least 2 stages so timeline progression is wired and ready (the `curre
 ## 6. Images — `frontend/public/characters/`
 
 - File format: PNG, recommended **1024×1536 portrait**.
-- Naming: `<kebab-slug>.png` for the primary, optional `<kebab-slug>-2.png`, `<kebab-slug>-3.png` for swipeable extras.
+- Naming: `<kebab-slug>.webp` for the primary, optional `<kebab-slug>-2.webp`, `<kebab-slug>-3.webp` for swipeable extras.
 - See `docs/image-prompts.md` for the team's image-gen prompts and cultural guardrails (Vietnamese folk illustration style, **explicitly NOT Chinese/Japanese/Korean** — gpt-image otherwise defaults to Chinese hanfu for "Asian historical figure"; that block matters).
 - Target style: aged parchment / Đông Hồ folk woodblock + Hàng Trống classical scroll painting (see `docs/image-prompts.md`).
 
@@ -425,7 +425,7 @@ If any of those four fails, the prompt card or the chunks need more work — don
 ## 10. PR checklist
 
 - [ ] `frontend/src/data/characters.ts` has the new entry; `id` matches the BE slug with `_→-`
-- [ ] `frontend/public/characters/<slug>.png` (and optional 2/3) exist
+- [ ] `frontend/public/characters/<slug>.webp` (and optional 2/3) exist
 - [ ] `backend/scripts/seed_database.py` updated in all three structures
 - [ ] `backend/knowledge_base/<Folder>/` has at least 1 original + 1-2 analyses
 - [ ] `backend/knowledge_base/manifest.json` registers character + every doc

@@ -7,6 +7,7 @@ Tables:
   matches     - user <-> character swipe state
   challenges  - per-character quiz questions (JSONB)
   challenge_attempts - one graded submission per user/character
+  user_progress - frontend progress state synced per user
   knowledge_chunks - embedded RAG chunks from knowledge_base/index/chunks.jsonl
   character_relationships - graph-like relationship facts
   character_events - ordered character timeline events
@@ -87,6 +88,12 @@ class User(Base):
         "ChallengeAttempt",
         back_populates="user",
         lazy="selectin",
+    )
+    progress = relationship(
+        "UserProgress",
+        back_populates="user",
+        lazy="selectin",
+        uselist=False,
     )
 
 
@@ -235,6 +242,29 @@ class ChallengeAttempt(Base):
     # relationships
     user = relationship("User", back_populates="challenge_attempts")
     character = relationship("Character", back_populates="challenge_attempts")
+
+
+# ---------------------------------------------------------------------------
+# User progress
+# ---------------------------------------------------------------------------
+class UserProgress(Base):
+    __tablename__ = "user_progress"
+
+    user_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    completed = Column(JSON, default=dict, nullable=False)
+    level_results = Column(JSON, default=dict, nullable=False)
+    skipped = Column(JSON, default=list, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    user = relationship("User", back_populates="progress")
 
 
 # ---------------------------------------------------------------------------
