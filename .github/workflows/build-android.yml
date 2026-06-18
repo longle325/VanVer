@@ -7,7 +7,7 @@ on:
       - feat/rank
 
 env:
-  VITE_API_BASE_URL: https://vanver-backend-w7i2isg2da-uc.a.run.app
+  VITE_API_BASE_URL: https://api.vanver.app
 
 jobs:
   build-apk:

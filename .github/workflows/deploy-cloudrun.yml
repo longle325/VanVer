@@ -13,6 +13,9 @@ env:
   ARTIFACT_REPOSITORY: vanver
   BACKEND_SERVICE: vanver-backend
   FRONTEND_SERVICE: vanver-frontend
+  PUBLIC_BACKEND_URL: https://api.vanver.app
+  PUBLIC_FRONTEND_URL: https://vanver.app
+  PUBLIC_FRONTEND_WWW_URL: https://www.vanver.app
   WORKLOAD_IDENTITY_PROVIDER: projects/724238746267/locations/global/workloadIdentityPools/github-actions/providers/vanver
   SERVICE_ACCOUNT: github-actions-deployer@cs317-mlops.iam.gserviceaccount.com
 
@@ -65,9 +68,6 @@ jobs:
           SESSION_COOKIE_SECURE: ${{ secrets.SESSION_COOKIE_SECURE }}
           SESSION_COOKIE_SAMESITE: ${{ secrets.SESSION_COOKIE_SAMESITE }}
           SESSION_MAX_AGE_SECONDS: ${{ secrets.SESSION_MAX_AGE_SECONDS }}
-          OAUTH_POST_LOGIN_REDIRECT: ${{ secrets.OAUTH_POST_LOGIN_REDIRECT }}
-          OAUTH_ALLOWED_REDIRECT_ORIGINS: ${{ secrets.OAUTH_ALLOWED_REDIRECT_ORIGINS }}
-          OAUTH_CALLBACK_BASE_URL: ${{ secrets.OAUTH_CALLBACK_BASE_URL }}
           OAUTH_GOOGLE_CLIENT_ID: ${{ secrets.OAUTH_GOOGLE_CLIENT_ID }}
           OAUTH_GOOGLE_CLIENT_SECRET: ${{ secrets.OAUTH_GOOGLE_CLIENT_SECRET }}
           OAUTH_GOOGLE_SERVER_METADATA_URL: ${{ secrets.OAUTH_GOOGLE_SERVER_METADATA_URL }}
@@ -76,7 +76,8 @@ jobs:
           : "${DATABASE_URL:?DATABASE_URL secret is required}"
           : "${OPENAI_API_KEY:?OPENAI_API_KEY secret is required}"
 
-          ENV_VARS="DATABASE_URL=${DATABASE_URL}||OPENAI_API_KEY=${OPENAI_API_KEY}||CHAT_MODEL=gpt-5-mini||EMBEDDING_MODEL=text-embedding-3-large||EMBEDDING_DIMENSIONS=3072||SESSION_COOKIE_SECURE=true||CORS_ORIGINS=[\"*\"]"
+          ALLOWED_REDIRECTS='["'"${PUBLIC_FRONTEND_URL}"'","'"${PUBLIC_FRONTEND_WWW_URL}"'","http://localhost:5173","http://127.0.0.1:5173","capacitor://localhost","https://localhost"]'
+          ENV_VARS="DATABASE_URL=${DATABASE_URL}||OPENAI_API_KEY=${OPENAI_API_KEY}||CHAT_MODEL=gpt-5-mini||EMBEDDING_MODEL=text-embedding-3-large||EMBEDDING_DIMENSIONS=3072||SESSION_COOKIE_SECURE=true||CORS_ORIGINS=[\"*\"]||OAUTH_CALLBACK_BASE_URL=${PUBLIC_BACKEND_URL}||OAUTH_POST_LOGIN_REDIRECT=${PUBLIC_FRONTEND_URL}||OAUTH_ALLOWED_REDIRECT_ORIGINS=${ALLOWED_REDIRECTS}"
 
           append_env() {
             local name="$1"
@@ -145,7 +146,7 @@ jobs:
         working-directory: frontend
         run: |
           docker build \
-            --build-arg VITE_API_BASE_URL=${{ needs.deploy-backend.outputs.url }} \
+            --build-arg VITE_API_BASE_URL=${{ env.PUBLIC_BACKEND_URL }} \
             -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.FRONTEND_SERVICE }}:${{ github.sha }} \
             -t ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.FRONTEND_SERVICE }}:latest \
             .
@@ -172,9 +173,10 @@ jobs:
 
       - name: Update backend public origins
         run: |
-          BACKEND=${{ needs.deploy-backend.outputs.url }}
-          FRONTEND=$(gcloud run services describe ${{ env.FRONTEND_SERVICE }} --project ${{ env.PROJECT_ID }} --region ${{ env.REGION }} --format 'value(status.url)')
-          ALLOWED_REDIRECTS='["'"${FRONTEND}"'","http://localhost:5173","http://127.0.0.1:5173","capacitor://localhost","https://localhost"]'
+          BACKEND=${{ env.PUBLIC_BACKEND_URL }}
+          FRONTEND=${{ env.PUBLIC_FRONTEND_URL }}
+          WWW_FRONTEND=${{ env.PUBLIC_FRONTEND_WWW_URL }}
+          ALLOWED_REDIRECTS='["'"${FRONTEND}"'","'"${WWW_FRONTEND}"'","http://localhost:5173","http://127.0.0.1:5173","capacitor://localhost","https://localhost"]'
 
           gcloud run services update ${{ env.BACKEND_SERVICE }} \
             --project ${{ env.PROJECT_ID }} \
@@ -184,9 +186,8 @@ jobs:
 
       - name: Show deployed URLs
         run: |
-          FRONTEND=$(gcloud run services describe ${{ env.FRONTEND_SERVICE }} --project ${{ env.PROJECT_ID }} --region ${{ env.REGION }} --format 'value(status.url)')
-          BACKEND=${{ needs.deploy-backend.outputs.url }}
           echo "## Deployed to Cloud Run" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Frontend:** $FRONTEND" >> $GITHUB_STEP_SUMMARY
-          echo "- **Backend:** $BACKEND" >> $GITHUB_STEP_SUMMARY
+          echo "- **Frontend:** ${{ env.PUBLIC_FRONTEND_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Frontend www:** ${{ env.PUBLIC_FRONTEND_WWW_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Backend:** ${{ env.PUBLIC_BACKEND_URL }}" >> $GITHUB_STEP_SUMMARY
