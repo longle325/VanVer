@@ -2,6 +2,7 @@ import unittest
 
 from core.prompt_templates import (
     CANON_GUARD_EVALUATOR_PROMPT,
+    CHARACTER_CARDS,
     REWRITE_FAILED_RESPONSE_PROMPT,
     build_character_prompt,
     detect_response_mode,
@@ -49,7 +50,35 @@ class PromptTemplateTests(unittest.TestCase):
 
         self.assertIn("[MODE]\nanalysis", prompt)
         self.assertIn("Analysis Mode", prompt)
-        self.assertIn("có thể nói: \"trong tác phẩm\"", prompt)
+        self.assertIn('it is allowed to say: "trong tác phẩm"', prompt)
+        self.assertIn("preserve a trace of the character's breath", prompt)
+        self.assertIn("Response shape", prompt)
+        self.assertIn("at least two line breaks", prompt)
+
+    def test_chi_pheo_prompt_pushes_analysis_back_into_character_voice(self):
+        prompt = build_character_prompt(
+            character_slug="chi_pheo",
+            character_name="Chí Phèo",
+            retrieved_context="Lò gạch cũ gắn với nguồn gốc bị bỏ rơi.",
+            user_message="Phân tích ý nghĩa lò gạch cũ",
+        )
+
+        self.assertIn("không biến thành giọng thầy giáo khô khan", prompt)
+        self.assertIn("lò gạch, bát cháo hành, tiếng chửi", prompt)
+        self.assertIn("Mẹ kiếp... có người chịu hỏi tao thế này à?\n\n", prompt)
+
+    def test_all_character_cards_have_voice_bridge_and_line_break_examples(self):
+        for slug, card in CHARACTER_CARDS.items():
+            with self.subTest(character_slug=slug):
+                self.assertIn(
+                    "Nếu phải giải thích biểu tượng hay ý nghĩa",
+                    card["speech_style"],
+                )
+                self.assertIn(
+                    "không biến thành giọng thầy giáo khô khan",
+                    card["speech_style"],
+                )
+                self.assertIn("\n\n", card["example_response_style"])
 
     def test_rag_context_format_instructs_silent_use(self):
         block = format_rag_context(
@@ -63,7 +92,7 @@ class PromptTemplateTests(unittest.TestCase):
         )
 
         self.assertIn("SILENT USE ONLY", block)
-        self.assertIn("Không được chép dài", block)
+        self.assertIn("Do not copy long passages", block)
         self.assertIn("type: plot_summary", block)
 
     def test_memory_context_separates_memory_types(self):

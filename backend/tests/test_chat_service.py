@@ -139,9 +139,9 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
 
         system_prompt, chunks = __import__("asyncio").run(collect_prompt())
 
-        self.assertIn("[LỊCH SỬ HỘI THOẠI GẦN ĐÂY]", system_prompt)
-        self.assertIn("Người học: Trước đó em hỏi về tiếng sáo.", system_prompt)
-        self.assertIn("Nhân vật: Ta đã nghe tiếng sáo gọi về tuổi trẻ.", system_prompt)
+        self.assertIn("[RECENT CONVERSATION HISTORY]", system_prompt)
+        self.assertIn("Student: Trước đó em hỏi về tiếng sáo.", system_prompt)
+        self.assertIn("Character: Ta đã nghe tiếng sáo gọi về tuổi trẻ.", system_prompt)
         self.assertEqual(chunks, ["tôi nhớ"])
 
     def test_format_chat_history_limits_prompt_context(self):
@@ -172,7 +172,7 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
         self.assertLessEqual(len(formatted), 140)
         self.assertNotIn("old message 0", formatted)
         self.assertNotIn("old message 4", formatted)
-        self.assertIn("Người học: latest user asks about", formatted)
+        self.assertIn("Student: latest user asks about", formatted)
         self.assertIn("... [truncated]", formatted)
 
     def test_prepare_retrieval_returns_sources_for_frontend(self):
