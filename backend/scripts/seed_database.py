@@ -610,12 +610,11 @@ async def seed_demo_users(session) -> int:
 
 
 async def run_seed(include_demo_users: bool = True) -> None:
-    from core.database import Base, async_session_factory, engine, ensure_vector_extension
+    from core.database import async_session_factory, engine, ensure_vector_extension
     import models.db_models  # noqa: F401
 
+    # Schema is owned by Alembic — run `alembic upgrade head` before seeding.
     await ensure_vector_extension()
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
 
     async with async_session_factory() as session:
         character_count = await seed_characters_and_challenges(session)

@@ -7,6 +7,10 @@ on:
       - deploy
       - feat/rank
 
+concurrency:
+  group: deploy-cloudrun-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   PROJECT_ID: cs317-mlops
   REGION: asia-northeast1
@@ -59,6 +63,16 @@ jobs:
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.BACKEND_SERVICE }}:${{ github.sha }}
           docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.BACKEND_SERVICE }}:latest
+
+      - name: Run database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          : "${DATABASE_URL:?DATABASE_URL secret is required}"
+          docker run --rm \
+            -e DATABASE_URL="${DATABASE_URL}" \
+            ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/${{ env.BACKEND_SERVICE }}:${{ github.sha }} \
+            alembic -c alembic.ini upgrade head
 
       - name: Deploy backend to Cloud Run
         env:

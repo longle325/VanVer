@@ -17,7 +17,7 @@ if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 from core.config import settings  # noqa: E402
-from core.database import Base, async_session_factory, engine, ensure_vector_extension  # noqa: E402
+from core.database import async_session_factory, engine, ensure_vector_extension  # noqa: E402
 from models.db_models import KnowledgeChunk  # noqa: E402
 
 
@@ -126,9 +126,8 @@ async def embed_knowledge_base(
     chunks_path: Path,
     batch_size: int = DEFAULT_BATCH_SIZE,
 ) -> dict[str, int]:
+    # Schema is owned by Alembic — run `alembic upgrade head` before embedding.
     await ensure_vector_extension()
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
 
     chunks = load_chunks(chunks_path)
     hashes = await existing_hashes()

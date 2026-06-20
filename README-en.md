@@ -93,6 +93,7 @@ cd backend && python3 -m venv .venv && ./.venv/bin/pip install -r requirements.t
 # This seeds characters, challenges, and demo users
 docker compose up -d postgres          # wait until `docker compose ps postgres` is healthy
 unset DEBUG                             # backend expects DEBUG to be a boolean
+cd backend && ./.venv/bin/alembic upgrade head && cd ..   # create schema via migrations
 cd backend && ./.venv/bin/python scripts/seed_database.py && cd ..
 
 # 5. Knowledge-base embeddings

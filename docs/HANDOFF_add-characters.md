@@ -371,7 +371,8 @@ Provide at least 2 stages so timeline progression is wired and ready (the `curre
 # 1. Postgres
 docker compose up -d postgres
 
-# 2. Re-seed schema + characters + challenges + relationships + events
+# 2. Apply migrations, then seed characters + challenges + relationships + events
+cd backend && ./.venv/bin/alembic upgrade head && cd ..
 cd backend && ./.venv/bin/python scripts/seed_database.py && cd ..
 
 # 3. Build chunks for the new character (write the helper if not present, see §4c)
