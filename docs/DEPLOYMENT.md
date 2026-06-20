@@ -196,16 +196,15 @@ GitHub push to deploy
 GitHub Actions workflow
         │
         ├── Build Docker image (Node 22 + nginx)
-        ├── Push to Artifact Registry (us-central1)
+        ├── Push to Artifact Registry (asia-northeast1)
         └── Deploy to Cloud Run
                 │
                 ▼
         https://vanver-frontend-xxxxx.run.app
 ```
 
-The default deployment region is `us-central1` to stay on Cloud Run Tier 1
-pricing and make best use of free-tier credits. Use `asia-southeast1` only when
-Singapore latency is worth the higher Tier 2 pricing.
+The default deployment region is `asia-northeast1` so Artifact Registry and
+Cloud Run deploy to the same region.
 
 ### One-time GCP setup
 
@@ -254,7 +253,7 @@ gcloud iam service-accounts add-iam-policy-binding $SA \
 ```bash
 gcloud artifacts repositories create vanver \
   --repository-format=docker \
-  --location=us-central1 \
+  --location=asia-northeast1 \
   --project=$PROJECT_ID
 ```
 
@@ -263,7 +262,7 @@ Apply the cleanup policy so per-deploy images do not accumulate indefinitely:
 ```bash
 gcloud artifacts repositories set-cleanup-policies vanver \
   --project=$PROJECT_ID \
-  --location=us-central1 \
+  --location=asia-northeast1 \
   --policy=.github/artifact-registry-cleanup-policy.json
 ```
 
@@ -296,14 +295,14 @@ GitHub Actions job summary.
 cd frontend
 
 # Build and push
-docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest .
-docker push us-central1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest
+docker build -t asia-northeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest .
+docker push asia-northeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest
 
 # Deploy
 gcloud run deploy vanver-frontend \
   --project $PROJECT_ID \
-  --image us-central1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest \
-  --region us-central1 \
+  --image asia-northeast1-docker.pkg.dev/$PROJECT_ID/vanver/vanver-frontend:latest \
+  --region asia-northeast1 \
   --port 8080 \
   --allow-unauthenticated
 ```

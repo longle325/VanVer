@@ -9,8 +9,8 @@ on:
 
 env:
   PROJECT_ID: cs317-mlops
-  REGION: us-central1
-  REGISTRY: us-central1-docker.pkg.dev
+  REGION: asia-northeast1
+  REGISTRY: asia-northeast1-docker.pkg.dev
   ARTIFACT_REPOSITORY: vanver
   BACKEND_SERVICE: vanver-backend
   FRONTEND_SERVICE: vanver-frontend
