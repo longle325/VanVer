@@ -35,6 +35,8 @@ export default function CharacterArt({ character }: { character: Character }) {
             <img
               key={`img-${src}`}
               src={src}
+              loading={index === 0 ? "eager" : "lazy"}
+              decoding="async"
               alt={
                 images.length > 1
                   ? `${character.name} - ảnh ${index + 1}/${images.length}`

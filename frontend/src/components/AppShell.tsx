@@ -69,11 +69,6 @@ export default function AppShell() {
           >
             Vanver
           </strong>
-          {profile && (
-            <span style={{ marginLeft: 8, color: "var(--muted)", fontSize: 12 }}>
-              Lớp {profile.grade}
-            </span>
-          )}
         </div>
         <div className="topbar-actions">
           <button

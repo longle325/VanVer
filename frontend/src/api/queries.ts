@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api/client";
 import { useAppStore } from "@/stores/useAppStore";
@@ -10,7 +11,16 @@ export const queryKeys = {
   leaderboard: ["leaderboard"] as const,
 };
 
+// The character catalog is effectively static content but the backend has a
+// slow TTFB, so cache it aggressively and keep it across navigation to avoid
+// refetching it (and blocking the Collection mount) every time.
+const CATALOG_STALE_MS = 30 * 60_000;
+const CATALOG_GC_MS = 60 * 60_000;
+
 export function useDeck() {
+  // The deck is user- and swipe-state-specific (keyed only ["deck"]), so it
+  // intentionally keeps the default freshness rather than the static-catalog
+  // policy below — avoids serving a stale deck across account switches.
   return useQuery({
     queryKey: queryKeys.deck,
     queryFn: api.getDeck,
@@ -21,6 +31,8 @@ export function useAllCharacters() {
   return useQuery({
     queryKey: queryKeys.characters,
     queryFn: api.getAllCharacters,
+    staleTime: CATALOG_STALE_MS,
+    gcTime: CATALOG_GC_MS,
   });
 }
 
@@ -29,7 +41,24 @@ export function useCharacter(id: string | undefined) {
     queryKey: queryKeys.character(id ?? ""),
     queryFn: () => api.getCharacter(id as string),
     enabled: !!id,
+    staleTime: CATALOG_STALE_MS,
+    gcTime: CATALOG_GC_MS,
   });
+}
+
+/**
+ * Warm the character catalog as soon as the app mounts so the first visit to
+ * Collection/Discover doesn't pay the backend's 2-4s TTFB on the render path.
+ */
+export function usePrefetchCatalog() {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.characters,
+      queryFn: api.getAllCharacters,
+      staleTime: CATALOG_STALE_MS,
+    });
+  }, [queryClient]);
 }
 
 export function useChallenge(id: string | undefined) {

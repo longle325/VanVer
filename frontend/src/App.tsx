@@ -3,6 +3,7 @@ import AppShell from "@/components/AppShell";
 import AuthBackgroundMusic from "@/components/AuthBackgroundMusic";
 import BackgroundMusic from "@/components/BackgroundMusic";
 import RequireProfile from "@/components/RequireProfile";
+import { usePrefetchCatalog } from "@/api/queries";
 import Onboarding from "@/routes/Onboarding";
 import Discover from "@/routes/Discover";
 import Collection from "@/routes/Collection";
@@ -15,6 +16,7 @@ import CharacterProfile from "@/routes/CharacterProfile";
 export default function App() {
   const { pathname } = useLocation();
   const isAuthRoute = pathname === "/onboarding" || pathname.startsWith("/auth/");
+  usePrefetchCatalog();
 
   return (
     <>
