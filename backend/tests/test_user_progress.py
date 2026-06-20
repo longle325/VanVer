@@ -91,7 +91,7 @@ class UserProgressRouteTests(unittest.TestCase):
         self.app.dependency_overrides.clear()
 
     def _session_cookie(self, user_id):
-        from api.routes.auth import SESSION_USER_ID_KEY
+        from api.session import SESSION_USER_ID_KEY
         from core.config import settings
 
         secret = settings.SESSION_SECRET_KEY or "vanver-dev-session-secret-change-me"

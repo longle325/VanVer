@@ -12,10 +12,11 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.deps import get_db, get_open_ended_grader
+from api.session import require_session_owner
 from core.config import settings
 from models.db_models import MatchStatus
 from models.schemas import (
@@ -111,9 +112,12 @@ async def get_challenge_result(
 
 @router.post("/challenges/submit", response_model=ChallengeResult)
 async def submit_challenge(
+    request: Request,
     body: ChallengeSubmission,
     session: AsyncSession = Depends(get_db),
 ):
+    require_session_owner(request, body.user_id)
+
     await _validate_challenge_access(session, body.user_id, body.character_id)
 
     # Load challenge first so we can grade.

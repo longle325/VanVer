@@ -25,7 +25,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sse_starlette.sse import EventSourceResponse
 
 from api.deps import get_chat, get_db
-from api.routes.auth import SESSION_USER_ID_KEY
+from api.session import session_user_id
 from core.config import settings
 from models.db_models import ChatRole, MatchStatus
 from models.schemas import ChatHistoryResponse, ChatRequest, ChatMessageResponse
@@ -59,32 +59,18 @@ async def _validate_chat_access(
     return user, character, match
 
 
-def _session_user_id(request: Request) -> UUID | None:
-    value = request.session.get(SESSION_USER_ID_KEY)
-    if not value:
-        return None
-    try:
-        return UUID(str(value))
-    except ValueError:
-        request.session.clear()
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated.",
-        )
-
-
 def _resolve_chat_user_id(
     request: Request,
     requested_user_id: UUID | None,
 ) -> UUID:
-    session_user_id = _session_user_id(request)
-    if session_user_id is not None:
-        if requested_user_id is not None and requested_user_id != session_user_id:
+    current_user_id = session_user_id(request)
+    if current_user_id is not None:
+        if requested_user_id is not None and requested_user_id != current_user_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Authenticated session does not match request user.",
             )
-        return session_user_id
+        return current_user_id
 
     if requested_user_id is None:
         raise HTTPException(

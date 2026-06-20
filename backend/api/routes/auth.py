@@ -4,13 +4,12 @@ OAuth login, callback, session introspection, and logout endpoints.
 
 from __future__ import annotations
 
-from uuid import UUID
-
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.deps import get_db
+from api.session import SESSION_USER_ID_KEY, session_user_id
 from core.config import settings
 from models.schemas import UserResponse
 from services import db_postgres as db
@@ -29,7 +28,6 @@ except ImportError:  # pragma: no cover - exercised only when deps are missing.
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 SUPPORTED_PROVIDERS = {"google"}
-SESSION_USER_ID_KEY = "user_id"
 SESSION_PROVIDER_KEY = "auth_provider"
 SESSION_NEXT_KEY = "oauth_next"
 
@@ -129,7 +127,7 @@ async def get_current_session_user(
     request: Request,
     session: AsyncSession = Depends(get_db),
 ):
-    user_id = _session_user_id(request)
+    user_id = session_user_id(request)
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -183,14 +181,3 @@ def _callback_redirect_uri(request: Request, provider: str) -> str:
     if base_url:
         return f"{base_url}/api/v1/auth/callback/{provider}"
     return str(request.url_for("oauth_callback", provider=provider))
-
-
-def _session_user_id(request: Request) -> UUID | None:
-    value = request.session.get(SESSION_USER_ID_KEY)
-    if not value:
-        return None
-    try:
-        return UUID(str(value))
-    except ValueError:
-        request.session.clear()
-        return None

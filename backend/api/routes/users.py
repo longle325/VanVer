@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.deps import get_db
-from api.routes.auth import SESSION_USER_ID_KEY
+from api.session import require_session_owner
 from models.db_models import MatchStatus
 from models.schemas import (
     MatchedCharacter,
@@ -27,34 +27,6 @@ from models.schemas import (
 from services import db_postgres as db
 
 router = APIRouter(prefix="/users", tags=["users"])
-
-
-def _session_user_id(request: Request) -> UUID | None:
-    value = request.session.get(SESSION_USER_ID_KEY)
-    if not value:
-        return None
-    try:
-        return UUID(str(value))
-    except ValueError:
-        request.session.clear()
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated.",
-        )
-
-
-def _require_progress_owner(request: Request, user_id: UUID) -> None:
-    session_user_id = _session_user_id(request)
-    if session_user_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated.",
-        )
-    if session_user_id != user_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Authenticated session does not match request user.",
-        )
 
 
 def _strip_client_awards(value: Any) -> Any:
@@ -160,7 +132,7 @@ async def save_user_progress(
     body: UserProgressPayload,
     session: AsyncSession = Depends(get_db),
 ):
-    _require_progress_owner(request, user_id)
+    require_session_owner(request, user_id)
 
     user = await db.get_user(session, user_id)
     if not user:
