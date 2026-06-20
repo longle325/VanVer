@@ -75,6 +75,7 @@ cd backend && python3 -m venv .venv && ./.venv/bin/pip install -r requirements.t
 # 4. Postgres + schema + seed (characters, challenges, demo users)
 docker compose up -d postgres          # chờ đến khi `docker compose ps postgres` báo healthy
 unset DEBUG                             # backend yêu cầu DEBUG là boolean
+cd backend && ./.venv/bin/alembic upgrade head && cd ..   # tạo schema bằng migrations
 cd backend && ./.venv/bin/python scripts/seed_database.py && cd ..
 
 # 5. Knowledge-base embeddings — khôi phục bản pgvector dump đã embed sẵn của team

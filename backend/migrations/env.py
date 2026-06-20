@@ -9,11 +9,14 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from core.config import settings
-from core.database import Base
+from core.database import Base, _prepare_url
 import models.db_models  # noqa: F401
 
+# Same normalization the app uses (strips sslmode, maps it to asyncpg ssl args).
+_clean_url, _connect_args = _prepare_url(settings.DATABASE_URL)
+
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", _clean_url)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -23,7 +26,7 @@ target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
     context.configure(
-        url=settings.DATABASE_URL,
+        url=_clean_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -46,6 +49,7 @@ async def run_migrations_online() -> None:
         configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        connect_args=_connect_args,
     )
 
     async with connectable.connect() as connection:
