@@ -77,6 +77,10 @@ export const mockClient: ApiClient = {
       userId: "mock-demo",
     };
   },
+  async logout(): Promise<{ ok: true }> {
+    await delay(0);
+    return { ok: true };
+  },
   async getDeck(): Promise<Character[]> {
     await delay(0);
     return characters;

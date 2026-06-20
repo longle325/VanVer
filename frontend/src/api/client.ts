@@ -27,6 +27,11 @@ export const api: ApiClient = {
       ? realClient.getCurrentUser()
       : mockClient.getCurrentUser(),
 
+  logout: () =>
+    useReal("auth")
+      ? realClient.logout()
+      : mockClient.logout(),
+
   getDeck: () =>
     useReal("deck") ? realClient.getDeck() : mockClient.getDeck(),
 

@@ -36,6 +36,7 @@ export type ChatStreamEvent =
 export interface ApiClient {
   createUser: (input: CreateUserInput) => Promise<UserProfile>;
   getCurrentUser: () => Promise<UserProfile>;
+  logout: () => Promise<{ ok: true }>;
   getDeck: () => Promise<Character[]>;
   /** Full character catalog. Unlike `getDeck` this is NOT filtered by
    *  the current user's swipes — Collection needs every matched

@@ -208,6 +208,11 @@ export const realClient: ApiClient = {
     return backendUserToProfile(user);
   },
 
+  async logout(): Promise<{ ok: true }> {
+    await apiFetch("/auth/logout", { method: "POST" });
+    return { ok: true };
+  },
+
   async getDeck(): Promise<Character[]> {
     const res = await apiFetch<BackendDeckResponse>("/deck", {
       withUser: true,
