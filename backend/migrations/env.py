@@ -10,13 +10,14 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from core.config import settings
 from core.database import Base, _prepare_url
+from migrations.url_config import escape_configparser_value
 import models.db_models  # noqa: F401
 
 # Same normalization the app uses (strips sslmode, maps it to asyncpg ssl args).
 _clean_url, _connect_args = _prepare_url(settings.DATABASE_URL)
 
 config = context.config
-config.set_main_option("sqlalchemy.url", _clean_url)
+config.set_main_option("sqlalchemy.url", escape_configparser_value(_clean_url))
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
