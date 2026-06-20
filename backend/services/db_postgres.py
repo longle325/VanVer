@@ -38,23 +38,13 @@ UNLOCKED_MATCH_STATUSES = (
 
 
 def calculate_progress_points(level_results: dict | None) -> int:
-    """Return points awarded by synced frontend level challenge results."""
-    if not isinstance(level_results, dict):
-        return 0
+    """Return server-trusted points from synced level challenge results.
 
-    total = 0
-    for character_results in level_results.values():
-        if not isinstance(character_results, dict):
-            continue
-        for result in character_results.values():
-            if not isinstance(result, dict):
-                continue
-            awarded = result.get("awarded", 0)
-            if isinstance(awarded, bool):
-                continue
-            if isinstance(awarded, (int, float)):
-                total += int(awarded)
-    return total
+    Level progress is currently submitted by the client, so it cannot be used
+    as an authoritative score source. Keep this at zero until level challenge
+    grading/awards are moved server-side.
+    """
+    return 0
 
 
 async def get_effective_total_score(db: AsyncSession, user: User) -> int:

@@ -7,10 +7,11 @@ POST /api/v1/interactions/swipe
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.deps import get_db
+from api.session import require_session_owner
 from core.config import settings
 from models.db_models import MatchStatus as DbMatchStatus
 from models.schemas import MatchStatus, SwipeDirection, SwipeRequest, SwipeResponse
@@ -21,9 +22,12 @@ router = APIRouter(prefix="/interactions", tags=["interactions"])
 
 @router.post("/swipe", response_model=SwipeResponse)
 async def swipe(
+    request: Request,
     body: SwipeRequest,
     session: AsyncSession = Depends(get_db),
 ):
+    require_session_owner(request, body.user_id)
+
     # Validate user and character exist
     user = await db.get_user(session, body.user_id)
     if not user:

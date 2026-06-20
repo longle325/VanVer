@@ -23,8 +23,9 @@ match_status = postgresql.ENUM(
     "CHAT_UNLOCKED",
     "CHALLENGE_PASSED",
     name="matchstatus",
+    create_type=False,
 )
-chat_role = postgresql.ENUM("USER", "ASSISTANT", name="chatrole")
+chat_role = postgresql.ENUM("USER", "ASSISTANT", name="chatrole", create_type=False)
 
 
 def upgrade() -> None:

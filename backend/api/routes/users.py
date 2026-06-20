@@ -7,12 +7,14 @@ GET  /api/v1/users/{user_id} – get user profile
 
 from __future__ import annotations
 
+from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.deps import get_db
+from api.session import require_session_owner
 from models.db_models import MatchStatus
 from models.schemas import (
     MatchedCharacter,
@@ -25,6 +27,18 @@ from models.schemas import (
 from services import db_postgres as db
 
 router = APIRouter(prefix="/users", tags=["users"])
+
+
+def _strip_client_awards(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {
+            key: _strip_client_awards(item)
+            for key, item in value.items()
+            if key != "awarded"
+        }
+    if isinstance(value, list):
+        return [_strip_client_awards(item) for item in value]
+    return value
 
 
 @router.post(
@@ -113,10 +127,13 @@ async def get_user_progress(
 
 @router.put("/{user_id}/progress", response_model=UserProgressResponse)
 async def save_user_progress(
+    request: Request,
     user_id: UUID,
     body: UserProgressPayload,
     session: AsyncSession = Depends(get_db),
 ):
+    require_session_owner(request, user_id)
+
     user = await db.get_user(session, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
@@ -125,7 +142,7 @@ async def save_user_progress(
         session,
         user_id,
         completed=body.completed,
-        level_results=body.level_results,
+        level_results=_strip_client_awards(body.level_results),
         skipped=body.skipped,
     )
     return UserProgressResponse(
