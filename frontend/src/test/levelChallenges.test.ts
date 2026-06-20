@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { getCharacter } from "@/data/characters";
 import { levelChallengeMap } from "@/data/levelChallenges";
+import { getLevelProgressPercent, type LevelResults } from "@/lib/characterLevels";
 import { scoreLevelChallenge } from "@/lib/scoring";
+import type { ChallengeResult } from "@/types";
 
 const coveredCharacters = [
   "chi-pheo",
@@ -87,5 +89,51 @@ describe("level challenge data", () => {
     expect(result.score).toBe(4);
     expect(result.perfect).toBe(false);
     expect(result.openGrades?.[openQuestion!.id]?.passed).toBe(false);
+  });
+
+  it("counts completed levels for collection exploration progress", () => {
+    const character = getCharacter("chi-pheo");
+    expect(character).toBeDefined();
+
+    const passedResult: ChallengeResult = {
+      score: 5,
+      total: 5,
+      passed: true,
+      perfect: true,
+      awarded: 115,
+      answers: [],
+    };
+    const failedResult: ChallengeResult = {
+      score: 3,
+      total: 5,
+      passed: false,
+      perfect: false,
+      awarded: 50,
+      answers: [],
+    };
+
+    const noLevels: LevelResults = {};
+    const onePassed: LevelResults = {
+      "chi-pheo": { 1: passedResult },
+    };
+    const twoPassed: LevelResults = {
+      "chi-pheo": { 1: passedResult, 2: passedResult },
+    };
+    const allPassed: LevelResults = {
+      "chi-pheo": {
+        1: passedResult,
+        2: passedResult,
+        3: passedResult,
+      },
+    };
+    const failedOnly: LevelResults = {
+      "chi-pheo": { 1: failedResult },
+    };
+
+    expect(getLevelProgressPercent(character!, noLevels)).toBe(0);
+    expect(getLevelProgressPercent(character!, failedOnly)).toBe(0);
+    expect(getLevelProgressPercent(character!, onePassed)).toBe(33);
+    expect(getLevelProgressPercent(character!, twoPassed)).toBe(67);
+    expect(getLevelProgressPercent(character!, allPassed)).toBe(100);
   });
 });

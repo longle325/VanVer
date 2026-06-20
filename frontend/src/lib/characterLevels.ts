@@ -67,12 +67,12 @@ export function getLevelProgressPercent(
 ): number {
   const challenges = character.levelChallenges;
   if (!challenges?.length) {
-    if (!legacyResult) return 33;
+    if (!legacyResult) return 0;
     return legacyResult.passed
       ? 100
       : Math.round((legacyResult.score / (legacyResult.total ?? 5)) * 100);
   }
 
   const passed = getPassedLevelCount(character, levelResults);
-  return Math.min(100, Math.max(33, Math.round(((passed + 1) / 3) * 100)));
+  return Math.min(100, Math.round((passed / challenges.length) * 100));
 }

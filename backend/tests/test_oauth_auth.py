@@ -7,6 +7,26 @@ from uuid import uuid4
 from fastapi.testclient import TestClient
 
 
+def _join_paths(prefix, path):
+    if not prefix:
+        return path
+    return f"{prefix.rstrip('/')}/{path.lstrip('/')}"
+
+
+def _route_paths(routes, prefix=""):
+    paths = set()
+    for route in routes:
+        path = getattr(route, "path", None)
+        if path:
+            paths.add(_join_paths(prefix, path))
+
+        include_context = getattr(route, "include_context", None)
+        nested_router = getattr(route, "original_router", None)
+        nested_prefix = _join_paths(prefix, getattr(include_context, "prefix", ""))
+        paths.update(_route_paths(getattr(nested_router, "routes", []), nested_prefix))
+    return paths
+
+
 class OAuthServiceTests(unittest.TestCase):
     def test_normalizes_oidc_userinfo_into_profile(self):
         from services.oauth_service import normalize_oidc_userinfo
@@ -89,7 +109,7 @@ class OAuthRouteTests(unittest.TestCase):
         self.app.dependency_overrides.clear()
 
     def test_auth_routes_are_registered(self):
-        paths = {route.path for route in self.app.routes}
+        paths = _route_paths(self.app.routes)
 
         self.assertIn("/api/v1/auth/login/{provider}", paths)
         self.assertIn("/api/v1/auth/callback/{provider}", paths)
