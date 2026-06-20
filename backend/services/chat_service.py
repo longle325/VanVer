@@ -135,8 +135,8 @@ class ChatService:
 
         return {
             "context": (
-                "(Không tìm thấy ngữ cảnh cụ thể trong kho kiến thức. "
-                "Hãy trả lời dựa trên hiểu biết chung về nhân vật.)"
+                "(No specific context was found in the knowledge base. "
+                "Answer from general canon knowledge about the character.)"
             ),
             "sources": [],
             "retrieval_mode": "none",
@@ -198,7 +198,7 @@ class ChatService:
             if resolved_max_chars > 0 and len(content) > resolved_max_chars:
                 content = f"{content[:resolved_max_chars].rstrip()}... [truncated]"
             role = message.get("role")
-            label = "Nhân vật" if role == "assistant" else "Người học"
+            label = "Character" if role == "assistant" else "Student"
             lines.append(f"{label}: {content}")
 
         while lines and resolved_max_total > 0:

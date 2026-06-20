@@ -298,6 +298,33 @@ function SymbolList({
   );
 }
 
+const SYMBOL_PHRASE_STOPS = [
+  " có ",
+  " của ",
+  " khiến ",
+  " khơi ",
+  " thể hiện ",
+  " cho thấy ",
+  " là ",
+  " đi cùng ",
+  " dùng ",
+  " được ",
+  " nhắm ",
+];
+
+function deriveSymbolFromSource(source: string): string {
+  const sentence = source.replace(/[.!?].*$/, "").trim();
+  const stopIndex = SYMBOL_PHRASE_STOPS
+    .map((stop) => sentence.indexOf(stop))
+    .filter((index) => index > 0)
+    .sort((a, b) => a - b)[0];
+
+  const phrase = stopIndex ? sentence.slice(0, stopIndex).trim() : sentence;
+  const words = phrase.split(/\s+/).filter(Boolean);
+  if (words.length <= 5) return phrase;
+  return `${words.slice(0, 5).join(" ")}...`;
+}
+
 function InsightPanel({
   character,
   onSelect,
@@ -308,7 +335,8 @@ function InsightPanel({
   const themes = character.interpretationThemes ?? [
     character.conflict.split(";")[0],
   ];
-  const symbols = character.symbols ?? character.sources.map((source) => source.split(" ")[0]);
+  const symbols =
+    character.symbols ?? character.sources.map(deriveSymbolFromSource);
 
   return (
     <aside className="panel source-panel insight-panel">
