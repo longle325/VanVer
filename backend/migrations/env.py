@@ -4,12 +4,14 @@ import asyncio
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import pool
+from alembic.script import ScriptDirectory
+from sqlalchemy import inspect, pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from core.config import settings
 from core.database import Base, _prepare_url
+from migrations.baseline import should_stamp_legacy_schema
 from migrations.url_config import escape_configparser_value
 import models.db_models  # noqa: F401
 
@@ -23,6 +25,15 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
+
+def stamp_existing_schema_if_needed(connection: Connection) -> None:
+    inspector = inspect(connection)
+    if should_stamp_legacy_schema(
+        inspector.get_table_names(),
+        target_metadata.tables.keys(),
+    ):
+        context.get_context().stamp(ScriptDirectory.from_config(config), "head")
 
 
 def run_migrations_offline() -> None:
@@ -39,6 +50,7 @@ def run_migrations_offline() -> None:
 
 def do_run_migrations(connection: Connection) -> None:
     context.configure(connection=connection, target_metadata=target_metadata)
+    stamp_existing_schema_if_needed(connection)
 
     with context.begin_transaction():
         context.run_migrations()
