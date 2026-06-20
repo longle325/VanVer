@@ -15,7 +15,6 @@ export default function Profile() {
       <div className="profile-card card">
         <p className="kicker">Hồ sơ</p>
         <h1 className="headline-lg">{profile?.username}</h1>
-        <p className="lead">Lớp {profile?.grade}</p>
         <div className="profile-meta">
           <div className="panel stat">
             <strong>{points}</strong>

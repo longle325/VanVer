@@ -50,7 +50,12 @@ function CollectionCard({
         aria-label={`Xem hồ sơ ${character.name}`}
       >
         {image ? (
-          <img src={image} alt={character.name} />
+          <img
+            src={image}
+            alt={character.name}
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <CharacterArt character={character} />
         )}
