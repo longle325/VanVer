@@ -196,7 +196,18 @@ function currentFrontendUrl(path: string): string {
     return `http://localhost:5173#${normalizedPath}`;
   }
 
-  const base = `${window.location.origin}${window.location.pathname}`;
+  const apiUrl = new URL(API_BASE_URL);
+  const appUrl = new URL(window.location.origin);
+  if (
+    apiUrl.hostname === "localhost" &&
+    appUrl.hostname === "127.0.0.1"
+  ) {
+    appUrl.hostname = "localhost";
+  }
+  appUrl.pathname = window.location.pathname;
+  appUrl.search = "";
+  appUrl.hash = "";
+  const base = appUrl.toString();
   return `${base}#${normalizedPath}`;
 }
 
