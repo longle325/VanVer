@@ -137,6 +137,17 @@ Frontend state is saved in `localStorage`. To reset the demo data, go to:
 - **Backend** — FastAPI, async SQLAlchemy, Postgres + pgvector, OpenAI GPT-4o + `text-embedding-3-large`, with SSE streaming for chat.
 - **RAG** — each character has a curated knowledge base embedded into `knowledge_chunks`. Chat and open-ended grading retrieve real supporting evidence, with lexical search as a fallback if vector search is unavailable.
 
+---
+
+## Contributing
+
+Contributions are welcome!
+
+- **Report a bug or request a feature** — open an [issue](../../issues/new) and follow the issue template.
+- **Submit a change** — open a [pull request](../../pulls) and follow the PR template.
+
+Both templates live in [`.github/`](.github) and appear automatically when you open an issue or pull request on GitHub.
+
 ```txt
 frontend/   React + TS + Vite + Capacitor
 backend/    FastAPI + Postgres + pgvector + OpenAI
