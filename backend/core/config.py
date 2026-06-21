@@ -7,7 +7,7 @@ Resolution order (pydantic-settings default behaviour):
 
 In production (Cloud Run / Docker) there is no .env file — settings come
 entirely from env vars injected by the platform.  Locally, developers can
-use either `backend/.env` or the repo-root `.env` (shared with Vite).
+use the repo-root `.env` (shared with Vite).
 """
 
 from pathlib import Path
@@ -16,12 +16,9 @@ from typing import List
 
 
 def _find_env_files() -> list[str]:
-    """Return .env paths that actually exist, closest first."""
-    candidates = [
-        Path(__file__).resolve().parents[1] / ".env",  # backend/.env
-        Path(__file__).resolve().parents[2] / ".env",  # repo-root .env
-    ]
-    return [str(p) for p in candidates if p.is_file()]
+    """Return the single repo-root .env path when it exists."""
+    root_env = Path(__file__).resolve().parents[2] / ".env"
+    return [str(root_env)] if root_env.is_file() else []
 
 
 class Settings(BaseSettings):
