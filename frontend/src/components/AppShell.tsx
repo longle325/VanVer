@@ -6,6 +6,7 @@ import {
   Trophy,
   User,
   Flame,
+  Github,
   LogOut,
   Medal,
   Volume2,
@@ -13,6 +14,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useLogout } from "@/hooks/useLogout";
+
+const REPO_URL = "https://github.com/longle325/VanVer";
 
 interface NavItem {
   key: string;
@@ -102,6 +105,17 @@ export default function AppShell() {
               {(Number.isFinite(points) ? points : 0).toLocaleString("vi-VN")} Điểm
             </span>
           </div>
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Xem mã nguồn trên GitHub"
+            title="Xem mã nguồn trên GitHub"
+            className="shell-repo-link"
+          >
+            <Github size={18} aria-hidden="true" />
+            <span>GitHub</span>
+          </a>
           <button
             type="button"
             aria-label={isLoggingOut ? "Đang đăng xuất" : "Đăng xuất"}
