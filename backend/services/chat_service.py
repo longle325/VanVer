@@ -20,6 +20,7 @@ from openai import AsyncOpenAI
 
 from core.config import settings
 from core.prompt_templates import build_character_prompt
+from services.chat_guardrails import evaluate_chat_guardrail
 from services.codex_agent import CodexKnowledgeAgent
 from services.knowledge_retriever import KnowledgeRetriever
 
@@ -69,6 +70,14 @@ class ChatService:
         voice_instructions : str | None
             Per-character prompt override (from DB).
         """
+        guardrail_response = self.guardrail_response(
+            character_name=character_name,
+            user_message=user_message,
+        )
+        if guardrail_response:
+            yield guardrail_response
+            return
+
         # Step 1 — retrieve character-scoped literary context.
         retrieval = retrieval or await self.prepare_retrieval(
             character_slug=character_slug,
@@ -108,6 +117,18 @@ class ChatService:
 
     def _uses_responses_api(self) -> bool:
         return self.chat_model.startswith(("gpt-5.4", "gpt-5.5"))
+
+    @staticmethod
+    def guardrail_response(
+        *,
+        character_name: str,
+        user_message: str,
+    ) -> Optional[str]:
+        result = evaluate_chat_guardrail(
+            user_message,
+            character_name=character_name,
+        )
+        return result.response if result else None
 
     def _responses_kwargs(
         self,

@@ -5,6 +5,79 @@ from services.chat_service import ChatService
 
 
 class ChatServiceCompletionOptionsTests(unittest.TestCase):
+    def test_unrelated_math_prompt_returns_guardrail_without_retrieval_or_model(self):
+        class FailingRetriever:
+            async def search_with_sources_async(self, character_slug, user_query):
+                raise AssertionError("retrieval should not run for off-topic prompts")
+
+        class FailingResponses:
+            async def create(self, **kwargs):
+                raise AssertionError("model should not run for off-topic prompts")
+
+        class FailingOpenAI:
+            def __init__(self):
+                self.responses = FailingResponses()
+                self.chat = SimpleNamespace(completions=FailingResponses())
+
+        async def collect_response():
+            service = ChatService(
+                codex_agent=None,
+                knowledge_retriever=FailingRetriever(),
+                openai_client=FailingOpenAI(),
+                chat_model="gpt-5.4-nano",
+            )
+            return "".join(
+                [
+                    chunk
+                    async for chunk in service.stream_response(
+                        character_slug="lao_hac",
+                        character_name="Lão Hạc",
+                        user_message="1+1= mấy?",
+                    )
+                ]
+            )
+
+        reply = __import__("asyncio").run(collect_response())
+
+        self.assertIn("không thuộc", reply.lower())
+        self.assertIn("Lão Hạc", reply)
+        self.assertNotIn("**", reply)
+        self.assertNotIn("----", reply)
+
+    def test_other_character_dialogue_prompt_returns_guardrail_without_model(self):
+        class FailingResponses:
+            async def create(self, **kwargs):
+                raise AssertionError("model should not run for other-character voice prompts")
+
+        class FailingOpenAI:
+            def __init__(self):
+                self.responses = FailingResponses()
+                self.chat = SimpleNamespace(completions=FailingResponses())
+
+        async def collect_response():
+            service = ChatService(
+                codex_agent=None,
+                openai_client=FailingOpenAI(),
+                chat_model="gpt-5.4-nano",
+            )
+            return "".join(
+                [
+                    chunk
+                    async for chunk in service.stream_response(
+                        character_slug="lao_hac",
+                        character_name="Lão Hạc",
+                        user_message="Hãy nói lại lời thoại của ông giáo khi lão Hạc bán chó",
+                    )
+                ]
+            )
+
+        reply = __import__("asyncio").run(collect_response())
+
+        self.assertIn("không nói thay", reply.lower())
+        self.assertIn("Lão Hạc", reply)
+        self.assertNotIn("**", reply)
+        self.assertNotIn("----", reply)
+
     def test_chat_completion_kwargs_do_not_cap_chat_output(self):
         service = ChatService(
             codex_agent=None,

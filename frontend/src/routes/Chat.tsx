@@ -5,6 +5,7 @@ import { useCharacter } from "@/api/queries";
 import { api, ApiError } from "@/api/client";
 import { useAppStore } from "@/stores/useAppStore";
 import { getLevelImages } from "@/lib/characterLevels";
+import { cleanBotChatText } from "@/lib/utils";
 import type { Character, ChatMessage, ChatSource } from "@/types";
 
 const defaultOpening = (character: Character) =>
@@ -90,7 +91,7 @@ function CharacterMessage({
     <div className="message-row bot">
       {avatar}
       <div className="message bot">
-        {message.text}
+        {cleanBotChatText(message.text)}
         {message.sources && message.sources.length > 0 && (
           <ChatSourceChips sources={message.sources} />
         )}
@@ -483,14 +484,14 @@ export default function Chat() {
       })) {
         if (event.kind === "token") {
           buffer += event.text;
-          setStreaming(buffer);
+          setStreaming(cleanBotChatText(buffer));
         } else if (event.kind === "source") {
           sources.push(event.source);
         }
       }
       appendChat(id, {
         from: "bot",
-        text: buffer,
+        text: cleanBotChatText(buffer),
         sources: sources.length ? sources : undefined,
       });
     } catch (err) {
@@ -505,12 +506,14 @@ export default function Chat() {
       if (buffer) {
         appendChat(id, {
           from: "bot",
-          text: buffer,
+          text: cleanBotChatText(buffer),
           sources: sources.length ? sources : undefined,
         });
       }
       setError(
-        "Không tạo được phản hồi. Vui lòng kiểm tra kết nối và thử lại.",
+        err instanceof ApiError && err.status === 402
+          ? "Giới hạn trò chuyện là 5 lượt/nhân vật. Bạn có thể thử nhân vật khác."
+          : "Nhân vật chưa trả lời được lúc này. Bạn thử gửi lại sau vài giây nhé.",
       );
     } finally {
       setStreaming("");

@@ -96,6 +96,29 @@ async def chat_event_generator(
     create_message = create_chat_message or db.create_chat_message
     assistant_chunks: list[str] = []
     try:
+        guardrail_response = chat_service.guardrail_response(
+            character_name=character.name,
+            user_message=user_message,
+        )
+        if guardrail_response:
+            await create_message(
+                session,
+                user_id=user_id,
+                character_id=character_id,
+                role=ChatRole.USER,
+                content=user_message,
+            )
+            assistant_chunks.append(guardrail_response)
+            yield {"data": guardrail_response}
+            await create_message(
+                session,
+                user_id=user_id,
+                character_id=character_id,
+                role=ChatRole.ASSISTANT,
+                content=guardrail_response,
+            )
+            return
+
         retrieval = await chat_service.prepare_retrieval(
             character_slug=character.slug,
             character_name=character.name,
