@@ -108,6 +108,71 @@ _GENERAL_LITERARY_TERMS = (
     "gia tri nhan dao",
 )
 
+_ROLEPLAY_ADDRESS_CUES = (
+    "ong",
+    "ba",
+    "co",
+    "chu",
+    "chi",
+    "anh",
+    "em",
+    "may",
+    "tao",
+    "toi",
+    "minh",
+)
+
+_CHARACTER_LIFE_TERMS = (
+    "cuoc doi",
+    "doi ong",
+    "doi ba",
+    "doi co",
+    "doi toi",
+    "doi minh",
+    "doi anh",
+    "doi chi",
+    "doi may",
+    "phan doi",
+    "noi kho",
+    "kho",
+    "ngheo",
+    "co don",
+    "buon",
+    "vui",
+    "dau",
+    "dau kho",
+    "day dut",
+    "an han",
+    "hoi han",
+    "nho",
+    "mong",
+    "uoc mo",
+    "hy vong",
+    "so",
+    "so hai",
+    "thuong",
+    "ghet",
+    "yeu",
+    "cam thay",
+    "tam su",
+    "long",
+    "ky uc",
+    "ky niem",
+    "qua khu",
+    "tuoi tho",
+    "gia dinh",
+    "cha",
+    "me",
+    "con",
+    "nguoi than",
+    "vo",
+    "chong",
+    "song",
+    "chet",
+    "lua chon",
+    "uoc",
+)
+
 _CHARACTER_CONTEXT_TERMS: dict[str, tuple[str, ...]] = {
     "lao_hac": (
         "lao hac",
@@ -342,7 +407,22 @@ def _has_literary_relevance(
     terms = [selected_character, *_GENERAL_LITERARY_TERMS]
     if character_slug:
         terms.extend(_CHARACTER_CONTEXT_TERMS.get(character_slug, ()))
-    return any(_contains_term(normalized_message, term) for term in terms)
+    return any(
+        _contains_term(normalized_message, term) for term in terms
+    ) or _is_in_character_life_prompt(normalized_message)
+
+
+def _is_in_character_life_prompt(normalized_message: str) -> bool:
+    has_address = any(
+        _contains_term(normalized_message, term)
+        for term in _ROLEPLAY_ADDRESS_CUES
+    )
+    if not has_address:
+        return False
+    return any(
+        _contains_term(normalized_message, term)
+        for term in _CHARACTER_LIFE_TERMS
+    )
 
 
 def _contains_term(normalized_message: str, term: str) -> bool:
