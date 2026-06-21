@@ -6,11 +6,13 @@ import {
   Trophy,
   User,
   Flame,
+  LogOut,
   Medal,
   Volume2,
   VolumeX,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useLogout } from "@/hooks/useLogout";
 
 interface NavItem {
   key: string;
@@ -32,6 +34,7 @@ export default function AppShell() {
   const streak = useAppStore((s) => s.streak);
   const musicEnabled = useAppStore((s) => s.music.enabled);
   const setMusicEnabled = useAppStore((s) => s.setMusicEnabled);
+  const { isLoggingOut, logout } = useLogout();
   const location = useLocation();
   const isLeaderboard = location.pathname.startsWith("/leaderboard");
   const isChallengeRoute = location.pathname.includes("/challenge");
@@ -99,6 +102,17 @@ export default function AppShell() {
               {points.toLocaleString("vi-VN")} Điểm
             </span>
           </div>
+          <button
+            type="button"
+            aria-label={isLoggingOut ? "Đang đăng xuất" : "Đăng xuất"}
+            title={isLoggingOut ? "Đang đăng xuất" : "Đăng xuất"}
+            className="shell-logout-button"
+            onClick={logout}
+            disabled={isLoggingOut}
+          >
+            <LogOut size={18} aria-hidden="true" />
+            <span>{isLoggingOut ? "Đang thoát" : "Đăng xuất"}</span>
+          </button>
         </div>
       </header>
       <main className="main">

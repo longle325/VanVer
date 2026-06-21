@@ -181,7 +181,8 @@ button {
 }
 
 @media (max-width: 520px) {
-  .global-sound-toggle span {
+  .global-sound-toggle span,
+  .shell-logout-button span {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -1380,6 +1381,38 @@ h3 {
 
 .profile-card {
   padding: 22px;
+}
+
+.profile-name-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.profile-field {
+  display: grid;
+  gap: 8px;
+}
+
+.profile-field input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.profile-save-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.profile-status {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .profile-meta {

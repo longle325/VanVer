@@ -77,6 +77,14 @@ export const mockClient: ApiClient = {
       userId: "mock-demo",
     };
   },
+  async updateDisplayName(input): Promise<UserProfile> {
+    await delay(0);
+    return {
+      username: input.displayName.trim(),
+      grade: 10,
+      userId: `mock-${input.displayName.trim()}`,
+    };
+  },
   async logout(): Promise<{ ok: true }> {
     await delay(0);
     return { ok: true };

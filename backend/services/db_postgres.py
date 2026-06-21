@@ -76,6 +76,20 @@ async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User
     return result.scalar_one_or_none()
 
 
+async def update_user_display_name(
+    db: AsyncSession,
+    user_id: UUID,
+    display_name: str,
+) -> Optional[User]:
+    user = await get_user(db, user_id)
+    if user is None:
+        return None
+    user.display_name = display_name
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
 async def get_user_by_oauth_identity(
     db: AsyncSession, provider: str, subject: str
 ) -> Optional[User]:
@@ -470,6 +484,7 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
         select(
             User.id.label("user_id"),
             User.username,
+            User.display_name,
             User.total_score,
             UserProgress.level_results,
             func.coalesce(unlocked_count.c.characters_unlocked, 0).label(
@@ -482,6 +497,10 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
 
     result = await db.execute(stmt)
     rows = result.all()
+    display_names = {}
+    for row in rows:
+        display_name = (row.display_name or "").strip()
+        display_names[row.user_id] = display_name or row.username
     ranked = sorted(
         rows,
         key=lambda row: (
@@ -489,7 +508,7 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
                 int(row.total_score or 0)
                 + calculate_progress_points(row.level_results)
             ),
-            row.username.lower(),
+            display_names[row.user_id].lower(),
         ),
     )[:limit]
 
@@ -497,7 +516,7 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
         {
             "rank": idx + 1,
             "user_id": row.user_id,
-            "username": row.username,
+            "username": display_names[row.user_id],
             "total_score": int(row.total_score or 0)
             + calculate_progress_points(row.level_results),
             "characters_unlocked": row.characters_unlocked,

@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.deps import get_db
 from api.session import SESSION_USER_ID_KEY, session_user_id
 from core.config import settings
-from models.schemas import UserResponse
+from models.schemas import UserProfileUpdate, UserResponse
 from services import db_postgres as db
 from services.oauth_service import normalize_oidc_userinfo, safe_post_login_redirect
 
@@ -135,6 +135,32 @@ async def get_current_session_user(
         )
 
     user = await db.get_user(session, user_id)
+    if not user:
+        request.session.clear()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated.",
+        )
+    total_score = await db.get_effective_total_score(session, user)
+    return UserResponse.model_validate(user).model_copy(
+        update={"total_score": total_score}
+    )
+
+
+@router.patch("/me", response_model=UserResponse)
+async def update_current_session_user(
+    request: Request,
+    body: UserProfileUpdate,
+    session: AsyncSession = Depends(get_db),
+):
+    user_id = session_user_id(request)
+    if user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated.",
+        )
+
+    user = await db.update_user_display_name(session, user_id, body.display_name)
     if not user:
         request.session.clear()
         raise HTTPException(

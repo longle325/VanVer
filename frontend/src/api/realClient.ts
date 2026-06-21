@@ -42,6 +42,7 @@ import type {
   ChatRequest,
   ChatStreamEvent,
   CreateUserInput,
+  UpdateDisplayNameInput,
 } from "./types";
 
 interface BackendUser {
@@ -205,6 +206,16 @@ export const realClient: ApiClient = {
 
   async getCurrentUser(): Promise<UserProfile> {
     const user = await apiFetch<BackendUser>("/auth/me");
+    return backendUserToProfile(user);
+  },
+
+  async updateDisplayName(
+    input: UpdateDisplayNameInput,
+  ): Promise<UserProfile> {
+    const user = await apiFetch<BackendUser>("/auth/me", {
+      method: "PATCH",
+      body: { display_name: input.displayName },
+    });
     return backendUserToProfile(user);
   },
 

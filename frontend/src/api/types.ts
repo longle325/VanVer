@@ -17,6 +17,10 @@ export interface CreateUserInput {
   grade: Grade;
 }
 
+export interface UpdateDisplayNameInput {
+  displayName: string;
+}
+
 export interface ChatRequest {
   characterId: string;
   message: string;
@@ -36,6 +40,7 @@ export type ChatStreamEvent =
 export interface ApiClient {
   createUser: (input: CreateUserInput) => Promise<UserProfile>;
   getCurrentUser: () => Promise<UserProfile>;
+  updateDisplayName: (input: UpdateDisplayNameInput) => Promise<UserProfile>;
   logout: () => Promise<{ ok: true }>;
   getDeck: () => Promise<Character[]>;
   /** Full character catalog. Unlike `getDeck` this is NOT filtered by
