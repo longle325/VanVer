@@ -87,6 +87,16 @@ class ChatService:
         )
 
         # Step 3 — stream the LLM response
+        if self._uses_responses_api():
+            stream = await self.client.responses.create(
+                **self._responses_kwargs(system_prompt, user_message)
+            )
+            async for event in stream:
+                delta = self._response_event_delta(event)
+                if delta:
+                    yield delta
+            return
+
         stream = await self.client.chat.completions.create(
             **self._completion_kwargs(system_prompt, user_message)
         )
@@ -95,6 +105,37 @@ class ChatService:
             delta = chunk.choices[0].delta
             if delta.content:
                 yield delta.content
+
+    def _uses_responses_api(self) -> bool:
+        return self.chat_model.startswith(("gpt-5.4", "gpt-5.5"))
+
+    def _responses_kwargs(
+        self,
+        system_prompt: str,
+        user_message: str,
+    ) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {
+            "model": self.chat_model,
+            "instructions": system_prompt,
+            "input": user_message,
+            "stream": True,
+        }
+        if settings.CHAT_REASONING_EFFORT:
+            kwargs["reasoning"] = {"effort": settings.CHAT_REASONING_EFFORT}
+        if settings.CHAT_RESPONSE_VERBOSITY:
+            kwargs["text"] = {"verbosity": settings.CHAT_RESPONSE_VERBOSITY}
+        return kwargs
+
+    @staticmethod
+    def _response_event_delta(event: Any) -> Optional[str]:
+        if isinstance(event, dict):
+            if event.get("type") == "response.output_text.delta":
+                return event.get("delta") or None
+            return None
+
+        if getattr(event, "type", None) == "response.output_text.delta":
+            return getattr(event, "delta", None) or None
+        return None
 
     async def prepare_retrieval(
         self,
@@ -157,11 +198,9 @@ class ChatService:
         }
 
         if self.chat_model.startswith(("gpt-5", "o1", "o3", "o4")):
-            kwargs["max_completion_tokens"] = 1024
-        else:
-            kwargs["temperature"] = 0.7
-            kwargs["max_tokens"] = 1024
+            return kwargs
 
+        kwargs["temperature"] = 0.7
         return kwargs
 
     @staticmethod

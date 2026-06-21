@@ -5,7 +5,7 @@ from services.chat_service import ChatService
 
 
 class ChatServiceCompletionOptionsTests(unittest.TestCase):
-    def test_gpt_5_models_use_max_completion_tokens(self):
+    def test_chat_completion_kwargs_do_not_cap_chat_output(self):
         service = ChatService(
             codex_agent=None,
             openai_client=object(),
@@ -14,11 +14,12 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
 
         kwargs = service._completion_kwargs("system", "message")
 
-        self.assertEqual(kwargs["max_completion_tokens"], 1024)
+        self.assertTrue(kwargs["stream"])
+        self.assertNotIn("max_completion_tokens", kwargs)
         self.assertNotIn("max_tokens", kwargs)
-        self.assertNotIn("temperature", kwargs)
+        self.assertNotIn("max_output_tokens", kwargs)
 
-    def test_legacy_chat_models_use_max_tokens(self):
+    def test_legacy_chat_completion_kwargs_do_not_cap_chat_output(self):
         service = ChatService(
             codex_agent=None,
             openai_client=object(),
@@ -27,9 +28,75 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
 
         kwargs = service._completion_kwargs("system", "message")
 
-        self.assertEqual(kwargs["max_tokens"], 1024)
+        self.assertTrue(kwargs["stream"])
         self.assertEqual(kwargs["temperature"], 0.7)
+        self.assertNotIn("max_tokens", kwargs)
         self.assertNotIn("max_completion_tokens", kwargs)
+        self.assertNotIn("max_output_tokens", kwargs)
+
+    def test_gpt_5_4_nano_streams_with_fast_responses_api_settings(self):
+        class FakeResponses:
+            def __init__(self):
+                self.kwargs = None
+
+            async def create(self, **kwargs):
+                self.kwargs = kwargs
+
+                async def stream():
+                    yield SimpleNamespace(type="response.created")
+                    yield SimpleNamespace(
+                        type="response.output_text.delta",
+                        delta="xin",
+                    )
+                    yield {
+                        "type": "response.output_text.delta",
+                        "delta": " chào",
+                    }
+                    yield SimpleNamespace(type="response.completed")
+
+                return stream()
+
+        class FakeOpenAI:
+            def __init__(self):
+                self.responses = FakeResponses()
+                self.chat = SimpleNamespace(completions=object())
+
+        async def collect_response():
+            client = FakeOpenAI()
+            service = ChatService(
+                codex_agent=None,
+                openai_client=client,
+                chat_model="gpt-5.4-nano",
+            )
+
+            chunks = [
+                chunk
+                async for chunk in service.stream_response(
+                    character_slug="chi_pheo",
+                    character_name="Chí Phèo",
+                    user_message="bát cháo hành là gì?",
+                    retrieval={
+                        "context": "CONTEXT",
+                        "sources": [],
+                        "retrieval_mode": "test",
+                    },
+                )
+            ]
+            return client, chunks
+
+        client, chunks = __import__("asyncio").run(collect_response())
+        kwargs = client.responses.kwargs
+
+        self.assertEqual(chunks, ["xin", " chào"])
+        self.assertEqual(kwargs["model"], "gpt-5.4-nano")
+        self.assertEqual(kwargs["input"], "bát cháo hành là gì?")
+        self.assertTrue(kwargs["stream"])
+        self.assertEqual(kwargs["reasoning"], {"effort": "none"})
+        self.assertEqual(kwargs["text"], {"verbosity": "low"})
+        self.assertIn("CONTEXT", kwargs["instructions"])
+        self.assertNotIn("max_output_tokens", kwargs)
+        self.assertNotIn("max_completion_tokens", kwargs)
+        self.assertNotIn("max_tokens", kwargs)
 
     def test_stream_response_uses_async_hybrid_retriever_context(self):
         class FakeRetriever:
