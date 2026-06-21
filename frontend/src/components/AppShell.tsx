@@ -99,7 +99,7 @@ export default function AppShell() {
             <span className="metric">
               <Medal size={16} />
               {isLeaderboard ? "Điểm: " : ""}
-              {points.toLocaleString("vi-VN")} Điểm
+              {(Number.isFinite(points) ? points : 0).toLocaleString("vi-VN")} Điểm
             </span>
           </div>
           <button

@@ -38,6 +38,7 @@ interface AppState {
     userId?: string,
     points?: number,
   ) => void;
+  setPoints: (points: number) => void;
   setUserId: (userId: string) => void;
   matchCharacter: (id: string) => void;
   setMatches: (ids: string[]) => void;
@@ -91,13 +92,16 @@ export const useAppStore = create<AppState>()(
             Boolean(nextUserId) &&
             previousUserId !== nextUserId;
 
+          const resolvedPoints =
+            points ?? (switchedUser ? initial.points : state.points);
           return {
             profile: {
               username,
               grade,
               userId: nextUserId,
             },
-            points: points ?? (switchedUser ? initial.points : state.points),
+            // Guard against a stale/NaN persisted value seeding bad arithmetic.
+            points: Number.isFinite(resolvedPoints) ? resolvedPoints : 0,
             matches: switchedUser ? initial.matches : state.matches,
             skipped: switchedUser ? initial.skipped : state.skipped,
             completed: switchedUser ? initial.completed : state.completed,
@@ -107,6 +111,12 @@ export const useAppStore = create<AppState>()(
             chats: switchedUser ? initial.chats : state.chats,
           };
         }),
+
+      // Set the authoritative account score returned by the server (e.g. after
+      // a graded challenge), so the topbar reflects the persisted total rather
+      // than locally-summed points.
+      setPoints: (points) =>
+        set(() => ({ points: Number.isFinite(points) ? points : 0 })),
 
       setUserId: (userId) =>
         set((state) =>
