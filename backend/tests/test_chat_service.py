@@ -39,7 +39,9 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
 
         reply = __import__("asyncio").run(collect_response())
 
-        self.assertIn("không thuộc", reply.lower())
+        self.assertIn("không liên quan", reply.lower())
+        self.assertIn("tác giả", reply.lower())
+        self.assertIn("tác phẩm", reply.lower())
         self.assertIn("Lão Hạc", reply)
         self.assertNotIn("**", reply)
         self.assertNotIn("----", reply)
@@ -77,6 +79,136 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
         self.assertIn("Lão Hạc", reply)
         self.assertNotIn("**", reply)
         self.assertNotIn("----", reply)
+
+    def test_unrelated_chitchat_prompt_returns_guardrail_without_retrieval_or_model(self):
+        class FailingRetriever:
+            async def search_with_sources_async(self, character_slug, user_query):
+                raise AssertionError("retrieval should not run for unrelated prompts")
+
+        class FailingResponses:
+            async def create(self, **kwargs):
+                raise AssertionError("model should not run for unrelated prompts")
+
+        class FailingOpenAI:
+            def __init__(self):
+                self.responses = FailingResponses()
+                self.chat = SimpleNamespace(completions=FailingResponses())
+
+        async def collect_response():
+            service = ChatService(
+                codex_agent=None,
+                knowledge_retriever=FailingRetriever(),
+                openai_client=FailingOpenAI(),
+                chat_model="gpt-5.4-nano",
+            )
+            return "".join(
+                [
+                    chunk
+                    async for chunk in service.stream_response(
+                        character_slug="lao_hac",
+                        character_name="Lão Hạc",
+                        user_message="Kể chuyện cười cho tôi nghe đi",
+                    )
+                ]
+            )
+
+        reply = __import__("asyncio").run(collect_response())
+
+        self.assertIn("không liên quan", reply.lower())
+        self.assertIn("tác giả", reply.lower())
+        self.assertIn("tác phẩm", reply.lower())
+        self.assertNotIn("**", reply)
+        self.assertNotIn("----", reply)
+
+    def test_short_character_name_does_not_match_unrelated_words(self):
+        class FailingResponses:
+            async def create(self, **kwargs):
+                raise AssertionError("model should not run for unrelated prompts")
+
+        class FailingOpenAI:
+            def __init__(self):
+                self.responses = FailingResponses()
+                self.chat = SimpleNamespace(completions=FailingResponses())
+
+        async def collect_response():
+            service = ChatService(
+                codex_agent=None,
+                openai_client=FailingOpenAI(),
+                chat_model="gpt-5.4-nano",
+            )
+            return "".join(
+                [
+                    chunk
+                    async for chunk in service.stream_response(
+                        character_slug="mi",
+                        character_name="Mị",
+                        user_message="Mình ăn gì hôm nay?",
+                    )
+                ]
+            )
+
+        reply = __import__("asyncio").run(collect_response())
+
+        self.assertIn("không liên quan", reply.lower())
+        self.assertIn("tác phẩm", reply.lower())
+
+    def test_literary_question_without_character_name_still_reaches_model(self):
+        class FakeRetriever:
+            def __init__(self):
+                self.called = False
+
+            async def search_with_sources_async(self, character_slug, user_query):
+                self.called = True
+                return {
+                    "context": "Lão Hạc bán cậu Vàng vì nghèo và vì muốn giữ lại mảnh vườn cho con.",
+                    "retrieval_mode": "vector",
+                    "sources": [],
+                }
+
+        class FakeResponses:
+            def __init__(self):
+                self.called = False
+
+            async def create(self, **kwargs):
+                self.called = True
+
+                async def stream():
+                    yield SimpleNamespace(
+                        type="response.output_text.delta",
+                        delta="Tôi đau vì cậu Vàng.",
+                    )
+
+                return stream()
+
+        class FakeOpenAI:
+            def __init__(self):
+                self.responses = FakeResponses()
+                self.chat = SimpleNamespace(completions=object())
+
+        async def collect_response():
+            retriever = FakeRetriever()
+            client = FakeOpenAI()
+            service = ChatService(
+                codex_agent=None,
+                knowledge_retriever=retriever,
+                openai_client=client,
+                chat_model="gpt-5.4-nano",
+            )
+            chunks = [
+                chunk
+                async for chunk in service.stream_response(
+                    character_slug="lao_hac",
+                    character_name="Lão Hạc",
+                    user_message="Tại sao ông phải bán cậu Vàng?",
+                )
+            ]
+            return retriever, client, chunks
+
+        retriever, client, chunks = __import__("asyncio").run(collect_response())
+
+        self.assertTrue(retriever.called)
+        self.assertTrue(client.responses.called)
+        self.assertEqual(chunks, ["Tôi đau vì cậu Vàng."])
 
     def test_chat_completion_kwargs_do_not_cap_chat_output(self):
         service = ChatService(

@@ -71,8 +71,10 @@ class ChatService:
             Per-character prompt override (from DB).
         """
         guardrail_response = self.guardrail_response(
+            character_slug=character_slug,
             character_name=character_name,
             user_message=user_message,
+            chat_history=chat_history,
         )
         if guardrail_response:
             yield guardrail_response
@@ -121,12 +123,16 @@ class ChatService:
     @staticmethod
     def guardrail_response(
         *,
+        character_slug: Optional[str] = None,
         character_name: str,
         user_message: str,
+        chat_history: Optional[list[dict[str, str]]] = None,
     ) -> Optional[str]:
         result = evaluate_chat_guardrail(
             user_message,
             character_name=character_name,
+            character_slug=character_slug,
+            has_chat_history=bool(chat_history),
         )
         return result.response if result else None
 
