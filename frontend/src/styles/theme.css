@@ -280,10 +280,12 @@ small,
   outline-offset: 3px;
 }
 
-.shell-logout-button {
+.shell-logout-button,
+.shell-repo-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
   gap: 8px;
   min-height: 44px;
   min-width: 44px;
@@ -302,14 +304,16 @@ small,
   transition: background 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
-.shell-logout-button:hover:not(:disabled) {
+.shell-logout-button:hover:not(:disabled),
+.shell-repo-link:hover {
   transform: translateY(-1px);
   background:
     linear-gradient(180deg, #fff6db, var(--surface-low));
   color: var(--cinnabar-deep);
 }
 
-.shell-logout-button:focus-visible {
+.shell-logout-button:focus-visible,
+.shell-repo-link:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
 }
