@@ -182,6 +182,7 @@ button {
 
 @media (max-width: 520px) {
   .global-sound-toggle span,
+  .shell-repo-link span,
   .shell-logout-button span {
     position: absolute;
     width: 1px;
