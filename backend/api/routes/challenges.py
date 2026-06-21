@@ -25,10 +25,13 @@ from models.schemas import (
     ChallengeQuestionsResponse,
     ChallengeResult,
     ChallengeSubmission,
+    LevelChallengeResult,
+    LevelChallengeSubmission,
     OpenEndedGradeResult,
     OpenEndedGradeSubmission,
 )
 from services import db_postgres as db
+from services.level_challenges import get_level_definition
 from services.open_ended_grading_service import (
     OpenEndedGradingError,
     OpenEndedGradingService,
@@ -118,7 +121,18 @@ async def submit_challenge(
 ):
     require_session_owner(request, body.user_id)
 
-    await _validate_challenge_access(session, body.user_id, body.character_id)
+    _, character, _ = await _validate_challenge_access(
+        session, body.user_id, body.character_id
+    )
+
+    # Characters with phase-level challenges are scored exclusively through
+    # /challenges/level/submit. Reject the legacy flat-challenge path for them
+    # so the two scoring ledgers can't both award the same character.
+    if get_level_definition(character.slug.replace("_", "-"), 1) is not None:
+        raise HTTPException(
+            status_code=409,
+            detail="This character uses phase-level challenges; submit each level instead.",
+        )
 
     # Load challenge first so we can grade.
     challenge = await db.get_challenge_for_character(session, body.character_id)
@@ -203,6 +217,103 @@ async def submit_challenge(
         points_earned=points,
         explanations=explanations,
         correct_answers=correct_answers,
+    )
+
+
+@router.post("/challenges/level/submit", response_model=LevelChallengeResult)
+async def submit_level_challenge(
+    request: Request,
+    body: LevelChallengeSubmission,
+    session: AsyncSession = Depends(get_db),
+    grader: OpenEndedGradingService = Depends(get_open_ended_grader),
+):
+    require_session_owner(request, body.user_id)
+
+    user, character, _ = await _validate_challenge_access(
+        session, body.user_id, body.character_id
+    )
+
+    # The DB stores underscore slugs (chi_pheo); the level data and the FE's
+    # level_results are keyed by the hyphen form (chi-pheo). Normalize so the
+    # award lands on the same slot the client syncs.
+    character_slug = character.slug.replace("_", "-")
+    definition = get_level_definition(character_slug, body.level)
+    if not definition:
+        raise HTTPException(
+            status_code=404,
+            detail="No challenge available for this character level.",
+        )
+
+    questions = definition["questions"]
+    if len(body.answers) != len(questions):
+        raise HTTPException(
+            status_code=422,
+            detail=f"Expected {len(questions)} answers, got {len(body.answers)}.",
+        )
+
+    # Grade every question first; only persist the award if grading succeeds so
+    # a grader failure leaves the user's score untouched (they can retry).
+    score = 0
+    correct_answers: list[int] = []
+    open_grades: dict[str, OpenEndedGradeResult] = {}
+    for question, answer in zip(questions, body.answers):
+        if question["type"] == "open_ended":
+            correct_answers.append(-1)
+            answer_text = answer.strip() if isinstance(answer, str) else ""
+            try:
+                grade = await grader.grade(
+                    character_slug=character_slug,
+                    character_name=character.name,
+                    work_title=character.work_title,
+                    phase_title=definition.get("phaseTitle"),
+                    question=question["text"],
+                    answer=answer_text,
+                    rubric=question.get("rubric") or "",
+                    evidence=question.get("evidence"),
+                )
+            except OpenEndedGradingError as exc:
+                raise HTTPException(
+                    status_code=502,
+                    detail="Không chấm được câu tự luận. Vui lòng thử lại.",
+                ) from exc
+            open_grades[question["id"]] = OpenEndedGradeResult(**grade)
+            if int(grade.get("score", 0)) == 1:
+                score += 1
+        else:
+            correct_index = int(question["answer"])
+            correct_answers.append(correct_index)
+            # bool is an int subclass, so reject it explicitly as a non-answer.
+            if not isinstance(answer, bool) and answer == correct_index:
+                score += 1
+
+    total = len(questions)
+    passed = score >= settings.CHALLENGE_PASS_THRESHOLD
+    points = settings.POINTS_LEVEL_COMPLETE
+    if passed:
+        points += settings.POINTS_LEVEL_PASS_BONUS
+
+    await db.record_level_award(
+        session,
+        body.user_id,
+        character_slug,
+        body.level,
+        points,
+        score=score,
+        total=total,
+        passed=passed,
+    )
+    total_score = await db.get_effective_total_score(session, user)
+
+    return LevelChallengeResult(
+        level=body.level,
+        phase_title=definition.get("phaseTitle"),
+        score=score,
+        total=total,
+        passed=passed,
+        points_earned=points,
+        correct_answers=correct_answers,
+        open_grades=open_grades,
+        total_score=total_score,
     )
 
 

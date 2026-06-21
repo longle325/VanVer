@@ -85,6 +85,8 @@ class Settings(BaseSettings):
     POINTS_CHALLENGE_COMPLETE: int = 50
     POINTS_CHALLENGE_PASS_BONUS: int = 40  # >= 4/5
     CHALLENGE_PASS_THRESHOLD: int = 4  # out of 5
+    POINTS_LEVEL_COMPLETE: int = 30
+    POINTS_LEVEL_PASS_BONUS: int = 20  # >= 4/5 in a phase level
 
     # --- Chat quota / prompt cost controls ---
     CHAT_MONTHLY_CHARACTER_LIMIT: int = 5
