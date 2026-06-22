@@ -29,6 +29,7 @@ _OFF_TOPIC_PATTERNS = (
         r"\b(?:dao ham|tich phan|phuong trinh|hinh hoc|excel|bitcoin|"
         r"gia vang|thoi tiet|may gio|tin tuc)\b"
     ),
+    re.compile(r"\b(?:an gi|mon gi|thich an|uong gi|nau mon)\b"),
 )
 
 _DIALOGUE_CUES = (
@@ -215,10 +216,6 @@ _CHARACTER_CONTEXT_TERMS: dict[str, tuple[str, ...]] = {
         "vu trong phung",
         "so do",
         "au hoa",
-        "danh vong",
-        "dia vi",
-        "tien than",
-        "leo len",
         "cu co hong",
         "ba pho doan",
         "tuyet",
@@ -324,22 +321,17 @@ def evaluate_chat_guardrail(
     character_slug: Optional[str] = None,
     has_chat_history: bool = False,
 ) -> ChatGuardrailResult | None:
+    hard_result = evaluate_chat_guardrail_hard_rules(
+        user_message,
+        character_name=character_name,
+    )
+    if hard_result:
+        return hard_result
+
     normalized = normalize_text(user_message)
     selected_character = normalize_text(character_name)
     if not normalized:
         return None
-
-    if any(pattern.search(normalized) for pattern in _OFF_TOPIC_PATTERNS):
-        return ChatGuardrailResult(
-            reason="off_topic",
-            response=_off_topic_response(character_name),
-        )
-
-    if _asks_for_other_character_voice(normalized, selected_character):
-        return ChatGuardrailResult(
-            reason="other_character_voice",
-            response=_other_character_voice_response(character_name),
-        )
 
     if _is_unrelated_question_or_request(
         normalized,
@@ -353,6 +345,52 @@ def evaluate_chat_guardrail(
         )
 
     return None
+
+
+def evaluate_chat_guardrail_hard_rules(
+    user_message: str,
+    *,
+    character_name: str,
+) -> ChatGuardrailResult | None:
+    normalized = normalize_text(user_message)
+    selected_character = normalize_text(character_name)
+    if not normalized:
+        return None
+
+    if any(pattern.search(normalized) for pattern in _OFF_TOPIC_PATTERNS):
+        return off_topic_guardrail_result(character_name)
+
+    if _asks_for_other_character_voice(normalized, selected_character):
+        return ChatGuardrailResult(
+            reason="other_character_voice",
+            response=_other_character_voice_response(character_name),
+        )
+
+    return None
+
+
+def should_defer_to_llm_guardrail(
+    user_message: str,
+    *,
+    character_name: str,
+    character_slug: Optional[str] = None,
+    has_chat_history: bool = False,
+) -> bool:
+    normalized = normalize_text(user_message)
+    selected_character = normalize_text(character_name)
+    if not normalized or not _looks_like_question_or_request(normalized):
+        return False
+
+    if has_chat_history and any(
+        cue in normalized for cue in _CONTINUATION_CUES
+    ):
+        return False
+
+    return not _has_literary_relevance(
+        normalized,
+        selected_character=selected_character,
+        character_slug=character_slug,
+    )
 
 
 def _asks_for_other_character_voice(
@@ -434,6 +472,13 @@ def _contains_term(normalized_message: str, term: str) -> bool:
     if not term:
         return False
     return re.search(rf"(?<!\w){re.escape(term)}(?!\w)", normalized_message) is not None
+
+
+def off_topic_guardrail_result(character_name: str) -> ChatGuardrailResult:
+    return ChatGuardrailResult(
+        reason="off_topic",
+        response=_off_topic_response(character_name),
+    )
 
 
 def _off_topic_response(character_name: str) -> str:

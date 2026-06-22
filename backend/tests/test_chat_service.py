@@ -1,4 +1,5 @@
 import unittest
+import json
 from types import SimpleNamespace
 
 from services.chat_service import ChatService
@@ -251,6 +252,188 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
         self.assertTrue(client.responses.called)
         self.assertEqual(chunks, ["Tôi đau vì cậu Vàng."])
 
+    def test_llm_guardrail_classifier_allows_ambiguous_character_arc_prompt(self):
+        class FakeRetriever:
+            def __init__(self):
+                self.called = False
+
+            async def search_with_sources_async(self, character_slug, user_query):
+                self.called = True
+                return {
+                    "context": "Xuân Tóc Đỏ tiến thân nhanh trong xã hội Số đỏ nhờ sự lố lăng của thời Âu hóa.",
+                    "retrieval_mode": "vector",
+                    "sources": [],
+                }
+
+        class FakeResponses:
+            def __init__(self):
+                self.calls = []
+
+            async def create(self, **kwargs):
+                self.calls.append(kwargs)
+                if kwargs.get("stream"):
+                    async def stream():
+                        yield SimpleNamespace(
+                            type="response.output_text.delta",
+                            delta="Cái thời ấy tự nâng tôi lên thôi.",
+                        )
+
+                    return stream()
+
+                return SimpleNamespace(
+                    output_text=json.dumps(
+                        {
+                            "decision": "allow",
+                            "reason": "character_or_work_question",
+                        }
+                    )
+                )
+
+        class FakeOpenAI:
+            def __init__(self):
+                self.responses = FakeResponses()
+                self.chat = SimpleNamespace(completions=object())
+
+        async def collect_response():
+            retriever = FakeRetriever()
+            client = FakeOpenAI()
+            service = ChatService(
+                codex_agent=None,
+                knowledge_retriever=retriever,
+                openai_client=client,
+                chat_model="gpt-5.4-nano",
+            )
+            chunks = [
+                chunk
+                async for chunk in service.stream_response(
+                    character_slug="xuan_toc_do",
+                    character_name="Xuân Tóc Đỏ",
+                    user_message="Vì sao hắn lại tiến thân nhanh như vậy?",
+                )
+            ]
+            return retriever, client, chunks
+
+        retriever, client, chunks = __import__("asyncio").run(collect_response())
+
+        self.assertTrue(retriever.called)
+        self.assertEqual(len(client.responses.calls), 2)
+        self.assertFalse(client.responses.calls[0].get("stream"))
+        self.assertTrue(client.responses.calls[1].get("stream"))
+        self.assertEqual(chunks, ["Cái thời ấy tự nâng tôi lên thôi."])
+
+    def test_llm_guardrail_classifier_blocks_unrelated_character_question(self):
+        class FailingRetriever:
+            async def search_with_sources_async(self, character_slug, user_query):
+                raise AssertionError("retrieval should not run for classified blocks")
+
+        class FakeResponses:
+            def __init__(self):
+                self.calls = []
+
+            async def create(self, **kwargs):
+                self.calls.append(kwargs)
+                if kwargs.get("stream"):
+                    raise AssertionError("main model should not run for classified blocks")
+                return SimpleNamespace(
+                    output_text=json.dumps(
+                        {
+                            "decision": "block",
+                            "reason": "off_topic",
+                        }
+                    )
+                )
+
+        class FakeOpenAI:
+            def __init__(self):
+                self.responses = FakeResponses()
+                self.chat = SimpleNamespace(completions=object())
+
+        async def collect_response():
+            client = FakeOpenAI()
+            service = ChatService(
+                codex_agent=None,
+                knowledge_retriever=FailingRetriever(),
+                openai_client=client,
+                chat_model="gpt-5.4-nano",
+            )
+            reply = "".join(
+                [
+                    chunk
+                    async for chunk in service.stream_response(
+                        character_slug="lao_hac",
+                        character_name="Lão Hạc",
+                        user_message="Ông nghĩ gì về Taylor Swift?",
+                    )
+                ]
+            )
+            return client, reply
+
+        client, reply = __import__("asyncio").run(collect_response())
+
+        self.assertEqual(len(client.responses.calls), 1)
+        self.assertIn("không liên quan", reply.lower())
+        self.assertIn("Lão Hạc", reply)
+
+    def test_llm_guardrail_classifier_failure_allows_ambiguous_prompt(self):
+        class FakeRetriever:
+            def __init__(self):
+                self.called = False
+
+            async def search_with_sources_async(self, character_slug, user_query):
+                self.called = True
+                return {
+                    "context": "Xuân Tóc Đỏ được xã hội Số đỏ nâng lên bằng những hiểu lầm trào phúng.",
+                    "retrieval_mode": "vector",
+                    "sources": [],
+                }
+
+        class FakeResponses:
+            def __init__(self):
+                self.calls = []
+
+            async def create(self, **kwargs):
+                self.calls.append(kwargs)
+                if not kwargs.get("stream"):
+                    raise TimeoutError("classifier timed out")
+
+                async def stream():
+                    yield SimpleNamespace(
+                        type="response.output_text.delta",
+                        delta="Cái danh vọng ấy cũng là trò đời thôi.",
+                    )
+
+                return stream()
+
+        class FakeOpenAI:
+            def __init__(self):
+                self.responses = FakeResponses()
+                self.chat = SimpleNamespace(completions=object())
+
+        async def collect_response():
+            retriever = FakeRetriever()
+            client = FakeOpenAI()
+            service = ChatService(
+                codex_agent=None,
+                knowledge_retriever=retriever,
+                openai_client=client,
+                chat_model="gpt-5.4-nano",
+            )
+            chunks = [
+                chunk
+                async for chunk in service.stream_response(
+                    character_slug="xuan_toc_do",
+                    character_name="Xuân Tóc Đỏ",
+                    user_message="Vì sao Xuân có thể leo lên đỉnh danh vọng?",
+                )
+            ]
+            return retriever, client, chunks
+
+        retriever, client, chunks = __import__("asyncio").run(collect_response())
+
+        self.assertTrue(retriever.called)
+        self.assertEqual(len(client.responses.calls), 2)
+        self.assertEqual(chunks, ["Cái danh vọng ấy cũng là trò đời thôi."])
+
     def test_xuan_status_arc_prompt_reaches_model(self):
         class FakeRetriever:
             def __init__(self):
@@ -267,9 +450,20 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
         class FakeResponses:
             def __init__(self):
                 self.called = False
+                self.calls = []
 
             async def create(self, **kwargs):
                 self.called = True
+                self.calls.append(kwargs)
+                if not kwargs.get("stream"):
+                    return SimpleNamespace(
+                        output_text=json.dumps(
+                            {
+                                "decision": "allow",
+                                "reason": "character_life_or_arc",
+                            }
+                        )
+                    )
 
                 async def stream():
                     yield SimpleNamespace(
@@ -307,6 +501,7 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
 
         self.assertTrue(retriever.called)
         self.assertTrue(client.responses.called)
+        self.assertEqual(len(client.responses.calls), 2)
         self.assertEqual(chunks, ["Ấy là cái thời buổi nhố nhăng đã nâng tôi lên."])
 
     def test_real_life_prompt_about_character_reaches_model(self):

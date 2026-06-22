@@ -52,7 +52,7 @@ class ChatStreamEventTests(unittest.TestCase):
 
     def test_stream_short_circuits_guardrail_response_before_retrieval(self):
         class FakeChatService:
-            def guardrail_response(self, **kwargs):
+            async def guardrail_response(self, **kwargs):
                 return "Chuyện ấy không thuộc phần đời của Lão Hạc."
 
             async def prepare_retrieval(self, **kwargs):

@@ -96,7 +96,7 @@ async def chat_event_generator(
     create_message = create_chat_message or db.create_chat_message
     assistant_chunks: list[str] = []
     try:
-        guardrail_response = chat_service.guardrail_response(
+        guardrail_response = await chat_service.guardrail_response(
             character_slug=character.slug,
             character_name=character.name,
             user_message=user_message,

@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     CHAT_MODEL: str = "gpt-5.4-nano"
     CHAT_REASONING_EFFORT: str = "none"
     CHAT_RESPONSE_VERBOSITY: str = "low"
+    CHAT_GUARDRAIL_MODEL: str = "gpt-5.4-nano"
+    CHAT_GUARDRAIL_LLM_ENABLED: bool = True
+    CHAT_GUARDRAIL_TIMEOUT_SECONDS: float = 4.0
     EMBEDDING_MODEL: str = "text-embedding-3-large"
     EMBEDDING_DIMENSIONS: int = 3072
 
