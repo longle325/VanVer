@@ -111,6 +111,23 @@ export function useSkipMutation() {
   });
 }
 
+export function useResetSkipsMutation() {
+  const resetSkipped = useAppStore((state) => state.resetSkipped);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      // Server-first: the deck is computed from the backend's swipe records,
+      // so the skips must be cleared there before the local mirror, otherwise
+      // a deck refetch would re-hide the cards we just reopened.
+      await api.resetSkips();
+      resetSkipped();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.deck });
+    },
+  });
+}
+
 export function useSubmitChallengeMutation() {
   const saveChallenge = useAppStore((state) => state.saveChallenge);
   const queryClient = useQueryClient();

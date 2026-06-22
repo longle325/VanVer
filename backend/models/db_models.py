@@ -257,7 +257,6 @@ class UserProgress(Base):
     )
     completed = Column(JSON, default=dict, nullable=False)
     level_results = Column(JSON, default=dict, nullable=False)
-    skipped = Column(JSON, default=list, nullable=False)
     updated_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

@@ -50,6 +50,9 @@ export interface ApiClient {
   getCharacter: (id: string) => Promise<Character>;
   recordMatch: (id: string) => Promise<{ ok: true }>;
   recordSkip: (id: string) => Promise<{ ok: true }>;
+  /** Clear the user's skipped (left-swiped) cards so they return to the
+   *  deck. Real backend deletes the user's SWIPED_LEFT rows; mock no-ops. */
+  resetSkips: () => Promise<{ ok: true }>;
   /** Authoritative list of slugs the user has right-swiped on. Real
    *  backend reads `GET /users/{id}/matches`; mock returns []. */
   getMatchedSlugs: () => Promise<string[]>;

@@ -111,6 +111,12 @@ export const mockClient: ApiClient = {
     await delay(0);
     return { ok: true };
   },
+  async resetSkips(): Promise<{ ok: true }> {
+    // Mock has no backend; the local Zustand `skipped` array is the truth in
+    // this mode and is cleared by the caller's `resetSkipped()` action.
+    await delay(0);
+    return { ok: true };
+  },
   async getMatchedSlugs(): Promise<string[]> {
     // Mock has no backend; the local Zustand `matches` array IS the
     // truth in this mode. Returning [] would falsely wipe it on sync,
@@ -120,7 +126,7 @@ export const mockClient: ApiClient = {
   },
   async getProgress(): Promise<SyncedProgress> {
     await delay(0);
-    return { completed: {}, levelResults: {}, skipped: [] };
+    return { completed: {}, levelResults: {} };
   },
   async saveProgress(progress: SyncedProgress): Promise<SyncedProgress> {
     await delay(0);
