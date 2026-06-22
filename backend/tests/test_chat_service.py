@@ -251,6 +251,64 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
         self.assertTrue(client.responses.called)
         self.assertEqual(chunks, ["Tôi đau vì cậu Vàng."])
 
+    def test_xuan_status_arc_prompt_reaches_model(self):
+        class FakeRetriever:
+            def __init__(self):
+                self.called = False
+
+            async def search_with_sources_async(self, character_slug, user_query):
+                self.called = True
+                return {
+                    "context": "Xuân Tóc Đỏ leo lên địa vị cao nhờ xã hội Âu hóa lố lăng và những hiểu lầm may rủi.",
+                    "retrieval_mode": "vector",
+                    "sources": [],
+                }
+
+        class FakeResponses:
+            def __init__(self):
+                self.called = False
+
+            async def create(self, **kwargs):
+                self.called = True
+
+                async def stream():
+                    yield SimpleNamespace(
+                        type="response.output_text.delta",
+                        delta="Ấy là cái thời buổi nhố nhăng đã nâng tôi lên.",
+                    )
+
+                return stream()
+
+        class FakeOpenAI:
+            def __init__(self):
+                self.responses = FakeResponses()
+                self.chat = SimpleNamespace(completions=object())
+
+        async def collect_response():
+            retriever = FakeRetriever()
+            client = FakeOpenAI()
+            service = ChatService(
+                codex_agent=None,
+                knowledge_retriever=retriever,
+                openai_client=client,
+                chat_model="gpt-5.4-nano",
+            )
+            chunks = [
+                chunk
+                async for chunk in service.stream_response(
+                    character_slug="xuan_toc_do",
+                    character_name="Xuân Tóc Đỏ",
+                    user_message="Vì sao Xuân có thể leo lên đỉnh danh vọng?",
+                )
+            ]
+            return retriever, client, chunks
+
+        retriever, client, chunks = __import__("asyncio").run(collect_response())
+
+        self.assertTrue(retriever.called)
+        self.assertTrue(client.responses.called)
+        self.assertEqual(chunks, ["Ấy là cái thời buổi nhố nhăng đã nâng tôi lên."])
+
     def test_real_life_prompt_about_character_reaches_model(self):
         class FakeRetriever:
             def __init__(self):
