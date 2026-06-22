@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     CHAT_MODEL: str = "gpt-5.4-nano"
     CHAT_REASONING_EFFORT: str = "none"
     CHAT_RESPONSE_VERBOSITY: str = "low"
+    CHAT_GUARDRAIL_MODEL: str = "gpt-5.4-nano"
+    CHAT_GUARDRAIL_LLM_ENABLED: bool = True
+    CHAT_GUARDRAIL_TIMEOUT_SECONDS: float = 4.0
     EMBEDDING_MODEL: str = "text-embedding-3-large"
     EMBEDDING_DIMENSIONS: int = 3072
 
@@ -90,9 +93,9 @@ class Settings(BaseSettings):
     # --- Chat quota / prompt cost controls ---
     CHAT_MONTHLY_CHARACTER_LIMIT: int = 5
     CHAT_MONTHLY_MESSAGES_PER_CHARACTER_LIMIT: int = 5
-    CHAT_PROMPT_HISTORY_MAX_MESSAGES: int = 3
-    CHAT_PROMPT_HISTORY_MAX_CHARS_PER_MESSAGE: int = 400
-    CHAT_PROMPT_HISTORY_MAX_TOTAL_CHARS: int = 1200
+    CHAT_PROMPT_HISTORY_MAX_MESSAGES: int = 10
+    CHAT_PROMPT_HISTORY_MAX_CHARS_PER_MESSAGE: int = 1200
+    CHAT_PROMPT_HISTORY_MAX_TOTAL_CHARS: int = 12000
 
     model_config = {
         # Tuple of .env paths — pydantic reads the first one found.

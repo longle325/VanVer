@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { cn, calculateChallengePoints, initials, formatNumber } from "@/lib/utils";
+import {
+  cn,
+  calculateChallengePoints,
+  initials,
+  formatNumber,
+  cleanBotChatText,
+} from "@/lib/utils";
 
 describe("cn (class merging)", () => {
   it("merges simple class names", () => {
@@ -56,5 +62,21 @@ describe("formatNumber", () => {
     const result = formatNumber(1450);
     expect(typeof result).toBe("string");
     expect(result).toContain("1");
+  });
+});
+
+describe("cleanBotChatText", () => {
+  it("removes markdown emphasis markers and horizontal rules from bot text", () => {
+    expect(
+      cleanBotChatText(
+        "Tôi nghe người ta bảo là **2**.\n\n----------------\n\nÔng giáo ạ.",
+      ),
+    ).toBe("Tôi nghe người ta bảo là 2.\n\nÔng giáo ạ.");
+  });
+
+  it("removes AI-style markdown structure without touching natural paragraphs", () => {
+    expect(
+      cleanBotChatText("### Trả lời\n- Tôi không rành chuyện đó.\n\n**Hỏi tôi về cậu Vàng đi.**"),
+    ).toBe("Trả lời\nTôi không rành chuyện đó.\n\nHỏi tôi về cậu Vàng đi.");
   });
 });
