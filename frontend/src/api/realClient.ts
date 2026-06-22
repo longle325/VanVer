@@ -382,13 +382,13 @@ export const realClient: ApiClient = {
     return { ok: true };
   },
 
-  async resetSkips(): Promise<{ ok: true }> {
+  async resetSkips(): Promise<{ cleared: number }> {
     const userId = requireCurrentUserId();
-    await apiFetch<{ cleared: number }>("/interactions/reset-skips", {
+    const res = await apiFetch<{ cleared: number }>("/interactions/reset-skips", {
       method: "POST",
       body: { user_id: userId },
     });
-    return { ok: true };
+    return { cleared: res.cleared ?? 0 };
   },
 
   async getChallenge(slug: string): Promise<ChallengeQuestion[]> {

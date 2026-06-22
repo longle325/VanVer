@@ -119,11 +119,17 @@ export function useResetSkipsMutation() {
       // Server-first: the deck is computed from the backend's swipe records,
       // so the skips must be cleared there before the local mirror, otherwise
       // a deck refetch would re-hide the cards we just reopened.
-      await api.resetSkips();
+      const { cleared } = await api.resetSkips();
       resetSkipped();
+      return cleared;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.deck });
+    onSuccess: (cleared) => {
+      // Only refetch when something actually came back. Invalidating on a
+      // no-op (no skipped cards to reopen) just repaints the empty state —
+      // a pointless flicker with nothing to show for it.
+      if (cleared > 0) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.deck });
+      }
     },
   });
 }

@@ -73,6 +73,14 @@ export default function Discover() {
                 : "Mở lại thẻ đã bỏ qua"}
             </button>
           </div>
+          {/* `data === 0` means the click reopened nothing — every remaining
+              card was matched, not skipped. Tell the user so the button
+              doesn't feel inert. */}
+          {resetSkipsMutation.isSuccess && resetSkipsMutation.data === 0 && (
+            <p className="lead" style={{ marginTop: 12, color: "var(--muted)" }}>
+              Không còn thẻ nào đã bỏ qua để mở lại.
+            </p>
+          )}
         </div>
       </section>
     );
