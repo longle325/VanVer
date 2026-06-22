@@ -1,4 +1,5 @@
 import { X, Heart, Scale } from "lucide-react";
+import { motion, type MotionValue } from "framer-motion";
 import type { Character } from "@/types";
 import CharacterArt from "./CharacterArt";
 import VoicePlayButton from "./VoicePlayButton";
@@ -10,6 +11,11 @@ interface Props {
   /** When true (mutation in flight) the action buttons are disabled to
    *  prevent fast double-taps on trackpads from firing the swipe twice. */
   busy?: boolean;
+  /** Drag-driven opacity for the "skip"/"match" stamps. Supplied by SwipeCard
+   *  so the stamps fade in as the card is dragged; omitted when the card is
+   *  rendered statically. */
+  skipStampOpacity?: MotionValue<number>;
+  matchStampOpacity?: MotionValue<number>;
 }
 
 export default function CharacterCard({
@@ -17,6 +23,8 @@ export default function CharacterCard({
   onSkip,
   onMatch,
   busy = false,
+  skipStampOpacity,
+  matchStampOpacity,
 }: Props) {
   const traits = character.personality
     .split(",")
@@ -24,8 +32,20 @@ export default function CharacterCard({
     .map((trait) => trait.trim());
   return (
     <article className="card deck-card">
-      <div className="swipe-stamp swipe-stamp-left">Bỏ qua</div>
-      <div className="swipe-stamp swipe-stamp-right">Chọn</div>
+      <motion.div
+        className="swipe-stamp swipe-stamp-left"
+        style={skipStampOpacity ? { opacity: skipStampOpacity } : undefined}
+        aria-hidden="true"
+      >
+        Bỏ qua
+      </motion.div>
+      <motion.div
+        className="swipe-stamp swipe-stamp-right"
+        style={matchStampOpacity ? { opacity: matchStampOpacity } : undefined}
+        aria-hidden="true"
+      >
+        Chọn
+      </motion.div>
       <CharacterArt character={character} />
       <div className="deck-body">
         <div className="deck-title">
