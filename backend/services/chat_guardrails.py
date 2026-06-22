@@ -20,6 +20,7 @@ class ChatGuardrailResult:
 _OFF_TOPIC_PATTERNS = (
     re.compile(r"(?<!\w)\d+\s*(?:\+|-|\*|/|x|×|÷)\s*\d+(?!\w)"),
     re.compile(r"\b(?:cong|tru|nhan|chia)\s+\d+\b"),
+    re.compile(r"\b(?:truyen cuoi|chuyen cuoi|cau chuyen cuoi|joke|meme)\b"),
     re.compile(
         r"\b(?:python|javascript|typescript|java|sql|html|css|code|coding|"
         r"lap trinh|chuong trinh|function|ham|thuat toan)\b"
@@ -72,7 +73,7 @@ _OTHER_CHARACTER_ALIASES = (
 _GENERAL_LITERARY_TERMS = (
     "tac gia",
     "tac pham",
-    "truyen",
+    "truyen nay",
     "truyen ngan",
     "tieu thuyet",
     "van hoc",
@@ -90,7 +91,7 @@ _GENERAL_LITERARY_TERMS = (
     "hinh anh",
     "chi tiet",
     "doan trich",
-    "cau chuyen",
+    "cau chuyen nay",
     "bi kich",
     "xung dot",
     "hoan canh",
