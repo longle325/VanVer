@@ -576,6 +576,23 @@ class ChatServiceCompletionOptionsTests(unittest.TestCase):
         self.assertIn("Character: Ta đã nghe tiếng sáo gọi về tuổi trẻ.", system_prompt)
         self.assertEqual(chunks, ["tôi nhớ"])
 
+    def test_format_chat_history_keeps_full_five_turn_context_by_default(self):
+        history = []
+        for turn in range(1, 6):
+            history.append({"role": "user", "content": f"user turn {turn}"})
+            history.append(
+                {"role": "assistant", "content": f"character turn {turn}"}
+            )
+
+        formatted = ChatService._format_chat_history(history)
+
+        self.assertIn("Student: user turn 1", formatted)
+        self.assertIn("Character: character turn 1", formatted)
+        self.assertIn("Student: user turn 5", formatted)
+        self.assertIn("Character: character turn 5", formatted)
+        self.assertEqual(formatted.count("Student:"), 5)
+        self.assertEqual(formatted.count("Character:"), 5)
+
     def test_format_chat_history_limits_prompt_context(self):
         history = [
             {"role": "user", "content": f"old message {index}"}
