@@ -1,5 +1,6 @@
 import { characters, getCharacter } from "@/data/characters";
 import { demoLeaders } from "@/data/leaderboard";
+import { useAppStore } from "@/stores/useAppStore";
 import { scoreChallenge } from "@/lib/scoring";
 import type {
   Character,
@@ -111,6 +112,13 @@ export const mockClient: ApiClient = {
     await delay(0);
     return { ok: true };
   },
+  async resetSkips(): Promise<{ cleared: number }> {
+    // Mock has no backend; the local Zustand `skipped` array is the truth in
+    // this mode. Report its size as the cleared count (the caller's
+    // `resetSkipped()` action does the actual clearing).
+    await delay(0);
+    return { cleared: useAppStore.getState().skipped.length };
+  },
   async getMatchedSlugs(): Promise<string[]> {
     // Mock has no backend; the local Zustand `matches` array IS the
     // truth in this mode. Returning [] would falsely wipe it on sync,
@@ -120,7 +128,7 @@ export const mockClient: ApiClient = {
   },
   async getProgress(): Promise<SyncedProgress> {
     await delay(0);
-    return { completed: {}, levelResults: {}, skipped: [] };
+    return { completed: {}, levelResults: {} };
   },
   async saveProgress(progress: SyncedProgress): Promise<SyncedProgress> {
     await delay(0);

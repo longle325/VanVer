@@ -67,7 +67,6 @@ class UserProfileUpdate(BaseModel):
 class UserProgressPayload(BaseModel):
     completed: dict[str, Any] = Field(default_factory=dict)
     level_results: dict[str, Any] = Field(default_factory=dict)
-    skipped: List[str] = Field(default_factory=list)
 
 
 class UserProgressResponse(UserProgressPayload):
@@ -180,6 +179,14 @@ class SwipeResponse(BaseModel):
     matched: bool
     points_earned: int
     match_status: Optional[MatchStatus] = None
+
+
+class ResetSkipsRequest(BaseModel):
+    user_id: UUID
+
+
+class ResetSkipsResponse(BaseModel):
+    cleared: int
 
 
 # ── Chat ──────────────────────────────────────────────────────────────────

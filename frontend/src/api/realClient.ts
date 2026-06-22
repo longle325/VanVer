@@ -124,7 +124,6 @@ interface BackendProgressResponse {
   user_id: string;
   completed: SyncedProgress["completed"];
   level_results: SyncedProgress["levelResults"];
-  skipped: string[];
   updated_at?: string | null;
 }
 
@@ -352,7 +351,6 @@ export const realClient: ApiClient = {
     return {
       completed: res.completed ?? {},
       levelResults: res.level_results ?? {},
-      skipped: res.skipped ?? [],
     };
   },
 
@@ -365,14 +363,12 @@ export const realClient: ApiClient = {
         body: {
           completed: progress.completed,
           level_results: progress.levelResults,
-          skipped: progress.skipped,
         },
       },
     );
     return {
       completed: res.completed ?? {},
       levelResults: res.level_results ?? {},
-      skipped: res.skipped ?? [],
     };
   },
 
@@ -384,6 +380,15 @@ export const realClient: ApiClient = {
       body: { user_id: userId, character_id: uuid, direction: "left" },
     });
     return { ok: true };
+  },
+
+  async resetSkips(): Promise<{ cleared: number }> {
+    const userId = requireCurrentUserId();
+    const res = await apiFetch<{ cleared: number }>("/interactions/reset-skips", {
+      method: "POST",
+      body: { user_id: userId },
+    });
+    return { cleared: res.cleared ?? 0 };
   },
 
   async getChallenge(slug: string): Promise<ChallengeQuestion[]> {

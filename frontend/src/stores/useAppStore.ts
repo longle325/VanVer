@@ -163,7 +163,6 @@ export const useAppStore = create<AppState>()(
         set(() => ({
           completed: progress.completed,
           levelResults: progress.levelResults,
-          skipped: progress.skipped,
         })),
 
       appendChat: (id, message) =>

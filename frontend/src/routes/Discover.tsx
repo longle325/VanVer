@@ -1,7 +1,12 @@
 import { useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import TinderCard from "react-tinder-card";
-import { useDeck, useMatchMutation, useSkipMutation } from "@/api/queries";
+import {
+  useDeck,
+  useMatchMutation,
+  useResetSkipsMutation,
+  useSkipMutation,
+} from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
 import CharacterCard from "@/components/CharacterCard";
 import { countPassedChallenges } from "@/lib/progressStats";
@@ -16,9 +21,9 @@ export default function Discover() {
   const points = useAppStore((s) => s.points);
   const completed = useAppStore((s) => s.completed);
   const levelResults = useAppStore((s) => s.levelResults);
-  const resetSkipped = useAppStore((s) => s.resetSkipped);
   const matchMutation = useMatchMutation();
   const skipMutation = useSkipMutation();
+  const resetSkipsMutation = useResetSkipsMutation();
   const completedChallenges = countPassedChallenges(completed, levelResults);
 
   const available = useMemo<Character[]>(
@@ -58,10 +63,24 @@ export default function Discover() {
             <Link className="btn primary" to="/collection">
               Xem nhân vật đã chọn
             </Link>
-            <button className="btn ghost" onClick={resetSkipped}>
-              Mở lại thẻ đã bỏ qua
+            <button
+              className="btn ghost"
+              onClick={() => resetSkipsMutation.mutate()}
+              disabled={resetSkipsMutation.isPending}
+            >
+              {resetSkipsMutation.isPending
+                ? "Đang mở lại..."
+                : "Mở lại thẻ đã bỏ qua"}
             </button>
           </div>
+          {/* `data === 0` means the click reopened nothing — every remaining
+              card was matched, not skipped. Tell the user so the button
+              doesn't feel inert. */}
+          {resetSkipsMutation.isSuccess && resetSkipsMutation.data === 0 && (
+            <p className="lead" style={{ marginTop: 12, color: "var(--muted)" }}>
+              Không còn thẻ nào đã bỏ qua để mở lại.
+            </p>
+          )}
         </div>
       </section>
     );

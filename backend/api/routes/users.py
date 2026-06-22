@@ -112,7 +112,6 @@ async def get_user_progress(
             user_id=user_id,
             completed={},
             level_results={},
-            skipped=[],
             updated_at=None,
         )
 
@@ -120,7 +119,6 @@ async def get_user_progress(
         user_id=progress.user_id,
         completed=progress.completed,
         level_results=progress.level_results,
-        skipped=progress.skipped,
         updated_at=progress.updated_at,
     )
 
@@ -143,12 +141,10 @@ async def save_user_progress(
         user_id,
         completed=body.completed,
         level_results=_strip_client_awards(body.level_results),
-        skipped=body.skipped,
     )
     return UserProgressResponse(
         user_id=progress.user_id,
         completed=progress.completed,
         level_results=progress.level_results,
-        skipped=progress.skipped,
         updated_at=progress.updated_at,
     )

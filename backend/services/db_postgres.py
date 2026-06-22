@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from typing import Iterable, List, Optional
 from uuid import UUID
 
-from sqlalchemy import func, select, update
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -264,7 +264,6 @@ async def _get_or_create_progress_locked(
         user_id=user_id,
         completed={},
         level_results={},
-        skipped=[],
         updated_at=now,
     )
     db.add(progress)
@@ -283,7 +282,6 @@ async def upsert_user_progress(
     user_id: UUID,
     completed: dict,
     level_results: dict,
-    skipped: list[str],
 ) -> UserProgress:
     now = datetime.now(timezone.utc)
     progress = await _get_or_create_progress_locked(db, user_id, now)
@@ -297,7 +295,6 @@ async def upsert_user_progress(
     )
     progress.completed = completed
     progress.level_results = merged_level_results
-    progress.skipped = skipped
     progress.updated_at = now
 
     await db.commit()
@@ -444,6 +441,25 @@ async def update_match_status(
     )
     await db.commit()
     return await get_match(db, user_id, character_id)
+
+
+async def delete_left_swipes(db: AsyncSession, user_id: UUID) -> int:
+    """Delete the user's left-swipe (skip) records, leaving real matches intact.
+
+    The discovery deck is computed from Match rows (a character with any Match
+    row is excluded), so clearing a user's SWIPED_LEFT rows is what actually
+    makes skipped cards reappear. SWIPED_RIGHT rows are never touched.
+
+    Returns the number of skip records removed.
+    """
+    result = await db.execute(
+        delete(Match).where(
+            Match.user_id == user_id,
+            Match.status == MatchStatus.SWIPED_LEFT,
+        )
+    )
+    await db.commit()
+    return result.rowcount or 0
 
 
 async def get_user_matches(

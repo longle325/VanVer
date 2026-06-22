@@ -40,7 +40,6 @@ function currentProgressSnapshot(): SyncedProgress {
   return {
     completed: state.completed,
     levelResults: state.levelResults,
-    skipped: state.skipped,
   };
 }
 
