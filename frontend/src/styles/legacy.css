@@ -351,26 +351,10 @@ h3 {
   max-height: none;
   margin: 0 auto;
   overflow: hidden;
+  /* The framer-motion wrapper (.deck-tinder) owns the drag; the card just
+     captures vertical scroll and blocks text selection while dragging. */
   touch-action: pan-y;
-  transform-origin: 50% 92%;
-  transition: transform 180ms ease, opacity 180ms ease;
-  will-change: transform;
   user-select: none;
-}
-
-.deck-card.is-dragging {
-  cursor: grabbing;
-  transition: none;
-}
-
-.deck-card.throw-left {
-  opacity: 0;
-  transform: translateX(-120vw) rotate(-18deg) !important;
-}
-
-.deck-card.throw-right {
-  opacity: 0;
-  transform: translateX(120vw) rotate(18deg) !important;
 }
 
 .swipe-stamp {
@@ -385,31 +369,22 @@ h3 {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  /* Opacity is driven by SwipeCard's drag-linked motion value, so no CSS
+     transition here (it would lag the stamp behind the finger). */
   opacity: 0;
-  transform: rotate(-9deg) scale(0.9);
-  transition: opacity 120ms ease, transform 120ms ease;
   pointer-events: none;
 }
 
 .swipe-stamp-left {
   left: 26px;
   color: var(--danger);
+  transform: rotate(-9deg) scale(0.95);
 }
 
 .swipe-stamp-right {
   right: 26px;
   color: var(--success);
-  transform: rotate(9deg) scale(0.9);
-}
-
-.deck-card.swipe-left .swipe-stamp-left,
-.deck-card.swipe-right .swipe-stamp-right {
-  opacity: 1;
-  transform: rotate(-9deg) scale(1);
-}
-
-.deck-card.swipe-right .swipe-stamp-right {
-  transform: rotate(9deg) scale(1);
+  transform: rotate(9deg) scale(0.95);
 }
 
 .art {

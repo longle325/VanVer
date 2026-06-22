@@ -1,6 +1,5 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import TinderCard from "react-tinder-card";
 import {
   useDeck,
   useMatchMutation,
@@ -8,11 +7,9 @@ import {
   useSkipMutation,
 } from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
-import CharacterCard from "@/components/CharacterCard";
+import SwipeCard, { type SwipeDirection } from "@/components/SwipeCard";
 import { countPassedChallenges } from "@/lib/progressStats";
 import type { Character } from "@/types";
-
-type SwipeDirection = "left" | "right" | "up" | "down";
 
 export default function Discover() {
   const { data: deck = [], isLoading } = useDeck();
@@ -34,8 +31,6 @@ export default function Discover() {
       ),
     [deck, matches, skipped],
   );
-
-  const cardRefs = useRef<Record<string, { swipe?: (dir: SwipeDirection) => Promise<void> }>>({});
 
   if (isLoading) {
     return (
@@ -97,43 +92,21 @@ export default function Discover() {
       matchMutation.mutate(id);
       return;
     }
-    if (direction === "left") {
-      skipMutation.mutate(id);
-    }
-  };
-
-  const triggerSwipe = (id: string, direction: SwipeDirection) => {
-    // Best-effort: ask TinderCard to animate the card off-screen. If the
-    // ref-forwarded `swipe` method isn't available (library version drift),
-    // fall through to the state update directly so the deck still advances.
-    const animation = cardRefs.current[id]?.swipe?.(direction);
-    if (animation && typeof animation.then === "function") {
-      animation.catch(() => handleSwipe(id, direction));
-    } else {
-      handleSwipe(id, direction);
-    }
+    skipMutation.mutate(id);
   };
 
   return (
     <section className="page deck-layout reference-discover">
       <div className="deck-stack">
-        <TinderCard
+        {/* `key` per card → SwipeCard remounts with fresh motion values, so the
+            new top card starts centred instead of inheriting the last card's
+            off-screen position. */}
+        <SwipeCard
           key={top.id}
-          ref={(el: { swipe?: (dir: SwipeDirection) => Promise<void> } | null) => {
-            if (el) cardRefs.current[top.id] = el;
-            else delete cardRefs.current[top.id];
-          }}
-          className="deck-tinder"
-          preventSwipe={["up", "down"]}
-          onSwipe={(dir: SwipeDirection) => handleSwipe(top.id, dir)}
-        >
-          <CharacterCard
-            character={top}
-            onSkip={() => triggerSwipe(top.id, "left")}
-            onMatch={() => triggerSwipe(top.id, "right")}
-            busy={matchMutation.isPending || skipMutation.isPending}
-          />
-        </TinderCard>
+          character={top}
+          busy={matchMutation.isPending || skipMutation.isPending}
+          onSwipe={(direction) => handleSwipe(top.id, direction)}
+        />
       </div>
       <aside className="deck-side">
         <div className="stat-grid">

@@ -474,7 +474,7 @@
   font-size: 18px;
 }
 
-/* === Swipe deck wrapper for react-tinder-card === */
+/* === Swipe deck wrapper (framer-motion drag) === */
 .deck-stack {
   position: relative;
   display: block;
@@ -482,7 +482,8 @@
 
 .deck-tinder {
   display: block;
-  touch-action: none;
+  /* touch-action is managed by framer-motion (pan-y) so the card captures
+     horizontal swipes while the page still scrolls vertically. */
 }
 
 .deck-tinder > * {
