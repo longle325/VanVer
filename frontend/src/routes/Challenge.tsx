@@ -1,7 +1,14 @@
 import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { CheckCircle, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle,
+  ClipboardCheck,
+  Send,
+  Sparkles,
+} from "lucide-react";
 import { api } from "@/api/client";
 import { useReal } from "@/api/adapter";
 import { submitLevelChallenge } from "@/api/realClient";
@@ -339,6 +346,7 @@ export default function Challenge() {
     challenge: CharacterLevelChallenge;
     result: ChallengeResult;
   } | null>(null);
+  const [isReviewing, setIsReviewing] = useState(false);
   const [isGradingOpenAnswer, setIsGradingOpenAnswer] = useState(false);
   const [gradeError, setGradeError] = useState<string | null>(null);
   const [levelUpView, setLevelUpView] = useState<{
@@ -358,6 +366,7 @@ export default function Challenge() {
     setActiveQuestion(0);
     setAnswers([]);
     setRecentLevelResult(null);
+    setIsReviewing(false);
     setGradeError(null);
     setLevelUpView(null);
   }, [id]);
@@ -424,6 +433,7 @@ export default function Challenge() {
             retryLevelChallenge(id, recent.challenge.level);
             setActiveQuestion(0);
             setAnswers([]);
+            setIsReviewing(false);
             setRecentLevelResult(null);
           }}
         />
@@ -452,6 +462,7 @@ export default function Challenge() {
           else retryChallenge(id);
           setActiveQuestion(0);
           setAnswers([]);
+          setIsReviewing(false);
         }}
       />
     );
@@ -470,6 +481,7 @@ export default function Challenge() {
     : undefined;
   const question = questions[activeQuestion];
   const total = questions.length;
+  const isFirst = activeQuestion === 0;
   const isLast = activeQuestion === total - 1;
   const selected = answers[activeQuestion];
   const canAdvance = isOpenQuestion(question)
@@ -486,9 +498,31 @@ export default function Challenge() {
     (count, q, index) => (isAnswered(q, index) ? count + 1 : count),
     0,
   );
+  const allAnswered = answeredCount === total;
+  const isSubmitting = submit.isPending || isGradingOpenAnswer;
+  const primaryDisabled =
+    isSubmitting || (isReviewing ? !allAnswered : !canAdvance);
+  const reviewItems = questions.map((item, index) => {
+    const value = answers[index];
+    const answered = isAnswered(item, index);
+    const answerText = isOpenQuestion(item)
+      ? typeof value === "string" && value.trim()
+        ? value.trim()
+        : "Chưa trả lời"
+      : typeof value === "number"
+        ? item.options[value] ?? "Chưa trả lời"
+        : "Chưa trả lời";
+
+    return {
+      answerText,
+      answered,
+      index,
+    };
+  });
 
   const setAnswer = (answer: AnswerValue) => {
     setGradeError(null);
+    setIsReviewing(false);
     setAnswers((prev) => {
       const next = [...prev];
       next[activeQuestion] = answer;
@@ -518,12 +552,7 @@ export default function Challenge() {
     return grades;
   };
 
-  const handleNext = async () => {
-    if (!canAdvance) return;
-    if (!isLast) {
-      setActiveQuestion((q) => q + 1);
-      return;
-    }
+  const handleSubmit = async () => {
     if (levelChallenge && id) {
       setIsGradingOpenAnswer(true);
       setGradeError(null);
@@ -573,6 +602,47 @@ export default function Challenge() {
     navigate(`/characters/${id}/challenge`, { replace: true });
   };
 
+  const goToQuestion = (index: number) => {
+    setActiveQuestion(index);
+    setIsReviewing(false);
+    setGradeError(null);
+  };
+
+  const handlePrevious = () => {
+    if (isReviewing) {
+      setIsReviewing(false);
+      return;
+    }
+    if (isFirst) return;
+    setActiveQuestion((q) => q - 1);
+    setGradeError(null);
+  };
+
+  const handleNext = async () => {
+    if (isReviewing) {
+      await handleSubmit();
+      return;
+    }
+    if (!canAdvance) return;
+    if (!isLast) {
+      setActiveQuestion((q) => q + 1);
+      setGradeError(null);
+      return;
+    }
+    if (!allAnswered) {
+      const firstUnanswered = questions.findIndex(
+        (item, index) => !isAnswered(item, index),
+      );
+      if (firstUnanswered >= 0) {
+        setActiveQuestion(firstUnanswered);
+      }
+      setGradeError("Vui lòng trả lời đầy đủ các câu trước khi xem lại bài.");
+      return;
+    }
+    setIsReviewing(true);
+    setGradeError(null);
+  };
+
   return (
     <section
       className="reference-challenge challenge-stage"
@@ -615,6 +685,31 @@ export default function Challenge() {
           </div>
         </div>
 
+        <div className="question-progress" aria-label="Chọn câu hỏi">
+          <ul className="question-pips">
+            {reviewItems.map((item) => (
+              <li key={item.index}>
+                <button
+                  className={`question-pip${
+                    item.answered ? " answered" : ""
+                  }${item.index === activeQuestion && !isReviewing ? " current" : ""}`}
+                  type="button"
+                  onClick={() => goToQuestion(item.index)}
+                  aria-label={`Đi đến câu ${item.index + 1}${
+                    item.answered ? ", đã trả lời" : ", chưa trả lời"
+                  }`}
+                  aria-pressed={item.index === activeQuestion && !isReviewing}
+                >
+                  {item.index + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <p className="question-progress-caption">
+            Đã trả lời {answeredCount}/{total}
+          </p>
+        </div>
+
         <div className="challenge-card challenge-question-card card">
           <p className="question">{question.text}</p>
           {isOpenQuestion(question) ? (
@@ -646,19 +741,55 @@ export default function Challenge() {
             </div>
           )}
         </div>
+        {isReviewing && (
+          <section className="challenge-review-panel" aria-live="polite">
+            <div>
+              <p className="challenge-review-eyebrow">Xem lại trước khi nộp</p>
+              <h2>Kiểm tra {total} câu trả lời của bạn</h2>
+            </div>
+            <ol className="challenge-review-list">
+              {reviewItems.map((item) => (
+                <li key={item.index}>
+                  <button type="button" onClick={() => goToQuestion(item.index)}>
+                    <span>Câu {item.index + 1}</span>
+                    <strong>{item.answerText}</strong>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
         {gradeError && <p className="form-error">{gradeError}</p>}
         <div className="challenge-actions">
           <button
+            className="btn secondary"
+            type="button"
+            disabled={(isFirst && !isReviewing) || isSubmitting}
+            onClick={handlePrevious}
+          >
+            <ArrowLeft size={18} />
+            <span>Quay lại</span>
+          </button>
+          <button
             className="btn primary"
             type="button"
-            disabled={!canAdvance || submit.isPending || isGradingOpenAnswer}
+            disabled={primaryDisabled}
             onClick={handleNext}
           >
             {isGradingOpenAnswer
               ? "Đang chấm..."
-              : isLast
+              : isReviewing
                 ? "Nộp bài"
-                : "Câu tiếp theo"}
+                : isLast
+                  ? "Xem lại bài"
+                  : "Câu tiếp theo"}
+            {isReviewing ? (
+              <Send size={18} />
+            ) : isLast ? (
+              <ClipboardCheck size={18} />
+            ) : (
+              <ArrowRight size={18} />
+            )}
           </button>
         </div>
       </div>
