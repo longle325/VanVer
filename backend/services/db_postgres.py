@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 from typing import Iterable, List, Optional
 from uuid import UUID
 
-from sqlalchemy import func, select, update
+from sqlalchemy import delete, func, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -37,14 +38,83 @@ UNLOCKED_MATCH_STATUSES = (
 )
 
 
-def calculate_progress_points(level_results: dict | None) -> int:
-    """Return server-trusted points from synced level challenge results.
+# Fields inside a level_results slot that only the server may write. The grade
+# endpoint sets them and progress saves preserve them (see upsert_user_progress
+# and _merge_server_owned_level_fields). This keeps both the score and the
+# server-graded progression authoritative — a client save can't forge a pass or
+# revert a server-graded retake.
+SERVER_OWNED_LEVEL_FIELDS = ("server_points", "score", "total", "passed")
 
-    Level progress is currently submitted by the client, so it cannot be used
-    as an authoritative score source. Keep this at zero until level challenge
-    grading/awards are moved server-side.
+
+def calculate_progress_points(level_results: dict | None) -> int:
+    """Sum server-graded level points from level_results.
+
+    Only the server-written ``server_points`` field is trusted; client-supplied
+    scores are ignored. The grade endpoint writes this field server-side and
+    progress saves preserve it, so this stays authoritative.
     """
-    return 0
+    if not isinstance(level_results, dict):
+        return 0
+
+    total = 0
+    for character_results in level_results.values():
+        if not isinstance(character_results, dict):
+            continue
+        for result in character_results.values():
+            if not isinstance(result, dict):
+                continue
+            points = result.get("server_points")
+            if isinstance(points, bool):
+                continue
+            if isinstance(points, (int, float)):
+                total += int(points)
+    return total
+
+
+def _merge_server_owned_level_fields(incoming: dict | None, existing: dict | None) -> dict:
+    """Merge a client-supplied level_results blob with the stored one so that
+    server-owned fields are never lost or forged.
+
+    For each (character, level) slot: take the client's display fields but
+    strip any client-supplied server-owned fields and restore the server-owned
+    values from the stored row. Slots the client omits are kept as-is from the
+    stored row so a partial sync can't drop server scores.
+    """
+    incoming = incoming if isinstance(incoming, dict) else {}
+    existing = existing if isinstance(existing, dict) else {}
+    merged: dict = {}
+
+    for slug in set(incoming) | set(existing):
+        in_char = incoming.get(slug)
+        ex_char = existing.get(slug)
+        in_char = in_char if isinstance(in_char, dict) else {}
+        ex_char = ex_char if isinstance(ex_char, dict) else {}
+        merged_char: dict = {}
+
+        for level_key in set(in_char) | set(ex_char):
+            in_slot = in_char.get(level_key)
+            ex_slot = ex_char.get(level_key)
+            in_slot = in_slot if isinstance(in_slot, dict) else None
+            ex_slot = ex_slot if isinstance(ex_slot, dict) else None
+
+            if in_slot is None and ex_slot is None:
+                continue
+            if in_slot is None:
+                merged_char[level_key] = dict(ex_slot)
+                continue
+
+            slot = dict(in_slot)
+            for field in SERVER_OWNED_LEVEL_FIELDS:
+                slot.pop(field, None)
+            if ex_slot is not None:
+                for field in SERVER_OWNED_LEVEL_FIELDS:
+                    if field in ex_slot:
+                        slot[field] = ex_slot[field]
+            merged_char[level_key] = slot
+
+        merged[slug] = merged_char
+
+    return merged
 
 
 async def get_effective_total_score(db: AsyncSession, user: User) -> int:
@@ -74,6 +144,20 @@ async def get_user(db: AsyncSession, user_id: UUID) -> Optional[User]:
 async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
     result = await db.execute(select(User).where(User.username == username))
     return result.scalar_one_or_none()
+
+
+async def update_user_display_name(
+    db: AsyncSession,
+    user_id: UUID,
+    display_name: str,
+) -> Optional[User]:
+    user = await get_user(db, user_id)
+    if user is None:
+        return None
+    user.display_name = display_name
+    await db.commit()
+    await db.refresh(user)
+    return user
 
 
 async def get_user_by_oauth_identity(
@@ -150,11 +234,47 @@ async def _unique_username(db: AsyncSession, seed: str) -> str:
 async def get_user_progress(
     db: AsyncSession,
     user_id: UUID,
+    *,
+    for_update: bool = False,
 ) -> Optional[UserProgress]:
-    result = await db.execute(
-        select(UserProgress).where(UserProgress.user_id == user_id)
-    )
+    stmt = select(UserProgress).where(UserProgress.user_id == user_id)
+    if for_update:
+        # Serialize concurrent read-modify-write of the JSON blob (a level
+        # award racing the debounced progress autosave) so neither clobbers
+        # the other's server_points.
+        stmt = stmt.with_for_update()
+    result = await db.execute(stmt)
     return result.scalar_one_or_none()
+
+
+async def _get_or_create_progress_locked(
+    db: AsyncSession, user_id: UUID, now: datetime
+) -> UserProgress:
+    """Return the user's progress row locked FOR UPDATE, creating it if absent.
+
+    Closes the first-write race: FOR UPDATE locks nothing when the row does not
+    exist, so two concurrent first writes could both try to INSERT the same
+    user_id. If a concurrent insert wins, retry the locked fetch instead of
+    failing with an IntegrityError.
+    """
+    progress = await get_user_progress(db, user_id, for_update=True)
+    if progress is not None:
+        return progress
+    progress = UserProgress(
+        user_id=user_id,
+        completed={},
+        level_results={},
+        updated_at=now,
+    )
+    db.add(progress)
+    try:
+        await db.flush()
+    except IntegrityError:
+        await db.rollback()
+        progress = await get_user_progress(db, user_id, for_update=True)
+        if progress is None:
+            raise
+    return progress
 
 
 async def upsert_user_progress(
@@ -162,24 +282,62 @@ async def upsert_user_progress(
     user_id: UUID,
     completed: dict,
     level_results: dict,
-    skipped: list[str],
 ) -> UserProgress:
-    progress = await get_user_progress(db, user_id)
     now = datetime.now(timezone.utc)
-    if progress is None:
-        progress = UserProgress(
-            user_id=user_id,
-            completed=completed,
-            level_results=level_results,
-            skipped=skipped,
-            updated_at=now,
-        )
-        db.add(progress)
-    else:
-        progress.completed = completed
-        progress.level_results = level_results
-        progress.skipped = skipped
-        progress.updated_at = now
+    progress = await _get_or_create_progress_locked(db, user_id, now)
+    existing_level_results = (
+        progress.level_results if isinstance(progress.level_results, dict) else {}
+    )
+    # A client save may not carry server-graded fields (and must not be
+    # trusted to set them), so merge them back from the stored row.
+    merged_level_results = _merge_server_owned_level_fields(
+        level_results, existing_level_results
+    )
+    progress.completed = completed
+    progress.level_results = merged_level_results
+    progress.updated_at = now
+
+    await db.commit()
+    await db.refresh(progress)
+    return progress
+
+
+async def record_level_award(
+    db: AsyncSession,
+    user_id: UUID,
+    character_slug: str,
+    level: int,
+    points: int,
+    *,
+    score: int,
+    total: int,
+    passed: bool,
+) -> UserProgress:
+    """Write the server-graded result for one (character, level) into the
+    user's level_results. Idempotent: a retake overwrites the prior award for
+    that slot, so totals never double-count.
+
+    Persists the server-graded score/total/passed in the same commit as the
+    award so progression stays consistent even if the client's separate
+    progress save never lands.
+    """
+    now = datetime.now(timezone.utc)
+    progress = await _get_or_create_progress_locked(db, user_id, now)
+    base = dict(progress.level_results) if isinstance(progress.level_results, dict) else {}
+    character_levels = base.get(character_slug)
+    character_levels = dict(character_levels) if isinstance(character_levels, dict) else {}
+    level_key = str(level)
+    slot = character_levels.get(level_key)
+    slot = dict(slot) if isinstance(slot, dict) else {}
+    slot["server_points"] = int(points)
+    slot["score"] = int(score)
+    slot["total"] = int(total)
+    slot["passed"] = bool(passed)
+    character_levels[level_key] = slot
+    base[character_slug] = character_levels
+
+    progress.level_results = base
+    progress.updated_at = now
 
     await db.commit()
     await db.refresh(progress)
@@ -283,6 +441,25 @@ async def update_match_status(
     )
     await db.commit()
     return await get_match(db, user_id, character_id)
+
+
+async def delete_left_swipes(db: AsyncSession, user_id: UUID) -> int:
+    """Delete the user's left-swipe (skip) records, leaving real matches intact.
+
+    The discovery deck is computed from Match rows (a character with any Match
+    row is excluded), so clearing a user's SWIPED_LEFT rows is what actually
+    makes skipped cards reappear. SWIPED_RIGHT rows are never touched.
+
+    Returns the number of skip records removed.
+    """
+    result = await db.execute(
+        delete(Match).where(
+            Match.user_id == user_id,
+            Match.status == MatchStatus.SWIPED_LEFT,
+        )
+    )
+    await db.commit()
+    return result.rowcount or 0
 
 
 async def get_user_matches(
@@ -470,6 +647,7 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
         select(
             User.id.label("user_id"),
             User.username,
+            User.display_name,
             User.total_score,
             UserProgress.level_results,
             func.coalesce(unlocked_count.c.characters_unlocked, 0).label(
@@ -482,6 +660,10 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
 
     result = await db.execute(stmt)
     rows = result.all()
+    display_names = {}
+    for row in rows:
+        display_name = (row.display_name or "").strip()
+        display_names[row.user_id] = display_name or row.username
     ranked = sorted(
         rows,
         key=lambda row: (
@@ -489,7 +671,7 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
                 int(row.total_score or 0)
                 + calculate_progress_points(row.level_results)
             ),
-            row.username.lower(),
+            display_names[row.user_id].lower(),
         ),
     )[:limit]
 
@@ -497,7 +679,7 @@ async def get_leaderboard(db: AsyncSession, limit: int = 50) -> List[dict]:
         {
             "rank": idx + 1,
             "user_id": row.user_id,
-            "username": row.username,
+            "username": display_names[row.user_id],
             "total_score": int(row.total_score or 0)
             + calculate_progress_points(row.level_results),
             "characters_unlocked": row.characters_unlocked,

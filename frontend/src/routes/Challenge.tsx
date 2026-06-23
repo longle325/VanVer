@@ -10,6 +10,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { api } from "@/api/client";
+import { useReal } from "@/api/adapter";
+import { submitLevelChallenge } from "@/api/realClient";
 import {
   queryKeys,
   useCharacter,
@@ -45,7 +47,6 @@ function currentProgressSnapshot(): SyncedProgress {
   return {
     completed: state.completed,
     levelResults: state.levelResults,
-    skipped: state.skipped,
   };
 }
 
@@ -78,7 +79,7 @@ function ResultView({
   const reviewItems = useMemo(
     () =>
       questions.map((question, index) => {
-        const picked = result.answers[index];
+        const picked = result.answers?.[index];
         // In real mode `question.answer` is a -1 stub (server hides it
         // pre-submission); the authoritative correct index comes back in
         // `result.correctAnswers`. Fall back to the seed value for mock.
@@ -333,6 +334,7 @@ export default function Challenge() {
   const retryChallenge = useAppStore((s) => s.retryChallenge);
   const saveLevelChallenge = useAppStore((s) => s.saveLevelChallenge);
   const retryLevelChallenge = useAppStore((s) => s.retryLevelChallenge);
+  const setPoints = useAppStore((s) => s.setPoints);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: character, isLoading } = useCharacter(id);
@@ -392,7 +394,15 @@ export default function Challenge() {
     character && levelChallenge
       ? getLevelResult(levelResults, character.id, levelChallenge.level)
       : undefined;
-  const existing = levelChallenge ? existingLevelResult : completed[id];
+  // A server-graded slot can lack the client-synced `answers` (e.g. the
+  // progress save failed after grading). Don't render the result view from a
+  // partial slot — fall through to the questions so the user can retake
+  // (idempotent on the server) instead of crashing on result.answers.
+  const existing = levelChallenge
+    ? Array.isArray(existingLevelResult?.answers)
+      ? existingLevelResult
+      : undefined
+    : completed[id];
   if (recent) {
     const advanceToNextLevel = () => {
       setLevelUpView(null);
@@ -543,13 +553,31 @@ export default function Challenge() {
   };
 
   const handleSubmit = async () => {
-    if (levelChallenge) {
+    if (levelChallenge && id) {
       setIsGradingOpenAnswer(true);
       setGradeError(null);
       try {
-        const openGrades = await gradeOpenAnswers(levelChallenge);
-        const result = scoreLevelChallenge(levelChallenge, answers, openGrades);
+        let result: ChallengeResult;
+        let serverTotalScore: number | null = null;
+        if (useReal("challenge")) {
+          // Server grades MCQ + open-ended, awards points, and returns the new
+          // account score so the FE shows the persisted total, not local math.
+          const submission = await submitLevelChallenge(
+            id,
+            levelChallenge.level,
+            answers,
+          );
+          result = submission.result;
+          serverTotalScore = submission.totalScore;
+        } else {
+          // Offline mock mode grades locally.
+          const openGrades = await gradeOpenAnswers(levelChallenge);
+          result = scoreLevelChallenge(levelChallenge, answers, openGrades);
+        }
         saveLevelChallenge(id, levelChallenge.level, result);
+        // Apply the authoritative server score AFTER saveLevelChallenge, whose
+        // local points arithmetic would otherwise double-count the award.
+        if (serverTotalScore !== null) setPoints(serverTotalScore);
         try {
           await api.saveProgress(currentProgressSnapshot());
           await queryClient.invalidateQueries({

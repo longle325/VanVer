@@ -17,6 +17,10 @@ export interface CreateUserInput {
   grade: Grade;
 }
 
+export interface UpdateDisplayNameInput {
+  displayName: string;
+}
+
 export interface ChatRequest {
   characterId: string;
   message: string;
@@ -36,6 +40,7 @@ export type ChatStreamEvent =
 export interface ApiClient {
   createUser: (input: CreateUserInput) => Promise<UserProfile>;
   getCurrentUser: () => Promise<UserProfile>;
+  updateDisplayName: (input: UpdateDisplayNameInput) => Promise<UserProfile>;
   logout: () => Promise<{ ok: true }>;
   getDeck: () => Promise<Character[]>;
   /** Full character catalog. Unlike `getDeck` this is NOT filtered by
@@ -45,6 +50,12 @@ export interface ApiClient {
   getCharacter: (id: string) => Promise<Character>;
   recordMatch: (id: string) => Promise<{ ok: true }>;
   recordSkip: (id: string) => Promise<{ ok: true }>;
+  /** Clear the user's skipped (left-swiped) cards so they return to the
+   *  deck. Returns how many were cleared so callers can skip a pointless
+   *  deck refetch (and tell the user) when there was nothing to reopen.
+   *  Real backend deletes the user's SWIPED_LEFT rows and reports the count;
+   *  mock reports the local skip count it is about to clear. */
+  resetSkips: () => Promise<{ cleared: number }>;
   /** Authoritative list of slugs the user has right-swiped on. Real
    *  backend reads `GET /users/{id}/matches`; mock returns []. */
   getMatchedSlugs: () => Promise<string[]>;

@@ -93,6 +93,7 @@ cd backend && python3 -m venv .venv && ./.venv/bin/pip install -r requirements.t
 # This seeds characters, challenges, and demo users
 docker compose up -d postgres          # wait until `docker compose ps postgres` is healthy
 unset DEBUG                             # backend expects DEBUG to be a boolean
+cd backend && ./.venv/bin/alembic upgrade head && cd ..   # create schema via migrations
 cd backend && ./.venv/bin/python scripts/seed_database.py && cd ..
 
 # 5. Knowledge-base embeddings
@@ -135,6 +136,17 @@ Frontend state is saved in `localStorage`. To reset the demo data, go to:
 - **Frontend** — React 18 + TypeScript + Vite, Zustand, TanStack Query, and react-tinder-card. Capacitor is used for iOS/Android packaging.
 - **Backend** — FastAPI, async SQLAlchemy, Postgres + pgvector, OpenAI GPT-4o + `text-embedding-3-large`, with SSE streaming for chat.
 - **RAG** — each character has a curated knowledge base embedded into `knowledge_chunks`. Chat and open-ended grading retrieve real supporting evidence, with lexical search as a fallback if vector search is unavailable.
+
+---
+
+## Contributing
+
+Contributions are welcome!
+
+- **Report a bug or request a feature** — open an [issue](../../issues/new) and follow the issue template.
+- **Submit a change** — open a [pull request](../../pulls) and follow the PR template.
+
+Both templates live in [`.github/`](.github) and appear automatically when you open an issue or pull request on GitHub.
 
 ```txt
 frontend/   React + TS + Vite + Capacitor

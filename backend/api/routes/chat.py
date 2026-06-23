@@ -16,8 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
-
-logger = logging.getLogger(__name__)
+from typing import Any, Awaitable, Callable
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
@@ -33,6 +32,7 @@ from services import db_postgres as db
 from services.chat_service import ChatService
 from services.chat_quota import ChatQuotaExceeded, enforce_monthly_chat_quota
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 
@@ -78,6 +78,101 @@ def _resolve_chat_user_id(
             detail="Not authenticated.",
         )
     return requested_user_id
+
+
+async def chat_event_generator(
+    *,
+    session: AsyncSession,
+    chat_service: ChatService,
+    user_id: UUID,
+    character_id: UUID,
+    character: Any,
+    user_message: str,
+    chat_history: list[dict[str, str]],
+    create_chat_message: Callable[..., Awaitable[Any]] | None = None,
+):
+    yield {"event": "ready", "data": "{}"}
+
+    create_message = create_chat_message or db.create_chat_message
+    assistant_chunks: list[str] = []
+    try:
+        guardrail_response = await chat_service.guardrail_response(
+            character_slug=character.slug,
+            character_name=character.name,
+            user_message=user_message,
+            chat_history=chat_history,
+        )
+        if guardrail_response:
+            await create_message(
+                session,
+                user_id=user_id,
+                character_id=character_id,
+                role=ChatRole.USER,
+                content=user_message,
+            )
+            assistant_chunks.append(guardrail_response)
+            yield {"data": guardrail_response}
+            await create_message(
+                session,
+                user_id=user_id,
+                character_id=character_id,
+                role=ChatRole.ASSISTANT,
+                content=guardrail_response,
+            )
+            return
+
+        retrieval = await chat_service.prepare_retrieval(
+            character_slug=character.slug,
+            character_name=character.name,
+            user_message=user_message,
+        )
+        yield {
+            "event": "sources",
+            "data": json.dumps(
+                {
+                    "retrieval_mode": retrieval["retrieval_mode"],
+                    "sources": retrieval["sources"],
+                },
+                ensure_ascii=False,
+            ),
+        }
+        await create_message(
+            session,
+            user_id=user_id,
+            character_id=character_id,
+            role=ChatRole.USER,
+            content=user_message,
+        )
+        async for chunk in chat_service.stream_response(
+            character_slug=character.slug,
+            character_name=character.name,
+            user_message=user_message,
+            voice_instructions=character.voice_instructions,
+            chat_history=chat_history,
+            retrieval=retrieval,
+        ):
+            assistant_chunks.append(chunk)
+            yield {"data": chunk}
+    except Exception as exc:
+        logger.exception("Chat stream failed: %s", exc)
+        yield {
+            "event": "error",
+            "data": json.dumps(
+                {"error": str(exc)},
+                ensure_ascii=False,
+            ),
+        }
+        return
+
+    assistant_message = "".join(assistant_chunks).strip()
+    if assistant_message:
+        await create_message(
+            session,
+            user_id=user_id,
+            character_id=character_id,
+            role=ChatRole.ASSISTANT,
+            content=assistant_message,
+        )
 
 
 @router.get("/history", response_model=ChatHistoryResponse)
@@ -132,59 +227,14 @@ async def chat_stream(
         for message in recent_messages
     ]
 
-    async def event_generator():
-        assistant_chunks: list[str] = []
-        retrieval = await chat_service.prepare_retrieval(
-            character_slug=character.slug,
-            character_name=character.name,
+    return EventSourceResponse(
+        chat_event_generator(
+            session=session,
+            chat_service=chat_service,
+            user_id=user_id,
+            character_id=body.character_id,
+            character=character,
             user_message=body.message,
+            chat_history=chat_history,
         )
-        yield {
-            "event": "sources",
-            "data": json.dumps(
-                {
-                    "retrieval_mode": retrieval["retrieval_mode"],
-                    "sources": retrieval["sources"],
-                },
-                ensure_ascii=False,
-            ),
-        }
-        try:
-            await db.create_chat_message(
-                session,
-                user_id=user_id,
-                character_id=body.character_id,
-                role=ChatRole.USER,
-                content=body.message,
-            )
-            async for chunk in chat_service.stream_response(
-                character_slug=character.slug,
-                character_name=character.name,
-                user_message=body.message,
-                voice_instructions=character.voice_instructions,
-                chat_history=chat_history,
-                retrieval=retrieval,
-            ):
-                assistant_chunks.append(chunk)
-                yield {"data": chunk}
-        except Exception as exc:
-            logger.exception("Chat stream failed: %s", exc)
-            yield {
-                "event": "error",
-                "data": json.dumps(
-                    {"error": str(exc)},
-                    ensure_ascii=False,
-                ),
-            }
-            return
-        assistant_message = "".join(assistant_chunks).strip()
-        if assistant_message:
-            await db.create_chat_message(
-                session,
-                user_id=user_id,
-                character_id=body.character_id,
-                role=ChatRole.ASSISTANT,
-                content=assistant_message,
-            )
-
-    return EventSourceResponse(event_generator())
+    )

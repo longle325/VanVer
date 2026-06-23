@@ -1,31 +1,64 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { LogOut, Save } from "lucide-react";
 import { api } from "@/api/client";
+import { queryKeys } from "@/api/queries";
 import { useAppStore } from "@/stores/useAppStore";
 import MusicSettingsCard from "@/components/MusicSettingsCard";
+import { useLogout } from "@/hooks/useLogout";
 import { countAttemptedChallenges } from "@/lib/progressStats";
 
 export default function Profile() {
-  const navigate = useNavigate();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const queryClient = useQueryClient();
   const profile = useAppStore((s) => s.profile);
   const points = useAppStore((s) => s.points);
   const matches = useAppStore((s) => s.matches);
   const completed = useAppStore((s) => s.completed);
   const levelResults = useAppStore((s) => s.levelResults);
-  const resetAll = useAppStore((s) => s.resetAll);
+  const setProfile = useAppStore((s) => s.setProfile);
+  const { isLoggingOut, logout } = useLogout();
+  const [displayName, setDisplayName] = useState(profile?.username ?? "");
+  const [isSavingName, setIsSavingName] = useState(false);
+  const [nameStatus, setNameStatus] = useState<
+    { kind: "success" | "error"; message: string } | null
+  >(null);
   const attemptedChallenges = countAttemptedChallenges(completed, levelResults);
+  const normalizedDisplayName = displayName.trim();
+  const currentDisplayName = useMemo(
+    () => (profile?.username ?? "").trim(),
+    [profile?.username],
+  );
+  const canSaveName =
+    normalizedDisplayName.length > 0 &&
+    normalizedDisplayName !== currentDisplayName &&
+    !isSavingName &&
+    !isLoggingOut;
 
-  const handleLogout = async () => {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
+  useEffect(() => {
+    setDisplayName(profile?.username ?? "");
+  }, [profile?.username]);
+
+  const handleDisplayNameSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!profile || !canSaveName) return;
+
+    setIsSavingName(true);
+    setNameStatus(null);
     try {
-      await api.logout();
+      const updated = await api.updateDisplayName({
+        displayName: normalizedDisplayName,
+      });
+      setProfile(updated.username, updated.grade, updated.userId, updated.points);
+      queryClient.invalidateQueries({ queryKey: queryKeys.leaderboard });
+      setNameStatus({ kind: "success", message: "Đã lưu tên hiển thị." });
     } catch (err) {
-      console.warn("Logout request failed; clearing local session anyway.", err);
+      console.warn("Display name update failed", err);
+      setNameStatus({
+        kind: "error",
+        message: "Chưa lưu được tên hiển thị.",
+      });
     } finally {
-      resetAll();
-      navigate("/onboarding", { replace: true });
+      setIsSavingName(false);
     }
   };
 
@@ -34,6 +67,35 @@ export default function Profile() {
       <div className="profile-card card">
         <p className="kicker">Hồ sơ</p>
         <h1 className="headline-lg">{profile?.username}</h1>
+        <form className="profile-name-form" onSubmit={handleDisplayNameSubmit}>
+          <label className="profile-field">
+            <span>Tên hiển thị</span>
+            <input
+              value={displayName}
+              maxLength={120}
+              onChange={(event) => {
+                setDisplayName(event.target.value);
+                setNameStatus(null);
+              }}
+              disabled={isSavingName || isLoggingOut}
+            />
+          </label>
+          <div className="profile-save-row">
+            <button
+              type="submit"
+              className="btn secondary"
+              disabled={!canSaveName}
+            >
+              <Save size={18} aria-hidden="true" />
+              {isSavingName ? "Đang lưu..." : "Lưu tên"}
+            </button>
+            {nameStatus && (
+              <p className={`profile-status ${nameStatus.kind}`}>
+                {nameStatus.message}
+              </p>
+            )}
+          </div>
+        </form>
         <div className="profile-meta">
           <div className="panel stat">
             <strong>{points}</strong>
@@ -52,21 +114,11 @@ export default function Profile() {
           <button
             type="button"
             className="btn secondary"
-            onClick={handleLogout}
+            onClick={logout}
             disabled={isLoggingOut}
           >
+            <LogOut size={18} aria-hidden="true" />
             {isLoggingOut ? "Đang đăng xuất..." : "Đăng xuất"}
-          </button>
-          <button
-            type="button"
-            className="btn ghost"
-            onClick={() => {
-              resetAll();
-              navigate("/onboarding", { replace: true });
-            }}
-            disabled={isLoggingOut}
-          >
-            Đặt lại dữ liệu thử nghiệm
           </button>
         </div>
       </div>

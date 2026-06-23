@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from core.config import settings
-from core.database import Base, engine, ensure_vector_extension
+from core.database import engine, ensure_vector_extension
 
 # Route modules
 from api.routes import (
@@ -42,11 +42,12 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Create tables on startup, dispose engine on shutdown."""
+    """Ensure pgvector is available; dispose engine on shutdown.
+
+    Schema is owned by Alembic migrations, not created here.
+    """
     logger.info("Starting Vanver API …")
     await ensure_vector_extension()
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
     yield
     logger.info("Shutting down …")
     await engine.dispose()

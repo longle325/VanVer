@@ -485,6 +485,11 @@ const rawCharacters: SeedCharacter[] = [
       "Tiếng sáo đêm xuân khơi lại ký ức tuổi trẻ và khát vọng đi chơi.",
       "Dòng nước mắt của A Phủ khiến Mị nhận ra nỗi đau chung của người bị áp bức.",
     ],
+    symbols: [
+      "Căn buồng",
+      "Tiếng sáo",
+      "Dòng nước mắt A Phủ",
+    ],
     voice: "ít lời, nén đau, nhưng khi nói về tự do thì sáng và quyết liệt",
     challenge: [
       q(
@@ -575,6 +580,13 @@ const rawCharacters: SeedCharacter[] = [
       "Hạnh phúc của một tang gia phơi bày niềm vui lố bịch trước cái chết.",
       "Tiếng cười trào phúng nhắm vào cả Xuân lẫn môi trường đã tạo ra Xuân.",
     ],
+    symbols: [
+      "Danh hiệu giả",
+      "Đám tang cụ cố",
+      "Tiếng cười trào phúng",
+      "Tóc đỏ",
+      "Âu hóa rởm",
+    ],
     voice: "láu cá, tự mãn, nói năng bốc đồng nhưng lộ bản chất châm biếm",
     challenge: [
       q(
@@ -664,6 +676,12 @@ const rawCharacters: SeedCharacter[] = [
       "Đánh cướp cứu Kiều Nguyệt Nga thể hiện quan niệm thấy việc nghĩa phải làm.",
       "Từ chối lạy tạ cho thấy lễ giáo và sự trong sạch trong ứng xử.",
       "Tác phẩm được truyền tụng rộng rãi qua nói thơ Vân Tiên ở Nam Bộ.",
+    ],
+    symbols: [
+      "Gậy đánh cướp",
+      "Kiến nghĩa bất vi",
+      "Kiệu Nguyệt Nga",
+      "Lễ tạ bị từ chối",
     ],
     voice: "chính trực, trang trọng, giàu đạo nghĩa và niềm tin vào điều thiện",
     challenge: [
@@ -757,6 +775,13 @@ const rawCharacters: SeedCharacter[] = [
     ],
     voice:
       "trầm, giàu tự ý thức, nhiều hình ảnh thơ và luôn phân biệt nỗi riêng với đạo lý",
+    symbols: [
+      "Lầu Ngưng Bích",
+      "Cánh buồm xa",
+      "Hoa trôi",
+      "Trao duyên",
+      "Tài mệnh tương đố",
+    ],
     challenge: [
       q(
         "Vì sao Kiều bán mình chuộc cha?",

@@ -1,0 +1,1402 @@
+{
+  "chi-pheo": [
+    {
+      "level": 1,
+      "phaseTitle": "Trước khi bị tha hóa hoàn toàn",
+      "questions": [
+        {
+          "id": "chi-pheo-l1-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Quá khứ Chí từng là một người canh điền hiền lành có tác dụng gì trong cách đọc bi kịch nhân vật?",
+          "rubric": null,
+          "evidence": "Văn bản kể Chí mồ côi, đi ở; khoảng hai mươi tuổi làm canh điền cho lý Kiến, rồi bị giải huyện và khi trở về thì khác hẳn."
+        },
+        {
+          "id": "chi-pheo-l1-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Khi nhìn Chí ở thời còn làm thuê, yếu tố nào báo trước rõ nhất nguy cơ bi kịch?",
+          "rubric": null,
+          "evidence": "Văn bản kể Chí mồ côi, đi ở; khoảng hai mươi tuổi làm canh điền cho lý Kiến, rồi bị giải huyện và khi trở về thì khác hẳn."
+        },
+        {
+          "id": "chi-pheo-l1-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Vì sao không nên xem Chí Phèo chỉ là “một kẻ dữ” từ đầu?",
+          "rubric": null,
+          "evidence": "Văn bản kể Chí mồ côi, đi ở; khoảng hai mươi tuổi làm canh điền cho lý Kiến, rồi bị giải huyện và khi trở về thì khác hẳn."
+        },
+        {
+          "id": "chi-pheo-l1-q4",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Chi tiết Chí từng có phần người lương thiện làm thay đổi trọng tâm đánh giá nhân vật theo hướng nào?",
+          "rubric": null,
+          "evidence": "Văn bản kể Chí mồ côi, đi ở; khoảng hai mươi tuổi làm canh điền cho lý Kiến, rồi bị giải huyện và khi trở về thì khác hẳn."
+        },
+        {
+          "id": "chi-pheo-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, giải thích vì sao quá khứ lương thiện của Chí làm bi kịch tha hóa nặng hơn.",
+          "rubric": "Đạt nếu nêu được: Chí từng có khả năng sống như người bình thường; tha hóa không phải bản chất bẩm sinh; làng Vũ Đại/quyền lực phong kiến/nhà tù góp phần đẩy Chí ra khỏi đời sống lương thiện.",
+          "evidence": "Văn bản kể Chí mồ côi, đi ở; khoảng hai mươi tuổi làm canh điền cho lý Kiến, rồi bị giải huyện và khi trở về thì khác hẳn."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Tha hóa sau nhà tù",
+      "questions": [
+        {
+          "id": "chi-pheo-l2-q1",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Tiếng chửi của Chí Phèo sau khi ra tù nên được hiểu chính xác nhất như thế nào?",
+          "rubric": null,
+          "evidence": "Mở đầu truyện là chuỗi tiếng chửi trời, đời, làng; nhưng cộng đồng im lặng, khiến tiếng chửi thành tiếng gọi bị từ chối."
+        },
+        {
+          "id": "chi-pheo-l2-q2",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Hình ảnh vết sẹo, cơn say và dáng vẻ hung dữ của Chí chủ yếu gợi điều gì?",
+          "rubric": null,
+          "evidence": "Sau khi biệt tăm vì bị giải huyện, Chí trở về với ngoại hình dữ dằn, say rượu, chửi bới và rạch mặt ăn vạ."
+        },
+        {
+          "id": "chi-pheo-l2-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Vai trò của Bá Kiến trong giai đoạn Chí tha hóa là gì?",
+          "rubric": null,
+          "evidence": "Văn bản cho thấy Bá Kiến biết dùng kẻ bạt mạng để trị phe đối địch; Chí được cho rượu/tiền và trở thành công cụ gây hại."
+        },
+        {
+          "id": "chi-pheo-l2-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Khi dân làng sợ Chí, vì sao đó không phải là quyền lực thật sự?",
+          "rubric": null,
+          "evidence": "Mở đầu truyện là chuỗi tiếng chửi trời, đời, làng; nhưng cộng đồng im lặng, khiến tiếng chửi thành tiếng gọi bị từ chối. Bá Kiến cũng có thể sai khiến Chí như một công cụ."
+        },
+        {
+          "id": "chi-pheo-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao Chí Phèo lúc dữ dằn nhất vẫn là một nhân vật đáng thương?",
+          "rubric": "Đạt nếu nêu được: dữ dằn là hậu quả của tha hóa; Chí bị cô lập khỏi cộng đồng; bị quyền lực lợi dụng và không thật sự làm chủ số phận.",
+          "evidence": "Sau khi biệt tăm vì bị giải huyện, Chí trở về với ngoại hình dữ dằn, say rượu, chửi bới và rạch mặt ăn vạ. Văn bản cũng cho thấy hắn bị cô lập khỏi tiếng nói cộng đồng."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Thức tỉnh rồi bế tắc",
+      "questions": [
+        {
+          "id": "chi-pheo-l3-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Bát cháo hành của Thị Nở tác động sâu nhất đến Chí ở điểm nào?",
+          "rubric": null,
+          "evidence": "Sau bát cháo hành, Chí lần đầu cảm nhận sự chăm sóc, bâng khuâng, ăn năn và nghĩ tới việc làm hòa với mọi người."
+        },
+        {
+          "id": "chi-pheo-l3-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Bi kịch sau khi Chí tỉnh rượu nằm chủ yếu ở đâu?",
+          "rubric": null,
+          "evidence": "Chí nói muốn làm người lương thiện và hỏi ai cho mình lương thiện, cho thấy khát vọng đi kèm bế tắc xã hội."
+        },
+        {
+          "id": "chi-pheo-l3-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Sự từ chối của Thị Nở có ý nghĩa rộng hơn chuyện tình cảm cá nhân vì sao?",
+          "rubric": null,
+          "evidence": "Sau khi bà cô ngăn cản, Thị Nở quay lại trút lời từ chối; Chí từ hy vọng làm hòa rơi vào tuyệt vọng."
+        },
+        {
+          "id": "chi-pheo-l3-q4",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Câu “Ai cho tao lương thiện?” đúng nhất nên được hiểu là gì?",
+          "rubric": null,
+          "evidence": "Chí nói muốn làm người lương thiện và hỏi ai cho mình lương thiện, cho thấy khát vọng đi kèm bế tắc xã hội."
+        },
+        {
+          "id": "chi-pheo-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Giải thích vì sao Chí càng tỉnh lại càng tuyệt vọng.",
+          "rubric": "Đạt nếu nêu được: tỉnh rượu làm Chí ý thức khát vọng lương thiện; quá khứ/định kiến/cấu trúc làng xã chặn đường trở về; bi kịch là có ý thức làm người nhưng không được công nhận.",
+          "evidence": "Sau bát cháo hành, Chí lần đầu cảm nhận sự chăm sóc, bâng khuâng, ăn năn và nghĩ tới việc làm hòa với mọi người. Sau đó Chí đối diện câu hỏi về quyền được lương thiện."
+        }
+      ]
+    }
+  ],
+  "mi": [
+    {
+      "level": 1,
+      "phaseTitle": "Mị thời trẻ, trước khi bị vùi lấp",
+      "questions": [
+        {
+          "id": "mi-l1-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Tài thổi sáo của Mị trước khi về nhà thống lí cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích nêu Mị trước khi làm dâu gạt nợ là cô gái trẻ đẹp, yêu đời, có tài thổi sáo và được nhiều chàng trai yêu mến."
+        },
+        {
+          "id": "mi-l1-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Việc Mị từng được nhiều người yêu mến có tác dụng gì trong cấu trúc nhân vật?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích nêu Mị trước khi làm dâu gạt nợ là cô gái trẻ đẹp, yêu đời, có tài thổi sáo và được nhiều chàng trai yêu mến."
+        },
+        {
+          "id": "mi-l1-q3",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Tiếng sáo gắn với Mị thời trẻ nên được hiểu đúng nhất là gì?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích nêu Mị trước khi làm dâu gạt nợ là cô gái trẻ đẹp, yêu đời, có tài thổi sáo và được nhiều chàng trai yêu mến. Nguồn về tiếng sáo xem đây là chi tiết đánh thức sức sống tiềm tàng của Mị."
+        },
+        {
+          "id": "mi-l1-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Nếu xem Mị là người cam chịu từ bản chất, ta sẽ hiểu sai điều gì?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích nêu Mị trước khi làm dâu gạt nợ là cô gái trẻ đẹp, yêu đời, có tài thổi sáo và được nhiều chàng trai yêu mến."
+        },
+        {
+          "id": "mi-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao quá khứ tươi trẻ của Mị làm đời con dâu gạt nợ trở nên đau hơn?",
+          "rubric": "Đạt nếu nêu được: Mị từng có tài năng, tình yêu và sức sống; nhà thống lí làm sức sống ấy bị vùi lấp; đối lập trước/sau làm bi kịch sâu hơn.",
+          "evidence": "Nguồn phân tích nêu Mị trước khi làm dâu gạt nợ là cô gái trẻ đẹp, yêu đời, có tài thổi sáo và được nhiều chàng trai yêu mến."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Con dâu gạt nợ, đêm tình mùa xuân",
+      "questions": [
+        {
+          "id": "mi-l2-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Trong đêm tình mùa xuân, điều gì đánh thức Mị mạnh nhất?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích cho thấy tiếng sáo, men rượu và mùa xuân làm Mị nhớ ngày trước, thấy mình còn trẻ, muốn đi chơi; sau đó A Sử trói Mị."
+        },
+        {
+          "id": "mi-l2-q2",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Việc Mị muốn đi chơi trong đêm xuân cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích cho thấy tiếng sáo, men rượu và mùa xuân làm Mị nhớ ngày trước, thấy mình còn trẻ, muốn đi chơi; sau đó A Sử trói Mị."
+        },
+        {
+          "id": "mi-l2-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Cảnh A Sử trói Mị làm nổi bật mâu thuẫn nào?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích cho thấy tiếng sáo, men rượu và mùa xuân làm Mị nhớ ngày trước, thấy mình còn trẻ, muốn đi chơi; sau đó A Sử trói Mị."
+        },
+        {
+          "id": "mi-l2-q4",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Vì sao sự thức tỉnh của Mị trong đêm xuân chưa phải là sự giải thoát thật sự?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích cho thấy tiếng sáo, men rượu và mùa xuân làm Mị nhớ ngày trước, thấy mình còn trẻ, muốn đi chơi; sau đó A Sử trói Mị."
+        },
+        {
+          "id": "mi-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao cảnh Mị bị trói trong đêm xuân vừa đau vừa quan trọng?",
+          "rubric": "Đạt nếu nêu được: Mị đã thức tỉnh ham sống; hành động trói cho thấy áp bức tàn bạo; sức sống bị chặn lại nhưng chưa bị tiêu diệt.",
+          "evidence": "Nguồn phân tích cho thấy tiếng sáo, men rượu và mùa xuân làm Mị nhớ ngày trước, thấy mình còn trẻ, muốn đi chơi; sau đó A Sử trói Mị."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Cắt dây cứu A Phủ",
+      "questions": [
+        {
+          "id": "mi-l3-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Giọt nước mắt của A Phủ tác động đến Mị vì sao?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích cho thấy giọt nước mắt A Phủ khiến Mị nhớ nỗi đau của chính mình; Mị cắt dây cứu A Phủ và đồng thời tự cứu mình."
+        },
+        {
+          "id": "mi-l3-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Hành động cắt dây trói cho A Phủ quan trọng nhất ở điểm nào?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích cho thấy giọt nước mắt A Phủ khiến Mị nhớ nỗi đau của chính mình; Mị cắt dây cứu A Phủ và đồng thời tự cứu mình."
+        },
+        {
+          "id": "mi-l3-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Bước chuyển của Mị trong cảnh cứu A Phủ là gì?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích cho thấy giọt nước mắt A Phủ khiến Mị nhớ nỗi đau của chính mình; Mị cắt dây cứu A Phủ và đồng thời tự cứu mình."
+        },
+        {
+          "id": "mi-l3-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Vì sao Mị chạy theo A Phủ là chi tiết quyết định?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích cho thấy giọt nước mắt A Phủ khiến Mị nhớ nỗi đau của chính mình; Mị cắt dây cứu A Phủ và đồng thời tự cứu mình."
+        },
+        {
+          "id": "mi-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Giải thích vì sao hành động cắt dây vừa là lòng thương người vừa là sự tự thức tỉnh.",
+          "rubric": "Đạt nếu nêu được: Mị thương A Phủ; nhận ra nỗi đau của anh giống nỗi đau của mình; từ nhận thức ấy nàng hành động và tự giải thoát.",
+          "evidence": "Nguồn phân tích cho thấy giọt nước mắt A Phủ khiến Mị nhớ nỗi đau của chính mình; Mị cắt dây cứu A Phủ và đồng thời tự cứu mình."
+        }
+      ]
+    }
+  ],
+  "xuan-toc-do": [
+    {
+      "level": 1,
+      "phaseTitle": "Nguồn gốc lưu manh đường phố",
+      "questions": [
+        {
+          "id": "xuan-toc-do-l1-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Xuất thân đường phố của Xuân Tóc Đỏ có tác dụng trào phúng gì?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt mô tả Xuân là kẻ mồ côi, lang thang, kiếm sống bằng nghề vặt như trèo me, trèo sấu, nhặt bóng ở sân quần."
+        },
+        {
+          "id": "xuan-toc-do-l1-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Sự nhanh trí kiểu chợ búa của Xuân khác gì với trí tuệ thật?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt mô tả Xuân là kẻ mồ côi, lang thang, kiếm sống bằng nghề vặt như trèo me, trèo sấu, nhặt bóng ở sân quần."
+        },
+        {
+          "id": "xuan-toc-do-l1-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Vì sao không nên đọc Xuân như một hình mẫu “vượt khó thành công”?",
+          "rubric": null,
+          "evidence": "Nguồn phân tích nêu Xuân từ kẻ kiếm sống vặt trở thành đốc tờ, giáo sư quần vợt, anh hùng/vĩ nhân trong xã hội văn minh rởm."
+        },
+        {
+          "id": "xuan-toc-do-l1-q4",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Điểm đáng chú ý nhất ở Xuân lúc chưa bước vào thế giới Âu hóa là gì?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt mô tả Xuân là kẻ mồ côi, lang thang, kiếm sống bằng nghề vặt như trèo me, trèo sấu, nhặt bóng ở sân quần."
+        },
+        {
+          "id": "xuan-toc-do-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao xuất phát điểm thấp của Xuân làm tiếng cười trào phúng mạnh hơn?",
+          "rubric": "Đạt nếu nêu được: Xuân vốn ít học/lưu manh/cơ hội; về sau lại được xã hội rỗng tuếch nâng lên; sự đối lập phơi bày xã hội sính danh, lố bịch.",
+          "evidence": "Nguồn tóm tắt mô tả Xuân là kẻ mồ côi, lang thang, kiếm sống bằng nghề vặt như trèo me, trèo sấu, nhặt bóng ở sân quần. Về sau hắn được xã hội thượng lưu Âu hóa phong các danh hiệu lố bịch."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Leo thang trong xã hội Âu hóa",
+      "questions": [
+        {
+          "id": "xuan-toc-do-l2-q1",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Xuân được xã hội Âu hóa tiếp nhận vì lý do nào đúng nhất?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt: Xuân được bà Phó Đoan giới thiệu vào cửa hàng Âu hóa, nhận danh hiệu sinh viên trường thuốc/đốc tờ Xuân, học quảng cáo thuốc lậu và mở rộng quan hệ."
+        },
+        {
+          "id": "xuan-toc-do-l2-q2",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Các danh xưng gắn với Xuân có tác dụng châm biếm thế nào?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt: Xuân được bà Phó Đoan giới thiệu vào cửa hàng Âu hóa, nhận danh hiệu sinh viên trường thuốc/đốc tờ Xuân, học quảng cáo thuốc lậu và mở rộng quan hệ."
+        },
+        {
+          "id": "xuan-toc-do-l2-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Việc các hiểu lầm thường có lợi cho Xuân cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt: Xuân được bà Phó Đoan giới thiệu vào cửa hàng Âu hóa, nhận danh hiệu sinh viên trường thuốc/đốc tờ Xuân, học quảng cáo thuốc lậu và mở rộng quan hệ."
+        },
+        {
+          "id": "xuan-toc-do-l2-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Xuân “lên đời” mà không trưởng thành đạo đức vì sao?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt: Xuân được bà Phó Đoan giới thiệu vào cửa hàng Âu hóa, nhận danh hiệu sinh viên trường thuốc/đốc tờ Xuân, học quảng cáo thuốc lậu và mở rộng quan hệ."
+        },
+        {
+          "id": "xuan-toc-do-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Nêu 2 cơ chế khiến Xuân “lên đời” mà không cần trưởng thành đạo đức thật.",
+          "rubric": "Đạt nếu có ít nhất 2 ý: hiểu lầm có lợi; mác Âu hóa/y học/thể thao rởm; giới thượng lưu sính danh; trò bịp được hợp thức hóa; người xung quanh cũng giả tạo nên không muốn phát hiện sự thật.",
+          "evidence": "Nguồn tóm tắt: Xuân được bà Phó Đoan giới thiệu vào cửa hàng Âu hóa, nhận danh hiệu sinh viên trường thuốc/đốc tờ Xuân, học quảng cáo thuốc lậu và mở rộng quan hệ."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Danh nhân rỗng được tung hô",
+      "questions": [
+        {
+          "id": "xuan-toc-do-l3-q1",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Khi Xuân được tung hô, đối tượng bị châm biếm sâu nhất là ai?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt: vụ quần vợt với quán quân Xiêm được diễn giải thành hy sinh vì tổ quốc, khiến Xuân được tung hô thành anh hùng/vĩ nhân."
+        },
+        {
+          "id": "xuan-toc-do-l3-q2",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Sự “nâng cấp” của Xuân khác với trưởng thành của nhân vật chính diện ở điểm nào?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt: vụ quần vợt với quán quân Xiêm được diễn giải thành hy sinh vì tổ quốc, khiến Xuân được tung hô thành anh hùng/vĩ nhân."
+        },
+        {
+          "id": "xuan-toc-do-l3-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Vì sao Xuân càng được ca tụng thì tiếng cười càng gay gắt?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt: vụ quần vợt với quán quân Xiêm được diễn giải thành hy sinh vì tổ quốc, khiến Xuân được tung hô thành anh hùng/vĩ nhân."
+        },
+        {
+          "id": "xuan-toc-do-l3-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Điểm nguy hiểm của “danh nhân rỗng” nằm ở đâu?",
+          "rubric": null,
+          "evidence": "Nguồn tóm tắt: vụ quần vợt với quán quân Xiêm được diễn giải thành hy sinh vì tổ quốc, khiến Xuân được tung hô thành anh hùng/vĩ nhân."
+        },
+        {
+          "id": "xuan-toc-do-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao Xuân Tóc Đỏ là đỉnh điểm của sự đảo lộn giá trị?",
+          "rubric": "Đạt nếu nêu được: Xuân không có phẩm chất tương xứng với danh tiếng; xã hội trưởng giả/Âu hóa giả hiệu tôn vinh hắn; tiếng cười nhắm vào cả cá nhân cơ hội và môi trường tạo ra hắn.",
+          "evidence": "Nguồn tóm tắt: vụ quần vợt với quán quân Xiêm được diễn giải thành hy sinh vì tổ quốc, khiến Xuân được tung hô thành anh hùng/vĩ nhân."
+        }
+      ]
+    }
+  ],
+  "luc-van-tien": [
+    {
+      "level": 1,
+      "phaseTitle": "Cứu Kiều Nguyệt Nga",
+      "questions": [
+        {
+          "id": "luc-van-tien-l1-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Lục Vân Tiên không nhận báo đáp sau khi cứu Kiều Nguyệt Nga cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Văn bản phần I kể Vân Tiên bẻ cây làm gậy đánh tan bọn cướp Phong Lai, giữ lễ với Nguyệt Nga và từ chối báo đáp."
+        },
+        {
+          "id": "luc-van-tien-l1-q2",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Hành động đánh cướp của Lục Vân Tiên khác với sự liều lĩnh thông thường ở điểm nào?",
+          "rubric": null,
+          "evidence": "Văn bản phần I kể Vân Tiên bẻ cây làm gậy đánh tan bọn cướp Phong Lai, giữ lễ với Nguyệt Nga và từ chối báo đáp."
+        },
+        {
+          "id": "luc-van-tien-l1-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Việc Lục Vân Tiên giữ lễ với Kiều Nguyệt Nga sau khi cứu nàng cho thấy phẩm chất nào?",
+          "rubric": null,
+          "evidence": "Văn bản phần I kể Vân Tiên bẻ cây làm gậy đánh tan bọn cướp Phong Lai, giữ lễ với Nguyệt Nga và từ chối báo đáp."
+        },
+        {
+          "id": "luc-van-tien-l1-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Cảnh cứu Kiều Nguyệt Nga đặt nền cho hình tượng Lục Vân Tiên như thế nào?",
+          "rubric": null,
+          "evidence": "Văn bản phần I kể Vân Tiên bẻ cây làm gậy đánh tan bọn cướp Phong Lai, giữ lễ với Nguyệt Nga và từ chối báo đáp."
+        },
+        {
+          "id": "luc-van-tien-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao việc cứu người mà không cầu báo đáp là chi tiết quan trọng?",
+          "rubric": "Đạt nếu nêu được: hành động vì nghĩa; không vụ lợi; thể hiện mẫu nhân vật chính diện trong văn học trung đại; làm nền cho các thử thách đạo nghĩa về sau.",
+          "evidence": "Văn bản phần I kể Vân Tiên bẻ cây làm gậy đánh tan bọn cướp Phong Lai, giữ lễ với Nguyệt Nga và từ chối báo đáp."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Hoạn nạn sau khi bị mù",
+      "questions": [
+        {
+          "id": "luc-van-tien-l2-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Khi rơi vào mù lòa và bị hãm hại, phẩm chất nào của Lục Vân Tiên được thử thách mạnh nhất?",
+          "rubric": null,
+          "evidence": "Phần II cho thấy Vân Tiên gặp nạn và bị Trịnh Hâm hãm hại; đây là chặng thử thách khi nhân vật mất lợi thế bên ngoài."
+        },
+        {
+          "id": "luc-van-tien-l2-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Hoạn nạn của Lục Vân Tiên có ý nghĩa gì trong cấu trúc truyện?",
+          "rubric": null,
+          "evidence": "Phần II cho thấy Vân Tiên gặp nạn và bị Trịnh Hâm hãm hại; đây là chặng thử thách khi nhân vật mất lợi thế bên ngoài."
+        },
+        {
+          "id": "luc-van-tien-l2-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Khi bị phản bội trong cảnh yếu thế, Lục Vân Tiên hiện lên khác với một anh hùng chỉ có sức mạnh ở điểm nào?",
+          "rubric": null,
+          "evidence": "Phần II cho thấy Vân Tiên gặp nạn và bị Trịnh Hâm hãm hại; đây là chặng thử thách khi nhân vật mất lợi thế bên ngoài."
+        },
+        {
+          "id": "luc-van-tien-l2-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Sự mù lòa của Lục Vân Tiên nên được hiểu sâu nhất như thế nào?",
+          "rubric": null,
+          "evidence": "Phần II cho thấy Vân Tiên gặp nạn và bị Trịnh Hâm hãm hại; đây là chặng thử thách khi nhân vật mất lợi thế bên ngoài."
+        },
+        {
+          "id": "luc-van-tien-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao hoạn nạn không làm Lục Vân Tiên nhỏ bé đi về mặt đạo đức?",
+          "rubric": "Đạt nếu nêu được: dù mù lòa/bị hại, nhân vật vẫn giữ khí tiết; thử thách làm sáng phẩm chất chính nghĩa; đạo đức không phụ thuộc vào hoàn cảnh thuận lợi.",
+          "evidence": "Phần II cho thấy Vân Tiên gặp nạn và bị Trịnh Hâm hãm hại; đây là chặng thử thách khi nhân vật mất lợi thế bên ngoài."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Sáng mắt, công thành danh toại",
+      "questions": [
+        {
+          "id": "luc-van-tien-l3-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Việc Lục Vân Tiên sáng mắt trở lại có ý nghĩa nào ngoài phục hồi thể xác?",
+          "rubric": null,
+          "evidence": "Phần IV kể Vân Tiên được thuốc làm mắt sáng lại, sau đó trở về và tiếp tục đường khoa trường/công danh, mở hướng phục hồi chính nghĩa."
+        },
+        {
+          "id": "luc-van-tien-l3-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Thi đỗ, lập công và đoàn tụ tạo nên mô hình kết thúc nào?",
+          "rubric": null,
+          "evidence": "Phần IV kể Vân Tiên được thuốc làm mắt sáng lại, sau đó trở về và tiếp tục đường khoa trường/công danh, mở hướng phục hồi chính nghĩa."
+        },
+        {
+          "id": "luc-van-tien-l3-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Vì sao đoạn kết không chỉ là phần thưởng riêng cho Lục Vân Tiên?",
+          "rubric": null,
+          "evidence": "Phần IV kể Vân Tiên được thuốc làm mắt sáng lại, sau đó trở về và tiếp tục đường khoa trường/công danh, mở hướng phục hồi chính nghĩa."
+        },
+        {
+          "id": "luc-van-tien-l3-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Sự đoàn tụ với Kiều Nguyệt Nga có ý nghĩa gì trong hệ giá trị của truyện?",
+          "rubric": null,
+          "evidence": "Từ cảnh cứu Nguyệt Nga đến phần phục hồi sau hoạn nạn, truyện giữ mạch nghĩa tình thủy chung và chính nghĩa."
+        },
+        {
+          "id": "luc-van-tien-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao kết thúc của Lục Vân Tiên mang màu sắc “chính nghĩa được khẳng định”?",
+          "rubric": "Đạt nếu nêu được: nhân vật vượt hoạn nạn; được phục hồi ánh sáng/danh phận; thi đỗ/lập công/đoàn tụ; người tốt được đền đáp, kẻ xấu bị xử lý.",
+          "evidence": "Phần IV kể Vân Tiên được thuốc làm mắt sáng lại, sau đó trở về và tiếp tục đường khoa trường/công danh, mở hướng phục hồi chính nghĩa."
+        }
+      ]
+    }
+  ],
+  "thuy-kieu": [
+    {
+      "level": 1,
+      "phaseTitle": "Tài sắc và mối tình đầu",
+      "questions": [
+        {
+          "id": "thuy-kieu-l1-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Việc Nguyễn Du khắc họa Kiều tài sắc ở đầu truyện có tác dụng gì?",
+          "rubric": null,
+          "evidence": "Văn bản đầu truyện khắc họa Kiều vượt trội về tài sắc, thông minh, giỏi thi họa/ca ngâm; phần gặp Kim Trọng mở mạch tình yêu đầu."
+        },
+        {
+          "id": "thuy-kieu-l1-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Mối tình Kim–Kiều ở phần đầu quan trọng vì sao?",
+          "rubric": null,
+          "evidence": "Truyện Kiều xây dựng cuộc gặp và thề nguyền Kim–Kiều trước biến cố gia đình, làm nền cho cảnh Trao duyên."
+        },
+        {
+          "id": "thuy-kieu-l1-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Nếu chỉ xem Kiều là “người đẹp gặp nạn”, ta sẽ bỏ qua điều gì?",
+          "rubric": null,
+          "evidence": "Văn bản đầu truyện khắc họa Kiều vượt trội về tài sắc, thông minh, giỏi thi họa/ca ngâm; phần gặp Kim Trọng mở mạch tình yêu đầu."
+        },
+        {
+          "id": "thuy-kieu-l1-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Sự trọn vẹn ban đầu của tình yêu Kim–Kiều có tác dụng gì về sau?",
+          "rubric": null,
+          "evidence": "Cảnh tình yêu Kim–Kiều được đặt trước biến cố bán mình và Trao duyên, nên chia lìa càng đau."
+        },
+        {
+          "id": "thuy-kieu-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao phần đầu cần xây dựng Kiều vừa tài hoa vừa giàu tình cảm?",
+          "rubric": "Đạt nếu nêu được: khẳng định giá trị nhân vật; tạo đối lập với lưu lạc về sau; tài hoa/tình yêu làm bi kịch tài mệnh tương đố sâu hơn.",
+          "evidence": "Văn bản đầu truyện khắc họa Kiều vượt trội về tài sắc, thông minh, giỏi thi họa/ca ngâm; phần gặp Kim Trọng mở mạch tình yêu đầu."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Trao duyên",
+      "questions": [
+        {
+          "id": "thuy-kieu-l2-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Chữ “cậy” trong cảnh Trao duyên cho thấy điều gì trong tâm thế Kiều?",
+          "rubric": null,
+          "evidence": "Văn bản Trao duyên có lời nhờ Thúy Vân, xung đột hiếu/tình và kỷ vật; phân tích của HNUE nhấn mạnh kỷ vật làm tiếng nói trái tim lấn át lí trí."
+        },
+        {
+          "id": "thuy-kieu-l2-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Mâu thuẫn lớn nhất của Kiều khi trao duyên là gì?",
+          "rubric": null,
+          "evidence": "Văn bản Trao duyên có lời nhờ Thúy Vân, xung đột hiếu/tình và kỷ vật; phân tích của HNUE nhấn mạnh kỷ vật làm tiếng nói trái tim lấn át lí trí."
+        },
+        {
+          "id": "thuy-kieu-l2-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Kỷ vật trong cảnh Trao duyên gây đau vì sao?",
+          "rubric": null,
+          "evidence": "Văn bản Trao duyên có lời nhờ Thúy Vân, xung đột hiếu/tình và kỷ vật; phân tích của HNUE nhấn mạnh kỷ vật làm tiếng nói trái tim lấn át lí trí."
+        },
+        {
+          "id": "thuy-kieu-l2-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Vì sao Trao duyên không phải là một cuộc nhờ vả bình thường?",
+          "rubric": null,
+          "evidence": "Văn bản Trao duyên có lời nhờ Thúy Vân, xung đột hiếu/tình và kỷ vật; phân tích của HNUE nhấn mạnh kỷ vật làm tiếng nói trái tim lấn át lí trí."
+        },
+        {
+          "id": "thuy-kieu-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Vì sao cảnh Trao duyên là bi kịch nội tâm, không chỉ là lời nhờ em gái?",
+          "rubric": "Đạt nếu nêu được: Kiều bán mình vì chữ hiếu; phải nhờ Thúy Vân nối duyên với Kim Trọng; lý trí cố sắp xếp nhưng tình cảm đau đớn; kỷ vật làm nỗi đau sâu hơn.",
+          "evidence": "Văn bản Trao duyên có lời nhờ Thúy Vân, xung đột hiếu/tình và kỷ vật; phân tích của HNUE nhấn mạnh kỷ vật làm tiếng nói trái tim lấn át lí trí."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Lầu Ngưng Bích",
+      "questions": [
+        {
+          "id": "thuy-kieu-l3-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Không gian lầu Ngưng Bích làm nổi bật trạng thái nào của Kiều?",
+          "rubric": null,
+          "evidence": "Văn bản đặt Kiều trước lầu Ngưng Bích, bốn bề xa rộng, nhớ Kim Trọng/cha mẹ và dùng chuỗi hình ảnh buồn trông để gợi cô đơn, dự cảm lưu lạc."
+        },
+        {
+          "id": "thuy-kieu-l3-q2",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Nỗi nhớ Kim Trọng và cha mẹ trong đoạn này cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Văn bản đặt Kiều trước lầu Ngưng Bích, bốn bề xa rộng, nhớ Kim Trọng/cha mẹ và dùng chuỗi hình ảnh buồn trông để gợi cô đơn, dự cảm lưu lạc."
+        },
+        {
+          "id": "thuy-kieu-l3-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Những hình ảnh cảnh vật xa rộng, trôi dạt, sóng gió có tác dụng gì?",
+          "rubric": null,
+          "evidence": "Văn bản đặt Kiều trước lầu Ngưng Bích, bốn bề xa rộng, nhớ Kim Trọng/cha mẹ và dùng chuỗi hình ảnh buồn trông để gợi cô đơn, dự cảm lưu lạc."
+        },
+        {
+          "id": "thuy-kieu-l3-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Nỗi đau ở Lầu Ngưng Bích khác Trao duyên ở điểm nào?",
+          "rubric": null,
+          "evidence": "Văn bản Trao duyên có lời nhờ Thúy Vân, xung đột hiếu/tình và kỷ vật; phân tích của HNUE nhấn mạnh kỷ vật làm tiếng nói trái tim lấn át lí trí. Ở Lầu Ngưng Bích, Kiều một mình đối diện cảnh xa rộng và nỗi lưu lạc."
+        },
+        {
+          "id": "thuy-kieu-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Giải thích cách “tả cảnh ngụ tình” làm nỗi đau của Kiều sâu hơn.",
+          "rubric": "Đạt nếu nêu được: cảnh vật phản chiếu tâm trạng; không gian xa rộng làm nổi cô đơn; hình ảnh trôi dạt/sóng gió dự báo số phận bất ổn.",
+          "evidence": "Văn bản đặt Kiều trước lầu Ngưng Bích, bốn bề xa rộng, nhớ Kim Trọng/cha mẹ và dùng chuỗi hình ảnh buồn trông để gợi cô đơn, dự cảm lưu lạc."
+        }
+      ]
+    }
+  ],
+  "lao-hac": [
+    {
+      "level": 1,
+      "phaseTitle": "Gia cảnh, cậu Vàng và mảnh vườn",
+      "questions": [
+        {
+          "id": "lao-hac-l1-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Trong hoàn cảnh góa vợ, con trai bỏ đi đồn điền vì không đủ tiền cưới vợ, việc lão Hạc nhất quyết giữ mảnh vườn cho con thể hiện phẩm chất nào của ông?",
+          "rubric": null,
+          "evidence": "Lão Hạc góa vợ; con trai vì nghèo không cưới được vợ nên phẫn chí đi đồn điền. Lão coi mảnh vườn là phần dành cho con và không muốn bán để tiêu cho mình."
+        },
+        {
+          "id": "lao-hac-l1-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Cậu Vàng là con chó của người con trai để lại và là bạn bầu của lão Hạc. Ý nghĩa đó khiến chi tiết bán cậu Vàng về sau trở nên đau đớn vì lý do nào?",
+          "rubric": null,
+          "evidence": "Cậu Vàng được lão gọi thân mật, trò chuyện và chăm chút; nó còn gắn với người con trai xa nhà nên không chỉ là một vật nuôi."
+        },
+        {
+          "id": "lao-hac-l1-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Người con trai bỏ đi đồn điền cao su sau khi không cưới được vợ đã đặt lão Hạc vào tình thế nào?",
+          "rubric": null,
+          "evidence": "Sau khi không lấy được vợ vì nghèo, con trai lão bỏ đi đồn điền. Lão ở lại một mình với cậu Vàng, mảnh vườn và nỗi lo giữ phần cho con."
+        },
+        {
+          "id": "lao-hac-l1-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Ở phần đầu truyện, cái nghèo của lão Hạc không chỉ là thiếu ăn mà còn tạo ra thử thách nào?",
+          "rubric": null,
+          "evidence": "Lão thiếu ăn, không có nguồn sống chắc chắn nhưng vẫn không muốn bán vườn của con; việc giữ phẩm giá trở thành thử thách trong cảnh đói nghèo."
+        },
+        {
+          "id": "lao-hac-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào mảnh vườn và cậu Vàng, giải thích tình thương con của lão Hạc được thể hiện âm thầm như thế nào.",
+          "rubric": "Đạt nếu nêu được: mảnh vườn là phần lão để dành cho con; cậu Vàng gắn với con và là chỗ dựa tinh thần của lão; tình thương của lão thể hiện bằng giữ gìn, chịu thiếu thốn, không nói thành lời.",
+          "evidence": "Lão giữ mảnh vườn cho con và giữ cậu Vàng như kỷ vật của người con xa nhà; cả hai chi tiết đều cho thấy tình thương con không ồn ào mà thể hiện qua việc giữ gìn, chịu đựng."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Bán cậu Vàng, gửi tài sản và lòng tự trọng",
+      "questions": [
+        {
+          "id": "lao-hac-l2-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Sau khi bán cậu Vàng, lão Hạc kể với ông giáo trong trạng thái mặt co rúm, mắt ầng ậc nước. Chi tiết ấy cho thấy cảm giác nào của lão rõ nhất?",
+          "rubric": null,
+          "evidence": "Sau khi bán cậu Vàng, lão Hạc khóc, mặt mũi biến dạng vì đau đớn và kể lại chuyện ấy cho ông giáo như một sự tự thú."
+        },
+        {
+          "id": "lao-hac-l2-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Việc lão Hạc tự trách mình là đã 'đánh lừa một con chó' sau khi bán cậu Vàng cho thấy điều gì về nhân cách của lão?",
+          "rubric": null,
+          "evidence": "Lão xem việc lừa cậu Vàng để bán là một lỗi đạo đức, dù hoàn cảnh nghèo đói buộc lão phải làm vậy."
+        },
+        {
+          "id": "lao-hac-l2-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Trước khi chết, lão Hạc gửi ông giáo mảnh vườn và tiền lo ma chay. Hành động này có ý nghĩa cụ thể nào?",
+          "rubric": null,
+          "evidence": "Lão nhờ ông giáo giữ hộ mảnh vườn để sau này trao lại cho con và gửi tiền để tự lo ma chay, tránh phiền lụy người khác."
+        },
+        {
+          "id": "lao-hac-l2-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Khi ông giáo muốn giúp mà lão Hạc dần từ chối, thậm chí xa cách hơn, chi tiết ấy chủ yếu làm rõ phẩm chất nào?",
+          "rubric": null,
+          "evidence": "Ông giáo thương lão và muốn giúp đỡ, nhưng lão Hạc không muốn nhận thêm sự cưu mang, vì đã tự chuẩn bị cho phần cuối đời mình."
+        },
+        {
+          "id": "lao-hac-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào việc bán cậu Vàng và gửi tài sản cho ông giáo, giải thích vì sao lão Hạc vẫn giữ được nhân cách dù bị cái nghèo dồn ép.",
+          "rubric": "Đạt nếu nêu được: bán cậu Vàng là bất đắc dĩ chứ không vô cảm; lão đau đớn và tự trách; việc gửi vườn/tiền cho thấy lão giữ chữ tín với con và lòng tự trọng với cộng đồng.",
+          "evidence": "Lão bán cậu Vàng trong đau đớn, rồi gửi ông giáo tiền và mảnh vườn để không xâm phạm phần của con, cũng không phiền lụy hàng xóm khi chết."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Cái chết và ý nghĩa nhân đạo",
+      "questions": [
+        {
+          "id": "lao-hac-l3-q1",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Việc lão Hạc xin Binh Tư một ít bả chó khiến ông giáo ban đầu có thể hiểu lầm theo hướng nào?",
+          "rubric": null,
+          "evidence": "Binh Tư kể chuyện lão Hạc xin bả chó, khiến ông giáo thoáng đau đớn vì nghĩ lão có thể đi vào con đường xấu; về sau mới rõ lão dùng bả chó để tự kết liễu."
+        },
+        {
+          "id": "lao-hac-l3-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Cách lão Hạc chết bằng bả chó, sau khi đã gửi tiền ma chay và giữ vườn cho con, cho thấy bi kịch nào?",
+          "rubric": null,
+          "evidence": "Lão Hạc chết dữ dội bằng bả chó sau khi đã sắp đặt tiền ma chay và mảnh vườn; lựa chọn ấy gắn trực tiếp với việc không muốn tiêu vào phần của con."
+        },
+        {
+          "id": "lao-hac-l3-q3",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Khi biết sự thật sau lời kể của Binh Tư và cái chết của lão Hạc, cách nhìn của ông giáo về lão chuyển biến như thế nào?",
+          "rubric": null,
+          "evidence": "Ông giáo từng đau lòng trước tin lão xin bả chó, nhưng cái chết của lão làm sáng tỏ rằng lão không tha hóa mà chọn cái chết để giữ điều mình coi là trong sạch."
+        },
+        {
+          "id": "lao-hac-l3-q4",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Qua số phận lão Hạc, tác phẩm hướng người đọc đến cách đánh giá nào về người nông dân nghèo trước Cách mạng?",
+          "rubric": null,
+          "evidence": "Lão Hạc nghèo, cô độc và bế tắc, nhưng truyện nhấn mạnh tình thương con, lương tâm trong sạch và lòng tự trọng của lão đến tận cái chết."
+        },
+        {
+          "id": "lao-hac-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào cái chết bằng bả chó và việc lão Hạc giữ tiền/vườn cho con, giải thích vì sao cái chết ấy là lời tố cáo xã hội.",
+          "rubric": "Đạt nếu nêu được: cái chết không phải do lão thiếu tình thương hay thiếu nhân cách; xã hội nghèo đói, bế tắc đẩy người nông dân lương thiện đến đường cùng; cái chết càng dữ dội thì lời tố cáo càng mạnh.",
+          "evidence": "Lão Hạc không muốn ăn vào phần của con, không muốn phiền người khác, cuối cùng chọn cái chết dữ dội bằng bả chó trong cảnh nghèo cùng quẫn."
+        }
+      ]
+    }
+  ],
+  "chi-dau": [
+    {
+      "level": 1,
+      "phaseTitle": "Mùa sưu thuế và bi kịch gia đình",
+      "questions": [
+        {
+          "id": "chi-dau-l1-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Trong mùa sưu thuế ở Tắt đèn, gia đình chị Dậu phải chạy tiền nộp sưu cho anh Dậu. Bối cảnh ấy giúp người đọc hiểu chị Dậu như thế nào?",
+          "rubric": null,
+          "evidence": "Mùa sưu thuế khiến gia đình chị Dậu bị dồn vào cảnh phải chạy tiền, chồng bị bắt trói, mọi tai họa xuất phát từ bộ máy thu sưu ở làng quê."
+        },
+        {
+          "id": "chi-dau-l1-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Việc chị Dậu phải bán cái Tí và ổ chó để lấy tiền cứu chồng phản ánh bi kịch nào rõ nhất?",
+          "rubric": null,
+          "evidence": "Để có tiền nộp sưu và cứu anh Dậu, chị Dậu phải bán con gái là cái Tí cùng ổ chó, một lựa chọn đau đớn của người mẹ bị dồn đường cùng."
+        },
+        {
+          "id": "chi-dau-l1-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Khi anh Dậu bị đánh trói, ốm lả và vừa được khiêng trả về, vai trò nào của chị Dậu được làm nổi rõ?",
+          "rubric": null,
+          "evidence": "Anh Dậu bị hành hạ vì sưu thuế và trở về trong tình trạng yếu ớt; chị Dậu phải chăm chồng, lo con và đối phó với tay sai."
+        },
+        {
+          "id": "chi-dau-l1-q4",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Trước khi phản kháng, chị Dậu nhiều lần nhẫn nhịn, van xin bọn tay sai. Cách hiểu nào đúng về sự nhẫn nhịn ấy?",
+          "rubric": null,
+          "evidence": "Chị Dậu ban đầu cố van xin để bọn tay sai tha cho anh Dậu đang ốm nặng; chị chỉ chuyển sang chống trả khi chúng tiếp tục thô bạo."
+        },
+        {
+          "id": "chi-dau-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào việc chạy sưu và bán cái Tí, giải thích bi kịch kép của chị Dậu: vừa là người vợ cứu chồng vừa là người mẹ phải xa con.",
+          "rubric": "Đạt nếu nêu được: chị cứu chồng trong mùa sưu; phải bán con là nỗi đau của người mẹ; bi kịch kép nằm ở chỗ càng thương chồng con thì chị càng bị buộc phải hy sinh đau đớn.",
+          "evidence": "Chị Dậu phải chạy tiền cứu anh Dậu khỏi cảnh bị bắt trói, đồng thời bị dồn đến mức bán cái Tí và ổ chó, khiến tình vợ chồng và tình mẫu tử cùng bị sưu thuế nghiền nát."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Tức nước vỡ bờ và phản kháng trực tiếp",
+      "questions": [
+        {
+          "id": "chi-dau-l2-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Trong đoạn Tức nước vỡ bờ, cách xưng hô của chị Dậu chuyển từ van xin lễ phép sang đối đầu trực diện. Sự chuyển đổi này cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Chị Dậu ban đầu xưng hô nhún nhường để xin tha cho chồng; khi cai lệ vẫn sấn tới, chị đổi giọng và chống trả."
+        },
+        {
+          "id": "chi-dau-l2-q2",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Khi cai lệ vẫn sấn tới trói anh Dậu đang ốm nặng, hành động chị Dậu đánh trả xuất phát trực tiếp từ động lực nào?",
+          "rubric": null,
+          "evidence": "Cai lệ và người nhà lý trưởng định bắt trói anh Dậu dù anh vừa thoát chết; chị Dậu phản kháng khi lời van xin không còn tác dụng."
+        },
+        {
+          "id": "chi-dau-l2-q3",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Nếu đọc nhan đề 'Tức nước vỡ bờ' trong quan hệ với cảnh chị Dậu đánh cai lệ, cách hiểu nào phù hợp nhất?",
+          "rubric": null,
+          "evidence": "Diễn biến đoạn trích đi từ van xin đến bị dồn ép và cuối cùng bật ra hành động chống trả, đúng với quy luật “tức nước vỡ bờ”."
+        },
+        {
+          "id": "chi-dau-l2-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Sức mạnh của chị Dậu trong cảnh đánh cai lệ không chỉ là sức khỏe thân thể vì nó còn dựa trên điều gì?",
+          "rubric": null,
+          "evidence": "Chị Dậu là người đàn bà nông dân bị dồn đến đường cùng; sức bật của chị đến từ tình thương anh Dậu và sự phẫn uất trước thái độ bất nhân của bọn tay sai."
+        },
+        {
+          "id": "chi-dau-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào cảnh anh Dậu ốm nặng và bọn tay sai vẫn định trói bắt, giải thích vì sao sự phản kháng của chị Dậu là dữ dội nhưng chính đáng.",
+          "rubric": "Đạt nếu nêu được: chị không phản kháng ngay từ đầu mà đã nhẫn nhịn; bọn tay sai quá tàn nhẫn với người đang ốm; hành động đánh trả nhằm bảo vệ chồng và phẩm giá, nên dữ dội nhưng có lý do chính đáng.",
+          "evidence": "Anh Dậu đang kiệt sức sau khi bị hành hạ, còn cai lệ vẫn định trói bắt; chị Dậu đã van xin trước rồi mới đánh trả khi chồng bị đe dọa trực tiếp."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Phẩm giá và bóng tối cuối truyện",
+      "questions": [
+        {
+          "id": "chi-dau-l3-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Sau cảnh Tức nước vỡ bờ, chị Dậu tiếp tục bị đẩy qua cửa quan và nhà giàu. Khi bị đe dọa nhân phẩm, phản ứng chống trả của chị làm nổi bật phẩm chất nào?",
+          "rubric": null,
+          "evidence": "Ở các biến cố sau, chị Dậu không chỉ chịu áp bức vì sưu thuế mà còn đối mặt nguy cơ bị xúc phạm thân thể và danh dự; chị vẫn chống lại để giữ mình."
+        },
+        {
+          "id": "chi-dau-l3-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Hình ảnh chị Dậu vùng chạy ra ngoài trời tối đen ở cuối tác phẩm gợi ý nghĩa nào?",
+          "rubric": null,
+          "evidence": "Kết thúc để chị Dậu chạy ra trong bóng tối sau khi thoát khỏi một tình huống đe dọa nhân phẩm; bóng tối cho thấy tương lai bế tắc vẫn bao trùm."
+        },
+        {
+          "id": "chi-dau-l3-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "So với lần đánh cai lệ để bảo vệ anh Dậu, sự chống trả cuối truyện của chị Dậu nhấn mạnh thêm phương diện nào?",
+          "rubric": null,
+          "evidence": "Cảnh đánh cai lệ đặt trọng tâm vào cứu chồng; những biến cố cuối truyện nhấn mạnh thêm việc chị chống lại sự xâm phạm nhân phẩm của bản thân."
+        },
+        {
+          "id": "chi-dau-l3-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Nếu chỉ xem chị Dậu là một nạn nhân đau khổ, người đọc sẽ bỏ qua phương diện quan trọng nào của nhân vật?",
+          "rubric": null,
+          "evidence": "Chị Dậu chịu nhiều tai họa nhưng vẫn chăm chồng con, xoay xở trong cảnh sưu thuế, đánh trả cai lệ và chống lại sự xúc phạm nhân phẩm."
+        },
+        {
+          "id": "chi-dau-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào ba tình huống bán con để cứu chồng, đánh cai lệ và chạy khỏi nơi đe dọa nhân phẩm, giải thích vì sao chị Dậu không chỉ là nạn nhân.",
+          "rubric": "Đạt nếu nêu được: chị là nạn nhân của sưu thuế và áp bức; chị vẫn rất thương chồng con, tháo vát, quyết liệt; các hành động đánh trả/chạy thoát cho thấy sức sống và tinh thần phản kháng, không phải cam chịu tuyệt đối.",
+          "evidence": "Chị Dậu vừa chịu cảnh bán con, chồng bị bắt, bị quyền lực đè ép, vừa nhiều lần hành động để bảo vệ người thân và phẩm giá của chính mình."
+        }
+      ]
+    }
+  ],
+  "ong-sau": [
+    {
+      "level": 1,
+      "phaseTitle": "Về phép và bị con từ chối",
+      "questions": [
+        {
+          "id": "ong-sau-l1-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Vết thẹo chiến tranh làm khuôn mặt ông Sáu khác với tấm ảnh mà bé Thu biết. Chi tiết này có vai trò gì trong bi kịch cha con?",
+          "rubric": null,
+          "evidence": "Bé Thu chỉ biết cha qua tấm ảnh; khi ông Sáu trở về với vết thẹo trên mặt, em thấy ông không giống hình ảnh người cha trong trí nhớ."
+        },
+        {
+          "id": "ong-sau-l1-q2",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Khi vừa về phép và thấy bé Thu, ông Sáu nôn nóng gọi con, đưa tay đón con. Hành động ấy cho thấy tâm trạng nào?",
+          "rubric": null,
+          "evidence": "Ông Sáu xa con nhiều năm vì chiến tranh; vừa gặp con, ông vội gọi và muốn ôm con ngay, nhưng bé Thu hoảng sợ tránh né."
+        },
+        {
+          "id": "ong-sau-l1-q3",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Bé Thu nhất quyết không gọi ông Sáu là ba trong những ngày đầu chủ yếu vì lý do nào?",
+          "rubric": null,
+          "evidence": "Bé Thu có hình ảnh người cha qua tấm ảnh không có vết thẹo; sự khác biệt trên gương mặt ông Sáu khiến em không tin ông là cha."
+        },
+        {
+          "id": "ong-sau-l1-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Bi kịch của ông Sáu trong lần đầu gặp con không nằm ở việc thiếu tình thương, mà ở mâu thuẫn nào?",
+          "rubric": null,
+          "evidence": "Ông Sáu thương con và mong được gọi là ba, nhưng bé Thu liên tục tránh né, nói trống hoặc từ chối gọi ba vì không nhận ra ông."
+        },
+        {
+          "id": "ong-sau-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào vết thẹo, tấm ảnh và phản ứng né tránh của bé Thu, giải thích vì sao cuộc gặp đầu của ông Sáu vừa hạnh phúc vừa đau xót.",
+          "rubric": "Đạt nếu nêu được: ông Sáu hạnh phúc vì được về gặp con; bé Thu từ chối do vết thẹo khác tấm ảnh; chiến tranh tạo ra khoảng cách và nhận lầm nên niềm vui đoàn tụ biến thành đau xót.",
+          "evidence": "Ông Sáu trở về sau nhiều năm xa cách với khát vọng nhận con; bé Thu lại chỉ tin hình ảnh cha trong tấm ảnh nên vết thẹo làm em sợ và không nhận ông."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Ba ngày đoàn tụ ngắn ngủi",
+      "questions": [
+        {
+          "id": "ong-sau-l2-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Trong ba ngày nghỉ phép ngắn ngủi, ông Sáu hầu như chỉ quanh quẩn gần bé Thu. Chi tiết này cho thấy mong muốn nào?",
+          "rubric": null,
+          "evidence": "Thời gian về phép của ông Sáu rất ngắn; ông tha thiết ở gần con để được nghe con gọi ba và bù đắp những năm vắng mặt."
+        },
+        {
+          "id": "ong-sau-l2-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Trong bữa ăn, khi bé Thu hất miếng trứng cá và ông Sáu lỡ đánh con, cách hiểu cân bằng nhất là gì?",
+          "rubric": null,
+          "evidence": "Ông Sáu rất thương con nhưng bị dồn nén vì con cự tuyệt; cú đánh trong bữa ăn là phút nóng giận khiến ông day dứt."
+        },
+        {
+          "id": "ong-sau-l2-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Khi bé Thu bất ngờ chạy đến gọi 'ba' lúc ông Sáu sắp lên đường, ông Sáu trải nghiệm nghịch cảnh nào?",
+          "rubric": null,
+          "evidence": "Bé Thu chỉ gọi ba và ôm chặt ông Sáu vào đúng phút chia tay, khi ông phải trở lại chiến khu."
+        },
+        {
+          "id": "ong-sau-l2-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Tiếng gọi 'ba' của bé Thu làm bi kịch chiến tranh hiện rõ hơn vì nó xảy ra trong hoàn cảnh nào?",
+          "rubric": null,
+          "evidence": "Tiếng gọi ba đến ở bến chia tay, không phải trong những ngày đầu ông được ở nhà; ngay sau đó hai cha con phải xa nhau."
+        },
+        {
+          "id": "ong-sau-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào ba ngày về phép, cú đánh trong bữa ăn và tiếng gọi 'ba' lúc chia tay, giải thích vì sao thời gian đoàn tụ quá ngắn làm tình cha con thêm đau.",
+          "rubric": "Đạt nếu nêu được: thời gian về phép quá ngắn; sự cự tuyệt của bé Thu làm ông Sáu đau và có phút lỡ tay; tiếng gọi ba đến đúng lúc chia tay nên hạnh phúc bị chiến tranh cắt ngang.",
+          "evidence": "Ông Sáu chỉ có ba ngày để bù đắp nhiều năm xa cách; trong thời gian ấy bé Thu từ chối cha, đến lúc gọi ba thì ông đã phải lên đường."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Chiếc lược ngà và di nguyện",
+      "questions": [
+        {
+          "id": "ong-sau-l3-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Trở lại căn cứ, ông Sáu tỉ mỉ làm chiếc lược ngà và khắc lời tặng con. Hành động này thể hiện điều gì?",
+          "rubric": null,
+          "evidence": "Sau lời dặn của bé Thu, ông Sáu ở chiến khu đã kiếm ngà, cưa từng chiếc răng lược và khắc lời tặng con lên chiếc lược."
+        },
+        {
+          "id": "ong-sau-l3-q2",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Chiếc lược ngà trong hình tượng ông Sáu nên được hiểu là biểu tượng nào?",
+          "rubric": null,
+          "evidence": "Chiếc lược gắn với lời hứa cho bé Thu, được ông Sáu nâng niu ở chiến khu và được gửi lại cho con sau khi ông hy sinh."
+        },
+        {
+          "id": "ong-sau-l3-q3",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Trước khi hy sinh, ông Sáu không nói được nhiều mà gửi chiếc lược cho bác Ba. Chi tiết này cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Trong phút cuối, ông Sáu trao chiếc lược cho bác Ba để nhờ đưa về cho bé Thu, hoàn thành điều ông chưa kịp tự tay làm."
+        },
+        {
+          "id": "ong-sau-l3-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Qua số phận ông Sáu, tác phẩm tố cáo chiến tranh ở phương diện gia đình nào?",
+          "rubric": null,
+          "evidence": "Ông Sáu xa con nhiều năm, bị vết thẹo chiến tranh làm con nhận lầm, chỉ được nghe tiếng gọi ba lúc chia tay và hy sinh trước khi trao chiếc lược."
+        },
+        {
+          "id": "ong-sau-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào lời hứa mua lược, quá trình làm chiếc lược và việc ông Sáu hy sinh trước khi trao quà, giải thích vì sao chiếc lược ngà vừa đẹp vừa đau.",
+          "rubric": "Đạt nếu nêu được: chiếc lược đẹp vì kết tinh tình cha, sự tỉ mỉ và lời hứa; đau vì nó gắn với xa cách, hy sinh và món quà không được trao trực tiếp; qua đó chiến tranh bị tố cáo.",
+          "evidence": "Chiếc lược được làm từ lời hứa với bé Thu và tình yêu âm thầm của ông Sáu trong chiến khu, nhưng ông hy sinh trước khi tự tay trao nó cho con."
+        }
+      ]
+    }
+  ],
+  "ong-hai": [
+    {
+      "level": 1,
+      "phaseTitle": "Yêu làng trong cảnh tản cư",
+      "questions": [
+        {
+          "id": "ong-hai-l1-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Ở nơi tản cư, ông Hai thường kể và khoe về làng Chợ Dầu, nhất là những đổi thay gắn với kháng chiến. Chi tiết này cho thấy nét tính cách nào?",
+          "rubric": null,
+          "evidence": "Ông Hai xa làng nhưng vẫn luôn kể về làng Chợ Dầu, khoe những việc làng làm cho kháng chiến và xem đó là niềm tự hào của mình."
+        },
+        {
+          "id": "ong-hai-l1-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Nỗi nhớ làng của ông Hai khi đi tản cư gắn với những kỷ niệm nào?",
+          "rubric": null,
+          "evidence": "Trong cảnh tản cư, ông Hai nhớ những ngày làm việc, đào đường, đắp ụ và không khí kháng chiến ở làng Chợ Dầu."
+        },
+        {
+          "id": "ong-hai-l1-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Trước khi nghe tin dữ, tình yêu làng của ông Hai còn mang nét hạn chế/hồn nhiên nào?",
+          "rubric": null,
+          "evidence": "Ông Hai yêu làng thật lòng nhưng thường biểu hiện bằng cách khoe làng, thích kể chuyện làng và mong người khác nghe, chia sẻ niềm tự hào ấy."
+        },
+        {
+          "id": "ong-hai-l1-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Việc ông Hai thích đi nghe tin ở phòng thông tin, vui theo tin quân ta đánh thắng, cho thấy tình yêu làng đã mở rộng theo hướng nào?",
+          "rubric": null,
+          "evidence": "Ở nơi tản cư, ông Hai thường nghe ngóng tin tức kháng chiến và vui mừng trước tin quân ta thắng, không chỉ nói chuyện làng riêng."
+        },
+        {
+          "id": "ong-hai-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào việc ông Hai khoe làng, nhớ làng và thích nghe tin kháng chiến, giải thích tình yêu làng của ông trước tin đồn có điểm đáng quý và điểm hồn nhiên nào.",
+          "rubric": "Đạt nếu nêu được: tình yêu làng của ông chân thật và cụ thể; cách biểu hiện còn hồn nhiên/khoe khoang; việc nghe tin kháng chiến cho thấy tình yêu làng không tách khỏi tình yêu nước.",
+          "evidence": "Ông Hai yêu làng Chợ Dầu bằng niềm nhớ và thói quen khoe làng rất cụ thể; đồng thời ông cũng vui với tin kháng chiến, cho thấy tình làng đang mở rộng thành tình yêu nước."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Tin làng theo Tây và xung đột nội tâm",
+      "questions": [
+        {
+          "id": "ong-hai-l2-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Khi nghe tin làng Chợ Dầu theo Tây, vì sao ông Hai cảm thấy đau đớn và nhục nhã?",
+          "rubric": null,
+          "evidence": "Tin làng Chợ Dầu theo Tây đánh thẳng vào niềm tự hào lớn nhất của ông Hai: làng mình là làng kháng chiến, không phải làng phản bội."
+        },
+        {
+          "id": "ong-hai-l2-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Sau tin dữ, ông Hai cúi gằm mặt, về nhà nằm vật ra, không dám ra ngoài. Những phản ứng này cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Ông Hai bị ám ảnh bởi tin làng theo giặc, sợ người ta bàn tán và đau khổ như chính mình mang tội của làng."
+        },
+        {
+          "id": "ong-hai-l2-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Cuộc trò chuyện với đứa con út, trong đó ông hỏi con ủng hộ ai, có ý nghĩa gì với ông Hai?",
+          "rubric": null,
+          "evidence": "Trong lúc bị tin đồn làm khổ, ông Hai trò chuyện với con út để tự nhắc mình và gia đình vẫn đứng về Cụ Hồ, đứng về kháng chiến."
+        },
+        {
+          "id": "ong-hai-l2-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Suy nghĩ 'làng thì yêu thật, nhưng làng theo Tây thì phải thù' thể hiện thứ tự giá trị nào trong ông Hai?",
+          "rubric": null,
+          "evidence": "Ông Hai rất yêu làng, nhưng khi tưởng làng theo giặc, ông tự buộc mình chọn kháng chiến và Cụ Hồ thay vì mù quáng bênh làng."
+        },
+        {
+          "id": "ong-hai-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào tin đồn làng theo Tây và cuộc trò chuyện với con út, giải thích xung đột nội tâm của ông Hai giữa tình yêu làng và lòng yêu nước.",
+          "rubric": "Đạt nếu nêu được: ông yêu làng nên nhục nhã, đau đớn trước tin đồn; ông không thể chấp nhận làng phản bội kháng chiến; cuộc trò chuyện với con giúp ông khẳng định lòng trung thành với Cụ Hồ/lòng yêu nước.",
+          "evidence": "Tin làng Chợ Dầu theo Tây làm ông Hai đau vì ông yêu làng sâu nặng; cuộc trò chuyện với con út cho thấy ông vẫn chọn đứng về Cụ Hồ và kháng chiến."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Tin cải chính và tình yêu làng - nước",
+      "questions": [
+        {
+          "id": "ong-hai-l3-q1",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Khi nghe tin làng Chợ Dầu được cải chính là không theo Tây, ông Hai vui mừng nhất vì điều gì?",
+          "rubric": null,
+          "evidence": "Tin cải chính xác nhận làng Chợ Dầu không theo giặc; ông Hai lập tức vui sướng, đi khoe khắp nơi vì làng được minh oan."
+        },
+        {
+          "id": "ong-hai-l3-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Ông Hai khoe cả chuyện nhà mình bị Tây đốt sau tin cải chính. Chi tiết này nên được hiểu thế nào?",
+          "rubric": null,
+          "evidence": "Sau tin cải chính, ông Hai khoe “Tây nó đốt nhà tôi rồi” như bằng chứng làng mình không theo giặc, dù đó là thiệt hại riêng của gia đình."
+        },
+        {
+          "id": "ong-hai-l3-q3",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Sau tin cải chính, tình yêu làng của ông Hai đã được thanh lọc theo hướng nào?",
+          "rubric": null,
+          "evidence": "Niềm vui của ông Hai không chỉ là làng được tiếng tốt, mà là làng được chứng minh đứng cùng kháng chiến; vì thế tình yêu làng hòa vào tình yêu nước."
+        },
+        {
+          "id": "ong-hai-l3-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Nghệ thuật xây dựng ông Hai nổi bật ở cách nào?",
+          "rubric": null,
+          "evidence": "Truyện chủ yếu theo dõi tâm trạng ông Hai: khoe làng, đau đớn khi nghe tin dữ, trò chuyện với con, rồi vui sướng khi nghe cải chính."
+        },
+        {
+          "id": "ong-hai-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào việc ông Hai khoe tin nhà bị đốt sau khi làng được cải chính, giải thích vì sao niềm vui ấy không vô lý.",
+          "rubric": "Đạt nếu nêu được: tin nhà bị đốt là bằng chứng làng không theo Tây; ông vui vì làng được minh oan; niềm vui không vô lý vì tình yêu làng đã gắn với lòng yêu nước và tinh thần kháng chiến.",
+          "evidence": "Ông Hai khoe nhà bị Tây đốt vì chi tiết đó chứng minh làng Chợ Dầu không theo giặc; với ông, danh dự kháng chiến của làng quan trọng hơn thiệt hại riêng."
+        }
+      ]
+    }
+  ],
+  "vu-nuong": [
+    {
+      "level": 1,
+      "phaseTitle": "Dung hạnh và bổn phận gia đình",
+      "questions": [
+        {
+          "id": "vu-nuong-l1-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Mở đầu truyện, Vũ Nương được giới thiệu là người thùy mị, nết na, tư dung tốt đẹp. Cách giới thiệu này có tác dụng gì đối với bi kịch về sau?",
+          "rubric": null,
+          "evidence": "Truyện mở đầu bằng việc giới thiệu Vũ Nương có dung hạnh tốt đẹp, tạo nền tảng để người đọc nhận ra sự bất công khi nàng bị nghi oan."
+        },
+        {
+          "id": "vu-nuong-l1-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Trương Sinh vốn ít học, có tính đa nghi và phòng ngừa vợ quá sức. Chi tiết này báo trước nguy cơ nào trong hôn nhân với Vũ Nương?",
+          "rubric": null,
+          "evidence": "Trương Sinh có tính đa nghi; khi trở về, chính sự đa nghi ấy khiến lời nói ngây thơ của bé Đản trở thành căn cứ buộc tội Vũ Nương."
+        },
+        {
+          "id": "vu-nuong-l1-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Trong lời tiễn chồng ra trận, Vũ Nương không mong chồng lập công lớn mà chỉ mong bình yên trở về. Điều đó thể hiện quan niệm nào?",
+          "rubric": null,
+          "evidence": "Khi tiễn Trương Sinh đi lính, Vũ Nương nói điều nàng mong là chồng bình an trở về, không đặt vinh hiển công danh lên trước tình nghĩa."
+        },
+        {
+          "id": "vu-nuong-l1-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Khi mẹ chồng ốm và qua đời, Vũ Nương thuốc thang, khuyên lơn, lo ma chay chu đáo. Chi tiết này làm rõ phẩm chất nào?",
+          "rubric": null,
+          "evidence": "Trong thời gian Trương Sinh vắng nhà, Vũ Nương chăm mẹ chồng khi ốm và lo ma chay chu tất khi bà mất."
+        },
+        {
+          "id": "vu-nuong-l1-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào lời giới thiệu về dung hạnh, lời tiễn chồng và việc chăm mẹ chồng, giải thích vì sao tác giả xây dựng Vũ Nương là người vợ/dâu vẹn toàn trước khi nàng bị nghi oan.",
+          "rubric": "Đạt nếu nêu được: Vũ Nương có phẩm hạnh tốt; lời tiễn chồng cho thấy thủy chung, trọng bình an; chăm mẹ chồng cho thấy hiếu thảo; xây dựng nàng vẹn toàn làm nỗi oan sau đó càng bất công.",
+          "evidence": "Vũ Nương được giới thiệu có dung hạnh, tiễn chồng bằng mong ước bình an và chăm mẹ chồng chu đáo; những chi tiết này chứng minh phẩm chất của nàng trước khi bi kịch xảy ra."
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "phaseTitle": "Cái bóng và nỗi oan",
+      "questions": [
+        {
+          "id": "vu-nuong-l2-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Chi tiết Vũ Nương chỉ bóng mình trên vách và nói với bé Đản đó là cha xuất phát từ động cơ nào?",
+          "rubric": null,
+          "evidence": "Trong lúc Trương Sinh đi lính, Vũ Nương nói với con rằng cái bóng trên vách là cha để bé Đản bớt thiếu vắng hình ảnh người cha."
+        },
+        {
+          "id": "vu-nuong-l2-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Vì sao lời nói ngây thơ của bé Đản về 'người cha' ban đêm lại trở thành tai họa cho Vũ Nương?",
+          "rubric": null,
+          "evidence": "Bé Đản thuật lại chuyện “cha” vẫn đến vào ban đêm theo cách trẻ con hiểu; Trương Sinh vì ghen và đa nghi đã xem đó là bằng chứng kết tội vợ."
+        },
+        {
+          "id": "vu-nuong-l2-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Khi bị Trương Sinh nghi oan, Vũ Nương thanh minh nhưng không được nghe. Điều này cho thấy nguyên nhân nào khiến nàng không tự cứu được mình?",
+          "rubric": null,
+          "evidence": "Vũ Nương phân trần và hàng xóm cũng can gián, nhưng Trương Sinh vẫn mắng nhiếc, đuổi nàng đi vì tin vào sự phán xét của mình."
+        },
+        {
+          "id": "vu-nuong-l2-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Việc Vũ Nương gieo mình xuống sông Hoàng Giang sau khi bị xua đuổi mang ý nghĩa gì?",
+          "rubric": null,
+          "evidence": "Sau khi bị chồng nghi oan và ruồng rẫy, Vũ Nương ra bến Hoàng Giang, than trời đất và gieo mình xuống sông để giữ sự trong sạch của mình."
+        },
+        {
+          "id": "vu-nuong-l2-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, phân tích hai mặt của chi tiết cái bóng: ban đầu là cách Vũ Nương an ủi con, về sau lại trở thành nguyên nhân trực tiếp dẫn đến oan khuất.",
+          "rubric": "Đạt nếu nêu được: mặt tích cực ban đầu là tình thương con và sự an ủi; mặt bi kịch về sau là cái bóng bị Trương Sinh hiểu sai; chi tiết cho thấy nỗi oan nảy sinh từ sự ngây thơ, ghen tuông và bất công với người phụ nữ.",
+          "evidence": "Cái bóng ban đầu được Vũ Nương dùng để bù đắp sự thiếu vắng cha cho bé Đản; khi Trương Sinh trở về, lời nói ngây thơ của bé Đản về cái bóng bị hiểu lầm thành bằng chứng ngoại tình."
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "phaseTitle": "Giải oan và dư âm bi kịch",
+      "questions": [
+        {
+          "id": "vu-nuong-l3-q1",
+          "type": "multiple_choice",
+          "answer": 0,
+          "text": "Khi Trương Sinh thắp đèn và bé Đản chỉ cái bóng trên vách là 'cha', sự thật được nhận ra trong tình thế nào?",
+          "rubric": null,
+          "evidence": "Sau cái chết của Vũ Nương, Trương Sinh mới thấy bé Đản chỉ bóng mình trên vách và hiểu ra “người cha” mà con nói chỉ là cái bóng."
+        },
+        {
+          "id": "vu-nuong-l3-q2",
+          "type": "multiple_choice",
+          "answer": 2,
+          "text": "Yếu tố Linh Phi, thủy cung và Phan Lang gặp Vũ Nương có tác dụng gì trong phần cuối truyện?",
+          "rubric": null,
+          "evidence": "Phan Lang gặp Vũ Nương ở thủy cung và giúp đưa lời nhắn về cho Trương Sinh lập đàn giải oan; yếu tố kỳ ảo mở ra sự minh oan cho nàng."
+        },
+        {
+          "id": "vu-nuong-l3-q3",
+          "type": "multiple_choice",
+          "answer": 1,
+          "text": "Vũ Nương hiện về trên sông trong lễ giải oan rồi biến mất, không trở lại đời sống trần thế. Chi tiết này cho thấy điều gì?",
+          "rubric": null,
+          "evidence": "Vũ Nương được minh oan và hiện về trong lễ giải oan, nhưng nàng chỉ nói lời từ biệt rồi biến mất, không trở về làm vợ, làm mẹ như trước."
+        },
+        {
+          "id": "vu-nuong-l3-q4",
+          "type": "multiple_choice",
+          "answer": 3,
+          "text": "Cách kết thúc và lời bình của truyện hướng người đọc đến thái độ nào?",
+          "rubric": null,
+          "evidence": "Truyện để Vũ Nương được minh oan nhưng không trở lại hạnh phúc cũ, qua đó làm nổi bật sự hồ đồ của Trương Sinh và nỗi oan của người phụ nữ đức hạnh."
+        },
+        {
+          "id": "vu-nuong-l3-q5",
+          "type": "open_ended",
+          "answer": -1,
+          "text": "Trong 2–3 câu, dựa vào lễ giải oan, sự hiện về của Vũ Nương và việc nàng không thể trở lại đời sống cũ, giải thích vì sao truyện có minh oan nhưng vẫn là kết thúc buồn.",
+          "rubric": "Đạt nếu nêu được: Vũ Nương được minh oan về danh dự; nàng không thể trở về đời sống trần thế; cái mất mát gia đình và sinh mạng không sửa được, nên kết thúc vẫn buồn dù có yếu tố kỳ ảo.",
+          "evidence": "Trương Sinh lập đàn giải oan và Vũ Nương hiện về, nhưng nàng chỉ trở lại trong khoảnh khắc rồi biến mất; danh dự được phục hồi nhưng hạnh phúc vợ chồng, mẹ con không thể nối lại."
+        }
+      ]
+    }
+  ]
+}

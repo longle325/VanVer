@@ -13,6 +13,8 @@ The route layer wraps the generator in an SSE EventSourceResponse.
 
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
 from typing import Any, AsyncIterator, Optional
 
@@ -20,10 +22,68 @@ from openai import AsyncOpenAI
 
 from core.config import settings
 from core.prompt_templates import build_character_prompt
+from services.chat_guardrails import (
+    evaluate_chat_guardrail,
+    evaluate_chat_guardrail_hard_rules,
+    off_topic_guardrail_result,
+    should_defer_to_llm_guardrail,
+)
 from services.codex_agent import CodexKnowledgeAgent
 from services.knowledge_retriever import KnowledgeRetriever
 
 logger = logging.getLogger(__name__)
+
+
+_GUARDRAIL_CLASSIFIER_INSTRUCTIONS = """
+You classify whether a student message is allowed in a Vietnamese literature
+character chat.
+
+Allowed:
+- Questions about the selected character's life, actions, emotions, motives,
+  relationships, choices, fate, or character arc in the literary work.
+- Questions about the author, work, plot, canon details, themes, conflicts,
+  symbols, literary analysis, or classroom interpretation of the work.
+- Natural follow-ups that depend on the existing conversation.
+
+Blocked:
+- Math, coding, current events, weather, prices, pop culture, jokes, memes, or
+  everyday advice unrelated to the selected author/work/character.
+- Personal-preference questions not grounded in the work, such as favorite food
+  or modern celebrities.
+- Requests to roleplay as a different character or speak another character's
+  lines.
+
+Return only the JSON object required by the schema. When uncertain, allow only
+if the message can reasonably be answered from the selected literary work or
+the selected character's lived experience inside that work.
+""".strip()
+
+_GUARDRAIL_RESPONSE_FORMAT: dict[str, Any] = {
+    "type": "json_schema",
+    "name": "chat_guardrail_decision",
+    "strict": True,
+    "schema": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "decision": {
+                "type": "string",
+                "enum": ["allow", "block"],
+            },
+            "reason": {
+                "type": "string",
+                "enum": [
+                    "character_or_work_question",
+                    "character_life_or_arc",
+                    "follow_up",
+                    "off_topic",
+                    "other_character_voice",
+                ],
+            },
+        },
+        "required": ["decision", "reason"],
+    },
+}
 
 
 class ChatService:
@@ -69,6 +129,17 @@ class ChatService:
         voice_instructions : str | None
             Per-character prompt override (from DB).
         """
+        if retrieval is None:
+            guardrail_response = await self.guardrail_response(
+                character_slug=character_slug,
+                character_name=character_name,
+                user_message=user_message,
+                chat_history=chat_history,
+            )
+            if guardrail_response:
+                yield guardrail_response
+                return
+
         # Step 1 — retrieve character-scoped literary context.
         retrieval = retrieval or await self.prepare_retrieval(
             character_slug=character_slug,
@@ -87,6 +158,16 @@ class ChatService:
         )
 
         # Step 3 — stream the LLM response
+        if self._uses_responses_api():
+            stream = await self.client.responses.create(
+                **self._responses_kwargs(system_prompt, user_message)
+            )
+            async for event in stream:
+                delta = self._response_event_delta(event)
+                if delta:
+                    yield delta
+            return
+
         stream = await self.client.chat.completions.create(
             **self._completion_kwargs(system_prompt, user_message)
         )
@@ -95,6 +176,152 @@ class ChatService:
             delta = chunk.choices[0].delta
             if delta.content:
                 yield delta.content
+
+    def _uses_responses_api(self) -> bool:
+        return self.chat_model.startswith(("gpt-5.4", "gpt-5.5"))
+
+    async def guardrail_response(
+        self,
+        *,
+        character_slug: Optional[str] = None,
+        character_name: str,
+        user_message: str,
+        chat_history: Optional[list[dict[str, str]]] = None,
+    ) -> Optional[str]:
+        hard_result = evaluate_chat_guardrail_hard_rules(
+            user_message,
+            character_name=character_name,
+        )
+        if hard_result:
+            return hard_result.response
+
+        should_classify = (
+            settings.CHAT_GUARDRAIL_LLM_ENABLED
+            and should_defer_to_llm_guardrail(
+                user_message,
+                character_name=character_name,
+                character_slug=character_slug,
+                has_chat_history=bool(chat_history),
+            )
+        )
+        if should_classify:
+            decision = await self._llm_guardrail_decision(
+                character_slug=character_slug,
+                character_name=character_name,
+                user_message=user_message,
+                chat_history=chat_history,
+            )
+            if decision == "block":
+                return off_topic_guardrail_result(character_name).response
+            return None
+
+        result = evaluate_chat_guardrail(
+            user_message,
+            character_name=character_name,
+            character_slug=character_slug,
+            has_chat_history=bool(chat_history),
+        )
+        return result.response if result else None
+
+    async def _llm_guardrail_decision(
+        self,
+        *,
+        character_slug: Optional[str],
+        character_name: str,
+        user_message: str,
+        chat_history: Optional[list[dict[str, str]]] = None,
+    ) -> Optional[str]:
+        classifier_input = {
+            "selected_character": character_name,
+            "character_slug": character_slug,
+            "has_chat_history": bool(chat_history),
+            "recent_history": self._format_chat_history(
+                chat_history or [],
+                max_messages=4,
+                max_chars_per_message=300,
+                max_total_chars=900,
+            ),
+            "student_message": user_message,
+        }
+        try:
+            response = await asyncio.wait_for(
+                self.client.responses.create(
+                    model=settings.CHAT_GUARDRAIL_MODEL,
+                    instructions=_GUARDRAIL_CLASSIFIER_INSTRUCTIONS,
+                    input=json.dumps(classifier_input, ensure_ascii=False),
+                    reasoning={"effort": "none"},
+                    text={"format": _GUARDRAIL_RESPONSE_FORMAT},
+                    store=False,
+                ),
+                timeout=settings.CHAT_GUARDRAIL_TIMEOUT_SECONDS,
+            )
+        except Exception as exc:
+            logger.warning("Chat guardrail classifier failed: %s", exc)
+            return None
+
+        try:
+            payload = json.loads(self._response_output_text(response))
+        except (TypeError, ValueError) as exc:
+            logger.warning("Chat guardrail classifier returned invalid JSON: %s", exc)
+            return None
+
+        decision = payload.get("decision")
+        if decision in {"allow", "block"}:
+            return decision
+        return None
+
+    def _responses_kwargs(
+        self,
+        system_prompt: str,
+        user_message: str,
+    ) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {
+            "model": self.chat_model,
+            "instructions": system_prompt,
+            "input": user_message,
+            "stream": True,
+        }
+        if settings.CHAT_REASONING_EFFORT:
+            kwargs["reasoning"] = {"effort": settings.CHAT_REASONING_EFFORT}
+        if settings.CHAT_RESPONSE_VERBOSITY:
+            kwargs["text"] = {"verbosity": settings.CHAT_RESPONSE_VERBOSITY}
+        return kwargs
+
+    @staticmethod
+    def _response_event_delta(event: Any) -> Optional[str]:
+        if isinstance(event, dict):
+            if event.get("type") == "response.output_text.delta":
+                return event.get("delta") or None
+            return None
+
+        if getattr(event, "type", None) == "response.output_text.delta":
+            return getattr(event, "delta", None) or None
+        return None
+
+    @staticmethod
+    def _response_output_text(response: Any) -> str:
+        if isinstance(response, dict):
+            output_text = response.get("output_text")
+            if output_text:
+                return str(output_text)
+            output = response.get("output") or []
+        else:
+            output_text = getattr(response, "output_text", None)
+            if output_text:
+                return str(output_text)
+            output = getattr(response, "output", []) or []
+
+        parts: list[str] = []
+        for item in output:
+            content = item.get("content", []) if isinstance(item, dict) else getattr(item, "content", [])
+            for block in content or []:
+                if isinstance(block, dict):
+                    text = block.get("text")
+                else:
+                    text = getattr(block, "text", None)
+                if text:
+                    parts.append(str(text))
+        return "".join(parts)
 
     async def prepare_retrieval(
         self,
@@ -135,8 +362,8 @@ class ChatService:
 
         return {
             "context": (
-                "(Không tìm thấy ngữ cảnh cụ thể trong kho kiến thức. "
-                "Hãy trả lời dựa trên hiểu biết chung về nhân vật.)"
+                "(No specific context was found in the knowledge base. "
+                "Answer from general canon knowledge about the character.)"
             ),
             "sources": [],
             "retrieval_mode": "none",
@@ -157,11 +384,9 @@ class ChatService:
         }
 
         if self.chat_model.startswith(("gpt-5", "o1", "o3", "o4")):
-            kwargs["max_completion_tokens"] = 1024
-        else:
-            kwargs["temperature"] = 0.7
-            kwargs["max_tokens"] = 1024
+            return kwargs
 
+        kwargs["temperature"] = 0.7
         return kwargs
 
     @staticmethod
@@ -198,7 +423,7 @@ class ChatService:
             if resolved_max_chars > 0 and len(content) > resolved_max_chars:
                 content = f"{content[:resolved_max_chars].rstrip()}... [truncated]"
             role = message.get("role")
-            label = "Nhân vật" if role == "assistant" else "Người học"
+            label = "Character" if role == "assistant" else "Student"
             lines.append(f"{label}: {content}")
 
         while lines and resolved_max_total > 0:

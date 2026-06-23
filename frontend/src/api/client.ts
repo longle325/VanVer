@@ -13,7 +13,12 @@ import { realClient } from "./realClient";
 import { useReal } from "./adapter";
 import type { ApiClient, ChatRequest } from "./types";
 
-export type { ApiClient, ChatRequest, CreateUserInput } from "./types";
+export type {
+  ApiClient,
+  ChatRequest,
+  CreateUserInput,
+  UpdateDisplayNameInput,
+} from "./types";
 export { ApiError } from "./adapter";
 
 export const api: ApiClient = {
@@ -26,6 +31,11 @@ export const api: ApiClient = {
     useReal("auth")
       ? realClient.getCurrentUser()
       : mockClient.getCurrentUser(),
+
+  updateDisplayName: (input) =>
+    useReal("auth")
+      ? realClient.updateDisplayName(input)
+      : mockClient.updateDisplayName(input),
 
   logout: () =>
     useReal("auth")
@@ -52,6 +62,9 @@ export const api: ApiClient = {
 
   recordSkip: (id) =>
     useReal("match") ? realClient.recordSkip(id) : mockClient.recordSkip(id),
+
+  resetSkips: () =>
+    useReal("match") ? realClient.resetSkips() : mockClient.resetSkips(),
 
   getMatchedSlugs: () =>
     useReal("match")

@@ -111,6 +111,29 @@ export function useSkipMutation() {
   });
 }
 
+export function useResetSkipsMutation() {
+  const resetSkipped = useAppStore((state) => state.resetSkipped);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      // Server-first: the deck is computed from the backend's swipe records,
+      // so the skips must be cleared there before the local mirror, otherwise
+      // a deck refetch would re-hide the cards we just reopened.
+      const { cleared } = await api.resetSkips();
+      resetSkipped();
+      return cleared;
+    },
+    onSuccess: (cleared) => {
+      // Only refetch when something actually came back. Invalidating on a
+      // no-op (no skipped cards to reopen) just repaints the empty state —
+      // a pointless flicker with nothing to show for it.
+      if (cleared > 0) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.deck });
+      }
+    },
+  });
+}
+
 export function useSubmitChallengeMutation() {
   const saveChallenge = useAppStore((state) => state.saveChallenge);
   const queryClient = useQueryClient();

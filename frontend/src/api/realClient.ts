@@ -42,6 +42,7 @@ import type {
   ChatRequest,
   ChatStreamEvent,
   CreateUserInput,
+  UpdateDisplayNameInput,
 } from "./types";
 
 interface BackendUser {
@@ -101,6 +102,18 @@ interface BackendOpenEndedGradeResult {
   retrieval_mode: string;
 }
 
+interface BackendLevelChallengeResult {
+  level: number;
+  phase_title: string | null;
+  score: number;
+  total: number;
+  passed: boolean;
+  points_earned: number;
+  correct_answers: number[];
+  open_grades: Record<string, BackendOpenEndedGradeResult>;
+  total_score: number;
+}
+
 interface BackendSwipeResponse {
   matched: boolean;
   points_earned: number;
@@ -111,7 +124,6 @@ interface BackendProgressResponse {
   user_id: string;
   completed: SyncedProgress["completed"];
   level_results: SyncedProgress["levelResults"];
-  skipped: string[];
   updated_at?: string | null;
 }
 
@@ -183,7 +195,18 @@ function currentFrontendUrl(path: string): string {
     return `http://localhost:5173#${normalizedPath}`;
   }
 
-  const base = `${window.location.origin}${window.location.pathname}`;
+  const apiUrl = new URL(API_BASE_URL);
+  const appUrl = new URL(window.location.origin);
+  if (
+    apiUrl.hostname === "localhost" &&
+    appUrl.hostname === "127.0.0.1"
+  ) {
+    appUrl.hostname = "localhost";
+  }
+  appUrl.pathname = window.location.pathname;
+  appUrl.search = "";
+  appUrl.hash = "";
+  const base = appUrl.toString();
   return `${base}#${normalizedPath}`;
 }
 
@@ -196,6 +219,55 @@ export function getOAuthLoginUrl(
   return url.toString();
 }
 
+/**
+ * Server-authoritative phase-level grading. The backend grades the MCQ and
+ * open-ended answers, awards points, and returns the new account score, so the
+ * FE never computes points itself. Standalone (not on the ApiClient facade)
+ * because it only runs in real mode — mock mode grades locally in the UI.
+ */
+export async function submitLevelChallenge(
+  slug: string,
+  level: number,
+  answers: Array<number | string>,
+): Promise<{ result: ChallengeResult; totalScore: number }> {
+  const uuid = await resolveSlugToUuid(slug);
+  const userId = requireCurrentUserId();
+  const res = await apiFetch<BackendLevelChallengeResult>(
+    "/challenges/level/submit",
+    {
+      method: "POST",
+      body: { user_id: userId, character_id: uuid, level, answers },
+    },
+  );
+  const openGrades: Record<string, OpenEndedGradeResult> = {};
+  for (const [questionId, grade] of Object.entries(res.open_grades ?? {})) {
+    openGrades[questionId] = {
+      score: grade.score,
+      passed: grade.passed,
+      feedback: grade.feedback,
+      matchedCriteria: grade.matched_criteria ?? [],
+      missingCriteria: grade.missing_criteria ?? [],
+      confidence: grade.confidence,
+      retrievalMode: grade.retrieval_mode,
+    };
+  }
+  const result: ChallengeResult = {
+    level: res.level as 1 | 2 | 3,
+    phaseTitle: res.phase_title ?? undefined,
+    score: res.score,
+    total: res.total,
+    passed: res.passed,
+    perfect: res.score === res.total,
+    awarded: res.points_earned,
+    answers: [...answers],
+    correctAnswers: res.correct_answers,
+    openGrades,
+    nextLevelUnlocked:
+      res.passed && res.level < 3 ? ((res.level + 1) as 2 | 3) : undefined,
+  };
+  return { result, totalScore: res.total_score };
+}
+
 // ─── Client ───────────────────────────────────────────────────────────────
 
 export const realClient: ApiClient = {
@@ -205,6 +277,16 @@ export const realClient: ApiClient = {
 
   async getCurrentUser(): Promise<UserProfile> {
     const user = await apiFetch<BackendUser>("/auth/me");
+    return backendUserToProfile(user);
+  },
+
+  async updateDisplayName(
+    input: UpdateDisplayNameInput,
+  ): Promise<UserProfile> {
+    const user = await apiFetch<BackendUser>("/auth/me", {
+      method: "PATCH",
+      body: { display_name: input.displayName },
+    });
     return backendUserToProfile(user);
   },
 
@@ -269,7 +351,6 @@ export const realClient: ApiClient = {
     return {
       completed: res.completed ?? {},
       levelResults: res.level_results ?? {},
-      skipped: res.skipped ?? [],
     };
   },
 
@@ -282,14 +363,12 @@ export const realClient: ApiClient = {
         body: {
           completed: progress.completed,
           level_results: progress.levelResults,
-          skipped: progress.skipped,
         },
       },
     );
     return {
       completed: res.completed ?? {},
       levelResults: res.level_results ?? {},
-      skipped: res.skipped ?? [],
     };
   },
 
@@ -301,6 +380,15 @@ export const realClient: ApiClient = {
       body: { user_id: userId, character_id: uuid, direction: "left" },
     });
     return { ok: true };
+  },
+
+  async resetSkips(): Promise<{ cleared: number }> {
+    const userId = requireCurrentUserId();
+    const res = await apiFetch<{ cleared: number }>("/interactions/reset-skips", {
+      method: "POST",
+      body: { user_id: userId },
+    });
+    return { cleared: res.cleared ?? 0 };
   },
 
   async getChallenge(slug: string): Promise<ChallengeQuestion[]> {

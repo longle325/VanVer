@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 # ── Enums ─────────────────────────────────────────────────────────────────
@@ -52,10 +52,21 @@ class UserResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class UserProfileUpdate(BaseModel):
+    display_name: str = Field(..., min_length=1, max_length=120)
+
+    @field_validator("display_name")
+    @classmethod
+    def normalize_display_name(cls, value: str) -> str:
+        display_name = value.strip()
+        if not display_name:
+            raise ValueError("Display name cannot be blank.")
+        return display_name
+
+
 class UserProgressPayload(BaseModel):
     completed: dict[str, Any] = Field(default_factory=dict)
     level_results: dict[str, Any] = Field(default_factory=dict)
-    skipped: List[str] = Field(default_factory=list)
 
 
 class UserProgressResponse(UserProgressPayload):
@@ -170,6 +181,14 @@ class SwipeResponse(BaseModel):
     match_status: Optional[MatchStatus] = None
 
 
+class ResetSkipsRequest(BaseModel):
+    user_id: UUID
+
+
+class ResetSkipsResponse(BaseModel):
+    cleared: int
+
+
 # ── Chat ──────────────────────────────────────────────────────────────────
 
 
@@ -252,6 +271,35 @@ class OpenEndedGradeResult(BaseModel):
     confidence: float = Field(..., ge=0, le=1)
     retrieval_mode: str
     sources: List[dict] = Field(default_factory=list)
+
+
+class LevelChallengeSubmission(BaseModel):
+    user_id: UUID
+    character_id: UUID
+    level: int = Field(..., ge=1, le=3)
+    answers: List[Union[int, str]] = Field(
+        ...,
+        description=(
+            "One entry per question, in order: option index for "
+            "multiple-choice, text for open-ended."
+        ),
+    )
+
+
+class LevelChallengeResult(BaseModel):
+    level: int
+    phase_title: Optional[str] = None
+    score: int
+    total: int
+    passed: bool
+    points_earned: int
+    # Per-question correct option index; -1 for open-ended questions.
+    correct_answers: List[int]
+    # Open-ended grade detail keyed by question id, for FE feedback rendering.
+    open_grades: Dict[str, OpenEndedGradeResult] = Field(default_factory=dict)
+    # Authoritative account score after this submission, so the FE shows the
+    # server number instead of locally-summed points.
+    total_score: int
 
 
 class ChallengeAttemptResponse(BaseModel):

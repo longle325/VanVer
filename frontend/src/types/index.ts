@@ -136,7 +136,6 @@ export type LevelResultsState = Record<
 export interface SyncedProgress {
   completed: Record<string, ChallengeResult>;
   levelResults: LevelResultsState;
-  skipped: string[];
 }
 
 export interface OpenEndedGradeRequest {

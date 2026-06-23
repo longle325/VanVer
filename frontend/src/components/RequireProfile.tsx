@@ -27,7 +27,6 @@ function mergeProgress(
   return {
     completed: { ...local.completed, ...remote.completed },
     levelResults,
-    skipped: Array.from(new Set([...local.skipped, ...remote.skipped])),
   };
 }
 
@@ -36,7 +35,6 @@ function currentProgressSnapshot(): SyncedProgress {
   return {
     completed: state.completed,
     levelResults: state.levelResults,
-    skipped: state.skipped,
   };
 }
 
@@ -44,7 +42,6 @@ export default function RequireProfile({ children }: { children: ReactNode }) {
   const profile = useAppStore((s) => s.profile);
   const completed = useAppStore((s) => s.completed);
   const levelResults = useAppStore((s) => s.levelResults);
-  const skipped = useAppStore((s) => s.skipped);
   const setProfile = useAppStore((s) => s.setProfile);
   const setMatches = useAppStore((s) => s.setMatches);
   const setProgress = useAppStore((s) => s.setProgress);
@@ -153,7 +150,7 @@ export default function RequireProfile({ children }: { children: ReactNode }) {
     if (!progressHydrated) return;
     if (!useReal("auth")) return;
 
-    const progress = { completed, levelResults, skipped };
+    const progress = { completed, levelResults };
     const timeout = window.setTimeout(() => {
       realClient.saveProgress(progress).catch((err) => {
         console.warn("progress save failed", err);
@@ -166,7 +163,6 @@ export default function RequireProfile({ children }: { children: ReactNode }) {
     progressHydrated,
     completed,
     levelResults,
-    skipped,
   ]);
 
   if (boot === "checking") {

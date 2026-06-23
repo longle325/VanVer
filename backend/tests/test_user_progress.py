@@ -47,7 +47,6 @@ class UserProgressSchemaTests(unittest.TestCase):
 
         self.assertEqual(payload.completed, {})
         self.assertEqual(payload.level_results, {})
-        self.assertEqual(payload.skipped, [])
 
 
 class UserProgressScoreTests(unittest.TestCase):
@@ -148,7 +147,6 @@ class UserProgressRouteTests(unittest.TestCase):
                 "user_id": str(user_id),
                 "completed": {},
                 "level_results": {},
-                "skipped": [],
                 "updated_at": None,
             },
         )
@@ -164,7 +162,6 @@ class UserProgressRouteTests(unittest.TestCase):
             user_id=user_id,
             completed={"chi_pheo": {"passed": True}},
             level_results={"chi_pheo": {"1": {"passed": True}}},
-            skipped=["mi"],
             updated_at=updated_at,
         )
         body_level_results = {"chi_pheo": {"1": {"passed": True, "awarded": 9999999}}}
@@ -189,20 +186,18 @@ class UserProgressRouteTests(unittest.TestCase):
                 json={
                     "completed": progress.completed,
                     "level_results": body_level_results,
-                    "skipped": progress.skipped,
                 },
             )
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["completed"], progress.completed)
         self.assertEqual(response.json()["level_results"], progress.level_results)
-        self.assertEqual(response.json()["skipped"], progress.skipped)
+        self.assertNotIn("skipped", response.json())
         upsert_progress.assert_awaited_once_with(
             fake_session,
             user_id,
             completed=progress.completed,
             level_results=progress.level_results,
-            skipped=progress.skipped,
         )
 
     def test_put_progress_requires_authenticated_session(self):
@@ -215,7 +210,6 @@ class UserProgressRouteTests(unittest.TestCase):
             user_id=user_id,
             completed={},
             level_results={},
-            skipped=[],
             updated_at=None,
         )
 
@@ -236,7 +230,7 @@ class UserProgressRouteTests(unittest.TestCase):
             self.addCleanup(client.close)
             response = client.put(
                 f"/api/v1/users/{user_id}/progress",
-                json={"completed": {}, "level_results": {}, "skipped": []},
+                json={"completed": {}, "level_results": {}},
             )
 
         self.assertEqual(response.status_code, 401)
@@ -253,7 +247,6 @@ class UserProgressRouteTests(unittest.TestCase):
             user_id=user_id,
             completed={},
             level_results={},
-            skipped=[],
             updated_at=None,
         )
 
@@ -273,7 +266,7 @@ class UserProgressRouteTests(unittest.TestCase):
             client = self._authenticated_client(other_user_id)
             response = client.put(
                 f"/api/v1/users/{user_id}/progress",
-                json={"completed": {}, "level_results": {}, "skipped": []},
+                json={"completed": {}, "level_results": {}},
             )
 
         self.assertEqual(response.status_code, 403)

@@ -14,7 +14,14 @@ from api.deps import get_db
 from api.session import require_session_owner
 from core.config import settings
 from models.db_models import MatchStatus as DbMatchStatus
-from models.schemas import MatchStatus, SwipeDirection, SwipeRequest, SwipeResponse
+from models.schemas import (
+    MatchStatus,
+    ResetSkipsRequest,
+    ResetSkipsResponse,
+    SwipeDirection,
+    SwipeRequest,
+    SwipeResponse,
+)
 from services import db_postgres as db
 
 router = APIRouter(prefix="/interactions", tags=["interactions"])
@@ -77,3 +84,23 @@ async def swipe(
         points_earned=settings.POINTS_MATCH,
         match_status=MatchStatus.SWIPED_RIGHT,
     )
+
+
+@router.post("/reset-skips", response_model=ResetSkipsResponse)
+async def reset_skips(
+    request: Request,
+    body: ResetSkipsRequest,
+    session: AsyncSession = Depends(get_db),
+):
+    """Clear the user's skipped (left-swiped) cards so they return to the deck.
+
+    Deletes only SWIPED_LEFT rows; real matches (SWIPED_RIGHT) are preserved.
+    """
+    require_session_owner(request, body.user_id)
+
+    user = await db.get_user(session, body.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    cleared = await db.delete_left_swipes(session, body.user_id)
+    return ResetSkipsResponse(cleared=cleared)

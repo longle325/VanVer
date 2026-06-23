@@ -1,9 +1,13 @@
+import asyncio
+import json
 import unittest
+from base64 import b64encode
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 from uuid import uuid4
 
+import itsdangerous
 from fastapi.testclient import TestClient
 
 
@@ -108,6 +112,28 @@ class OAuthRouteTests(unittest.TestCase):
     def tearDown(self):
         self.app.dependency_overrides.clear()
 
+    def _session_cookie(self, user_id):
+        from api.session import SESSION_USER_ID_KEY
+        from core.config import settings
+
+        secret = settings.SESSION_SECRET_KEY or "vanver-dev-session-secret-change-me"
+        signer = itsdangerous.TimestampSigner(secret)
+        payload = b64encode(
+            json.dumps({SESSION_USER_ID_KEY: str(user_id)}).encode("utf-8")
+        )
+        return signer.sign(payload).decode("utf-8")
+
+    def _authenticated_client(self, user_id):
+        from core.config import settings
+
+        client = TestClient(self.app)
+        self.addCleanup(client.close)
+        client.cookies.set(
+            settings.SESSION_COOKIE_NAME,
+            self._session_cookie(user_id),
+        )
+        return client
+
     def test_auth_routes_are_registered(self):
         paths = _route_paths(self.app.routes)
 
@@ -124,6 +150,51 @@ class OAuthRouteTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json()["detail"], "Not authenticated.")
+
+    def test_update_current_session_user_updates_display_name_for_session_user(self):
+        from api.session import SESSION_USER_ID_KEY
+        from api.routes import auth
+        from models.schemas import UserProfileUpdate
+
+        user_id = uuid4()
+        user = SimpleNamespace(
+            id=user_id,
+            username="student",
+            grade_level=10,
+            total_score=0,
+            email="student@example.com",
+            display_name="Student Two",
+            created_at=datetime.now(timezone.utc),
+        )
+
+        request = SimpleNamespace(session={SESSION_USER_ID_KEY: str(user_id)})
+
+        with (
+            patch.object(
+                auth.db,
+                "update_user_display_name",
+                new=AsyncMock(return_value=user),
+            ) as update_display_name,
+            patch.object(
+                auth.db,
+                "get_effective_total_score",
+                new=AsyncMock(return_value=80),
+            ),
+        ):
+            response = asyncio.run(
+                auth.update_current_session_user(
+                    request,
+                    UserProfileUpdate(display_name="  Student Two  "),
+                    session=object(),
+                )
+            )
+
+            self.assertEqual(response.display_name, "Student Two")
+            self.assertEqual(response.total_score, 80)
+            update_display_name.assert_awaited_once()
+            _, called_user_id, called_display_name = update_display_name.await_args.args
+            self.assertEqual(called_user_id, user_id)
+            self.assertEqual(called_display_name, "Student Two")
 
     def test_callback_upserts_user_and_sets_session(self):
         from api.deps import get_db

@@ -75,6 +75,7 @@ cd backend && python3 -m venv .venv && ./.venv/bin/pip install -r requirements.t
 # 4. Postgres + schema + seed (characters, challenges, demo users)
 docker compose up -d postgres          # chờ đến khi `docker compose ps postgres` báo healthy
 unset DEBUG                             # backend yêu cầu DEBUG là boolean
+cd backend && ./.venv/bin/alembic upgrade head && cd ..   # tạo schema bằng migrations
 cd backend && ./.venv/bin/python scripts/seed_database.py && cd ..
 
 # 5. Knowledge-base embeddings — khôi phục bản pgvector dump đã embed sẵn của team
@@ -114,3 +115,14 @@ Trạng thái của frontend được lưu trong `localStorage`. Khi cần đưa
 - **Frontend** — React 18 + TypeScript + Vite, Zustand, TanStack Query, react-tinder-card; dùng Capacitor để đóng gói app cho iOS/Android.
 - **Backend** — FastAPI, async SQLAlchemy, Postgres + pgvector, OpenAI GPT-4o + `text-embedding-3-large`; chat dùng SSE streaming.
 - **RAG** — mỗi nhân vật có một kho tri thức được tuyển chọn riêng và embed vào `knowledge_chunks`. Chat và phần chấm tự luận sẽ truy xuất bằng chứng thật từ kho này; nếu vector search không khả dụng thì fallback sang lexical search.
+
+---
+
+## Đóng góp
+
+Chúng tôi luôn hoan nghênh mọi đóng góp.
+
+- **Báo lỗi hoặc đề xuất tính năng** — mở một [issue](../../issues/new) và làm theo mẫu issue.
+- **Gửi thay đổi** — mở một [pull request](../../pulls) và làm theo mẫu PR.
+
+Các mẫu nằm trong thư mục [`.github/`](.github) và sẽ tự động hiện ra khi bạn tạo issue hoặc pull request trên GitHub.
