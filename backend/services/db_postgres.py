@@ -7,10 +7,11 @@ All database queries live here so route handlers stay thin.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Iterable, List, Optional
+from typing import Any, Iterable, List, Optional, cast
 from uuid import UUID
 
 from sqlalchemy import delete, func, select, update
+from sqlalchemy.engine import CursorResult
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -100,6 +101,7 @@ def _merge_server_owned_level_fields(incoming: dict | None, existing: dict | Non
             if in_slot is None and ex_slot is None:
                 continue
             if in_slot is None:
+                assert ex_slot is not None
                 merged_char[level_key] = dict(ex_slot)
                 continue
 
@@ -452,11 +454,14 @@ async def delete_left_swipes(db: AsyncSession, user_id: UUID) -> int:
 
     Returns the number of skip records removed.
     """
-    result = await db.execute(
-        delete(Match).where(
-            Match.user_id == user_id,
-            Match.status == MatchStatus.SWIPED_LEFT,
-        )
+    result = cast(
+        CursorResult[Any],
+        await db.execute(
+            delete(Match).where(
+                Match.user_id == user_id,
+                Match.status == MatchStatus.SWIPED_LEFT,
+            )
+        ),
     )
     await db.commit()
     return result.rowcount or 0
